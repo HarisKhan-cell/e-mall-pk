@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String
+  phone         String?
+  role          String    @default("BUYER")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  shop          Shop?     
+  orders        Order[]   
+  reviews       Review[]
+}
+
+model Shop {
+  id              String      @id @default(uuid())
+  name            String      
+  slug            String      @unique 
+  logo            String?
+  banner          String?
+  description     String?
+  isVerified      Boolean     @default(false) 
+  commissionRate  Float       @default(5.0)   
+  
+  sellerId        String      @unique
+  seller          User        @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  products        Product[]
+  subOrders       SubOrder[]  
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique 
+  image       String?
+  products    Product[]
+}
+
+model Product {
+  id          String      @id @default(uuid())
+  title       String
+  description String
+  price       Float       
+  stock       Int         @default(0)
+  images      String      @default("[]")
+  isFeatured  Boolean     @default(false)
+
+  shopId      String
+  shop        Shop        @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  categoryId  String?
+  category    Category?   @relation(fields: [categoryId], references: [id])
+
+  orderItems  OrderItem[]
+  reviews     Review[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  buyerId         String
+  buyer           User          @relation(fields: [buyerId], references: [id])
+  
+  totalAmount     Float         
+  platformFee     Float         @default(50.0) 
+  paymentMethod   String        @default("COD")
+  isPaid          Boolean       @default(false)
+  
+  shippingAddress String
+  city            String        @default("Lahore")
+  
+  subOrders       SubOrder[]    
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model SubOrder {
+  id              String      @id @default(uuid())
+  masterOrderId   String
+  masterOrder     Order       @relation(fields: [masterOrderId], references: [id], onDelete: Cascade)
+
+  shopId          String
+  shop            Shop        @relation(fields: [shopId], references: [id])
+
+  subTotal        Float       
+  sellerFeeAmount Float       
+  status          String      @default("PENDING")
+  trackingNumber  String?     
+
+  items           OrderItem[]
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id          String    @id @default(uuid())
+  subOrderId  String
+  subOrder    SubOrder  @relation(fields: [subOrderId], references: [id], onDelete: Cascade)
+
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+
+  quantity    Int
+  price       Float
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int      
+  comment   String?
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
