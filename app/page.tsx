@@ -28,7 +28,9 @@ import {
   Gamepad2,
   ArrowUpRight,
   Building2,
-  FileText
+  Facebook,
+  Send,
+  Heart
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -42,6 +44,8 @@ export default function HomePage() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [user, setUser] = useState<any>(null);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
   // Customer Form Fields
   const [customerName, setCustomerName] = useState('');
@@ -142,12 +146,14 @@ export default function HomePage() {
     setShowInvoice(true);
   };
 
-  const categories = ['All', 'Toys & Games', 'Fashion & Apparel', 'Artificial Jewelry', 'Bags & Accessories', 'Home Decoration', 'T-Shirts & Apparel', 'Shoes & Footwear', 'Watches', 'Groceries & Food'];
+  const categories = ['All', 'Fashion & Apparel', 'Artificial Jewelry', 'Bags & Accessories', 'Home Decoration', 'Shoes & Footwear', 'Watches', 'Toys & Games', 'Groceries & Food'];
 
   const brands = [
     { name: 'KHAADI', slug: 'khaadi-official', badge: 'Official Partner' },
     { name: 'SAPPHIRE', slug: 'sapphire-official', badge: 'Official Partner' },
+    { name: 'SANA SAFINAZ', slug: 'sana-safinaz', badge: 'Official Partner' },
     { name: 'J. JUNAID JAMSHED', slug: 'j-official', badge: 'Official Partner' },
+    { name: 'LIMELIGHT', slug: 'limelight-official', badge: 'Official Partner' },
     { name: 'NESTLÉ', slug: 'nestle-store', badge: 'Global Partner' },
     { name: 'TOYS GALAXY', slug: 'toys-galaxy', badge: 'Verified Partner' },
   ];
@@ -192,12 +198,12 @@ export default function HomePage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search Khaadi, Sapphire, J., Nestle, Toys Galaxy..."
+              placeholder="Search Khaadi, Sapphire, Sana Safinaz, J., Nestle..."
               className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#D95D27] transition-all"
             />
           </div>
 
-          {/* Right Action Links */}
+          {/* Actions */}
           <div className="flex items-center gap-5 text-xs font-bold tracking-wider uppercase">
             <Link href="/track-order" className="hidden sm:inline-block text-gray-400 hover:text-white transition-colors">
               Track Order
@@ -460,7 +466,7 @@ export default function HomePage() {
             {cart.length > 0 && (
               <div className="border-t border-white/10 pt-6 mt-6 space-y-3 text-xs text-gray-400">
                 <div className="flex justify-between">
-                  <span>Items Subtotal:</span>
+                  <span>Subtotal:</span>
                   <span className="font-bold text-white">PKR {calculateSubtotal().toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-[#D95D27]">
@@ -658,6 +664,10 @@ export default function HomePage() {
               </div>
             </div>
 
+            <div className="bg-[#D95D27]/10 border border-[#D95D27]/30 p-3 rounded-2xl text-[10px] text-gray-300 text-center leading-relaxed">
+              📦 <strong>Single-Box Delivery:</strong> Items from all vendors consolidated at Lahore Center & delivered in 1 shipment!
+            </div>
+
             <button
               onClick={() => setShowInvoice(false)}
               className="w-full py-3.5 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-bold rounded-full shadow-xl text-xs"
@@ -668,81 +678,98 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* LUXURY EDITORIAL 5-COLUMN FOOTER SECTION */}
-      <footer className="bg-black/80 border-t border-white/10 mt-28 pt-16 pb-12 px-8 text-xs text-gray-400 font-sans">
+      {/* LUXURY SAPPHIRE / SANA SAFINAZ 5-COLUMN FOOTER */}
+      <footer className="bg-black/90 border-t border-white/10 mt-28 pt-16 pb-12 px-8 text-xs text-gray-400 font-sans">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
           
-          {/* Col 1: Brand Info */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D95D27] to-amber-600 flex items-center justify-center text-white shadow-lg shadow-[#D95D27]/30">
-                <Building2 className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold tracking-widest text-white uppercase font-sans">
-                E-MALL <span className="text-[10px] text-[#D95D27] font-mono">PK</span>
-              </span>
-            </div>
-            <p className="text-gray-400 text-xs leading-relaxed max-w-sm font-light">
-              Pakistan’s premier multi-vendor digital mall. Shop authentic items from Khaadi, Sapphire, J., Nestle, and verified partner stores in one single, consolidated package.
-            </p>
-
-            <div className="flex flex-wrap gap-2 pt-2">
-              <span className="bg-white/5 border border-white/10 text-gray-300 px-3 py-1 rounded-full text-[10px] font-bold">
-                🚚 PKR 195 Express Lahore Delivery
-              </span>
-              <span className="bg-white/5 border border-white/10 text-[#D95D27] px-3 py-1 rounded-full text-[10px] font-bold">
-                🛡️ PKR 50 Protection Fee
-              </span>
-              <span className="bg-white/5 border border-white/10 text-emerald-400 px-3 py-1 rounded-full text-[10px] font-bold">
-                ✓ 100% Cash on Delivery
-              </span>
+          {/* Col 1: Contact Us (Matching Sapphire Reference!) */}
+          <div className="space-y-3">
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Contact Us</h4>
+            <div className="space-y-2 text-gray-400 text-[11px]">
+              <p className="flex items-center gap-2 text-white">
+                <Mail className="w-3.5 h-3.5 text-[#D95D27]" />
+                <span>support@emall.pk</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 text-gray-400" />
+                <span>+92(0)42 323-882-45</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 text-gray-400" />
+                <span>+92(0)42 111-738-245</span>
+              </p>
+              <p className="text-gray-500 pt-1">Lahore Fulfillment Hub, Punjab, Pakistan</p>
             </div>
           </div>
 
-          {/* Col 2: Flagship Brands */}
+          {/* Col 2: Customer Care */}
           <div className="space-y-3">
-            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Flagship Stores</h4>
-            <ul className="space-y-2 text-gray-400 text-xs">
-              <li><Link href="/shop/khaadi-official" className="hover:text-[#D95D27] transition-colors">Khaadi Official</Link></li>
-              <li><Link href="/shop/sapphire-official" className="hover:text-[#D95D27] transition-colors">Sapphire Official</Link></li>
-              <li><Link href="/shop/j-official" className="hover:text-[#D95D27] transition-colors">J. Junaid Jamshed</Link></li>
-              <li><Link href="/shop/nestle-store" className="hover:text-[#D95D27] transition-colors">Nestle Store</Link></li>
-              <li><Link href="/shop/toys-galaxy" className="hover:text-[#D95D27] transition-colors">Toys Galaxy</Link></li>
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Customer Care</h4>
+            <ul className="space-y-2 text-gray-400 text-[11px]">
+              <li><Link href="/track-order" className="hover:text-[#D95D27] transition-colors">Track Your Order</Link></li>
+              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Exchange & Return Policy</Link></li>
+              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Single-Box Delivery Guarantee</Link></li>
+              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">FAQs & Support</Link></li>
             </ul>
           </div>
 
-          {/* Col 3: Quick Links */}
+          {/* Col 3: Company / Information */}
           <div className="space-y-3">
-            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Quick Navigation</h4>
-            <ul className="space-y-2 text-gray-400 text-xs">
-              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Marketplace Catalog</Link></li>
-              <li><Link href="/track-order" className="hover:text-[#D95D27] transition-colors">Track Order Logistics</Link></li>
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Information</h4>
+            <ul className="space-y-2 text-gray-400 text-[11px]">
               <li><Link href="/register" className="hover:text-[#D95D27] transition-colors">Become a Seller (5% Fee)</Link></li>
-              <li><Link href="/login" className="hover:text-[#D95D27] transition-colors">Partner Portal Sign In</Link></li>
-              <li><Link href="/admin/dashboard" className="hover:text-[#D95D27] transition-colors">Super Admin Hub</Link></li>
+              <li><Link href="/login" className="hover:text-[#D95D27] transition-colors">Partner Store Sign In</Link></li>
+              <li><Link href="/admin/dashboard" className="hover:text-[#D95D27] transition-colors">Super Admin Master Hub</Link></li>
+              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Privacy & Cookie Policy</Link></li>
             </ul>
           </div>
 
-          {/* Col 4: Support & Contact */}
+          {/* Col 4: Delivery Partners */}
           <div className="space-y-3">
-            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Support & Contact</h4>
-            <p className="text-gray-400 text-xs">Lahore Fulfillment Center, Punjab, Pakistan</p>
-            <div className="space-y-1.5 font-mono text-[11px] text-gray-300">
-              <p className="text-[#D95D27]">✉️ support@emall.pk</p>
-              <p>�� +92 300 0000000</p>
-              <p className="text-emerald-400">🟢 WhatsApp 24/7 Live</p>
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Logistics Partners</h4>
+            <p className="text-gray-500 text-[11px]">Authorized Delivery Partners in Pakistan:</p>
+            <div className="flex items-center gap-2 pt-1">
+              <span className="bg-red-600/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-lg font-black text-xs">
+                SKYNET Express
+              </span>
+              <span className="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-3 py-1 rounded-full font-black text-xs">
+                TCS Logistics
+              </span>
             </div>
+          </div>
+
+          {/* Col 5: Newsletter Signup (Matching Sana Safinaz Reference!) */}
+          <div className="space-y-3">
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Newsletter Signup</h4>
+            <p className="text-gray-400 text-[11px]">Subscribe to discover our latest multi-brand collections & sales</p>
+            
+            <form onSubmit={(e) => { e.preventDefault(); setNewsletterSuccess(true); }} className="space-y-2">
+              <div className="flex bg-white/5 border border-white/10 rounded-full p-1 focus-within:border-[#D95D27]">
+                <input
+                  type="email"
+                  required
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder="EMAIL ADDRESS"
+                  className="w-full px-4 py-2 bg-transparent text-xs text-white placeholder-gray-500 focus:outline-none"
+                />
+                <button type="submit" className="px-5 py-2 bg-[#D95D27] text-white font-extrabold text-[10px] rounded-full uppercase tracking-wider">
+                  Subscribe
+                </button>
+              </div>
+              {newsletterSuccess && <p className="text-emerald-400 text-[10px] font-bold">Subscribed successfully! 🎉</p>}
+            </form>
           </div>
         </div>
 
         {/* Footer Bottom Bar */}
         <div className="max-w-7xl mx-auto pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500">
-          <p>© {new Date().getFullYear()} E-MALL PAKISTAN. Created by Haris Khan. All rights reserved.</p>
+          <p>© COPYRIGHT 2026 E-MALL PAKISTAN. CREATED BY HARIS KHAN. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-3 text-gray-400 font-bold">
             <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">Cash on Delivery</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">JazzCash</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">EasyPaisa</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">Visa / Card</span>
+            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">UnionPay</span>
+            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">MasterCard</span>
+            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">VISA</span>
           </div>
         </div>
       </footer>
