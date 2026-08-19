@@ -28,7 +28,6 @@ import {
   Gamepad2,
   ArrowUpRight,
   Building2,
-  Facebook,
   Send,
   Heart
 } from 'lucide-react';
