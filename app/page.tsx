@@ -7,24 +7,188 @@ import {
   ShoppingBag,
   Store,
   MapPin,
-  Trash2,
-  Tag,
   X,
   ArrowRight,
   Truck,
   MessageCircle,
-  Mail,
-  Phone,
   Building2,
-  ArrowUpRight,
   Sparkles,
   Gift,
-  ShieldCheck,
   CreditCard
 } from 'lucide-react';
 
+const REAL_PRODUCTS = [
+  // --- KHAADI PRODUCTS ---
+  {
+    id: 'khaadi-1',
+    title: 'Khaadi Cotton Dobby Kurta',
+    description: 'Multi-colored cotton dobby embroidered kurta with relaxed V-neckline.',
+    price: 3990,
+    stock: 15,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800'])
+  },
+  {
+    id: 'khaadi-2',
+    title: 'Khaadi Floral V-Neck Printed Kurta',
+    description: 'Elegant floral print cotton kurta with relaxed fit and embroidered finish.',
+    price: 4490,
+    stock: 12,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800'])
+  },
+  {
+    id: 'khaadi-3',
+    title: 'Khaadi V-Neck Cotton Kurta',
+    description: 'Classic lawn cotton kurta with intricate neck detail.',
+    price: 3690,
+    stock: 20,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800'])
+  },
+  {
+    id: 'khaadi-4',
+    title: 'Khaadi Beige V-Neck Kurta',
+    description: 'Neutral tone subtle embroidered cotton kurta for summer.',
+    price: 4290,
+    stock: 10,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1563178406-4cdc2923acbc?q=80&w=800'])
+  },
+
+  // --- SAPPHIRE PRODUCTS ---
+  {
+    id: 'sapphire-1',
+    title: 'Sapphire 2-Piece Embroidered Lawn Suit',
+    description: 'Dark blue embroidered straight lawn shirt with farshi cambric shalwar (PRW26SSTV961).',
+    price: 12990,
+    stock: 8,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Sapphire Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800'])
+  },
+  {
+    id: 'sapphire-2',
+    title: 'Sapphire Ready to Wear Stitched Suit',
+    description: '2-Piece stitched lawn suit with fine lace accents (PR26SCSTV810).',
+    price: 5990,
+    stock: 8,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Sapphire Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800'])
+  },
+  {
+    id: 'sapphire-3',
+    title: 'Sapphire Stitched Luxury Suit',
+    description: '3-Piece stitched luxury cotton lawn suit with chiffon dupatta (PR26SCSTV813).',
+    price: 7490,
+    stock: 6,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Sapphire Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=800'])
+  },
+  {
+    id: 'sapphire-4',
+    title: 'Sapphire Floral Ready to Wear Top',
+    description: 'Contemporary floral printed cotton kurta (PRW26SSTV921).',
+    price: 3290,
+    stock: 14,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Sapphire Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800'])
+  },
+
+  // --- SAYA PRODUCTS ---
+  {
+    id: 'saya-1',
+    title: 'Saya Unstitched Printed Lawn 3-Piece',
+    description: 'Premium printed lawn shirt, dupatta, and dyed trouser (WUNS-5595-R).',
+    price: 2699,
+    stock: 25,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'SAYA Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=800'])
+  },
+  {
+    id: 'saya-2',
+    title: 'Saya Unstitched Lawn 2-Piece (Shirt + Trouser)',
+    description: 'Summer lawn shirt piece with plain dyed trouser (WU2P-5882).',
+    price: 1699,
+    stock: 30,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'SAYA Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?q=80&w=800'])
+  },
+  {
+    id: 'saya-3',
+    title: 'Saya Unstitched Lawn 2-Piece (Shirt + Dupatta)',
+    description: 'Vibrant printed lawn shirt with lawn dupatta (WU2P-6716).',
+    price: 1799,
+    stock: 22,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'SAYA Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=800'])
+  },
+  {
+    id: 'saya-4',
+    title: 'Saya Premium Printed Lawn 2-Piece',
+    description: 'Azadi Sale Edition printed premium lawn suit (WU2P-6793).',
+    price: 1899,
+    stock: 19,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'SAYA Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800'])
+  },
+
+  // --- ETHNIC FOOTWEAR ---
+  {
+    id: 'ethnic-1',
+    title: 'Ethnic Braided Strap Flat Sandal (Peanut)',
+    description: 'Jet-black sole with crystalline braided strap (E1203/109/808).',
+    price: 4000,
+    stock: 10,
+    category: { name: 'Shoes & Footwear' },
+    shop: { name: 'ETHNIC Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=800'])
+  },
+  {
+    id: 'ethnic-2',
+    title: 'Ethnic Embroidered Traditional Sandal',
+    description: 'Traditional embellished flat sandal for festive & casual wear (E1103/109/901).',
+    price: 3990,
+    stock: 12,
+    category: { name: 'Shoes & Footwear' },
+    shop: { name: 'ETHNIC Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1562273138-f46be4ebdf33?q=80&w=800'])
+  },
+  {
+    id: 'ethnic-3',
+    title: 'Ethnic Minimalist Flat Sandal',
+    description: 'Sleek everyday slip-on flat sandal (E1084/109/318).',
+    price: 2990,
+    stock: 15,
+    category: { name: 'Shoes & Footwear' },
+    shop: { name: 'ETHNIC Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1603808033192-082d6919d3e1?q=80&w=800'])
+  },
+  {
+    id: 'ethnic-4',
+    title: 'Ethnic Comfort Strap Sandal',
+    description: 'Soft padded strap casual sandal (E1101/109/901).',
+    price: 3290,
+    stock: 11,
+    category: { name: 'Shoes & Footwear' },
+    shop: { name: 'ETHNIC Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=800'])
+  }
+];
+
 export default function HomePage() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products] = useState<any[]>(REAL_PRODUCTS);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
@@ -33,42 +197,13 @@ export default function HomePage() {
   const [lastOrder, setLastOrder] = useState<any>(null);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [user, setUser] = useState<any>(null);
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
-
-  // Promo Banner State
   const [showPromoBanner, setShowPromoBanner] = useState(true);
 
   // Customer Form & Payment Method Fields
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [customerCity, setCustomerCity] = useState('Lahore');
   const [customerAddress, setCustomerAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'PREPAID'>('PREPAID');
-  const [orderNotes, setOrderNotes] = useState('');
-
-  useEffect(() => {
-    fetchProducts();
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsed = JSON.parse(storedUser);
-      setUser(parsed);
-      setCustomerName(parsed.name || '');
-    }
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      const res = await fetch('/api/products');
-      if (res.ok) {
-        const data = await res.json();
-        setProducts(data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const addToCart = (product: any) => {
     setCart((prev) => [...prev, product]);
@@ -91,12 +226,11 @@ export default function HomePage() {
     if (cart.length === 0) return;
 
     const shopBreakdown: any = {};
-    let totalHardworkProfit = 0; // 5% profit for reselling/sourcing effort
+    let totalHardworkProfit = 0; // 5% profit
 
     cart.forEach((item) => {
       const shopName = item.shop?.name || 'Verified Brand Partner';
-      const commissionRate = item.shop?.commissionRate || 5.0; // 5% profit
-      const profitAmount = (item.price * commissionRate) / 100;
+      const profitAmount = (item.price * 5.0) / 100;
       totalHardworkProfit += profitAmount;
 
       if (!shopBreakdown[shopName]) {
@@ -120,10 +254,8 @@ export default function HomePage() {
       date: new Date().toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
       customerName,
       customerPhone,
-      customerCity,
       customerAddress,
       paymentMethod,
-      orderNotes,
       cartItems: [...cart],
       shopBreakdown,
       itemsSubtotal,
@@ -162,7 +294,7 @@ export default function HomePage() {
       
       {/* PROMO BANNER FOR FREE PREPAID DELIVERY */}
       {showPromoBanner && (
-        <div className="bg-gradient-to-r from-amber-600 via-[#D95D27] to-amber-700 text-white text-[11px] font-bold py-2.5 px-4 text-center relative flex items-center justify-center gap-2 shadow-lg">
+        <div className="bg-gradient-to-r from-amber-600 via-[#D95D27] to-amber-700 text-white text-[11px] font-bold py-2.5 px-4 text-center relative flex items-center justify-center gap-2 shadow-lg z-50">
           <Sparkles className="w-4 h-4 text-amber-200 animate-pulse" />
           <span>
             🎉 <strong>SPECIAL PROMO:</strong> Enjoy <strong>FREE DELIVERY</strong> on all <strong>Prepaid Orders!</strong> (Cash on Delivery: PKR 195).
@@ -210,20 +342,6 @@ export default function HomePage() {
 
           {/* Actions */}
           <div className="flex items-center gap-5 text-xs font-bold tracking-wider uppercase">
-            {user ? (
-              <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10">
-                <span className="text-white text-xs">{user.name}</span>
-                <button onClick={() => { localStorage.removeItem('user'); setUser(null); }} className="text-gray-500 hover:text-red-400">
-                  Exit
-                </button>
-              </div>
-            ) : (
-              <Link href="/login" className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-full border border-white/10 transition-all">
-                Sign In
-              </Link>
-            )}
-
-            {/* Cart Button */}
             <button
               onClick={() => setShowCart(true)}
               className="relative p-2.5 bg-[#D95D27] hover:bg-[#c44e1d] text-white rounded-full shadow-lg shadow-[#D95D27]/20 transition-all"
