@@ -3,21 +3,19 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  Building2,
   Plus,
   Trash2,
   Store,
   Sparkles,
   ArrowLeft,
   CheckCircle2,
-  Image as ImageIcon,
-  Tag,
-  DollarSign
+  Image as ImageIcon
 } from 'lucide-react';
 
 export default function AdminAddProductPage() {
   const [products, setProducts] = useState<any[]>([]);
-  const [successMessage, setNewsletterSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Form State
   const [title, setTitle] = useState('');
@@ -28,26 +26,22 @@ export default function AdminAddProductPage() {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
+  const loadProducts = () => {
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch(console.error);
+  };
+
   useEffect(() => {
-    // Load products from API / LocalStorage
-    const stored = localStorage.getItem('emall_custom_products');
-    if (stored) {
-      setProducts(JSON.parse(stored));
-    } else {
-      fetch('/api/products')
-        .then((res) => res.json())
-        .then((data) => {
-          setProducts(data);
-          localStorage.setItem('emall_custom_products', JSON.stringify(data));
-        })
-        .catch(console.error);
-    }
+    loadProducts();
   }, []);
 
-  const handleAddProduct = (e: React.FormEvent) => {
+  const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price || !imageUrl) return;
 
+    setLoading(true);
     const finalBrand = brand === 'Custom' ? customBrand : brand;
 
     const newProduct = {
@@ -60,23 +54,42 @@ export default function AdminAddProductPage() {
       images: JSON.stringify([imageUrl]),
     };
 
-    const updatedList = [newProduct, ...products];
-    setProducts(updatedList);
-    localStorage.setItem('emall_custom_products', JSON.stringify(updatedList));
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct),
+      });
 
-    // Reset Form
-    setTitle('');
-    setPrice('');
-    setDescription('');
-    setImageUrl('');
-    setNewsletterSuccessMessage(true);
-    setTimeout(() => setNewsletterSuccessMessage(false), 4000);
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(data.products);
+        setTitle('');
+        setPrice('');
+        setDescription('');
+        setImageUrl('');
+        setSuccessMessage(true);
+        setTimeout(() => setSuccessMessage(false), 4000);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteProduct = (id: string) => {
-    const updated = products.filter((p) => p.id !== id);
-    setProducts(updated);
-    localStorage.setItem('emall_custom_products', JSON.stringify(updated));
+  const handleDeleteProduct = async (id: string) => {
+    try {
+      const res = await fetch(`/api/products?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(data.products);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const brandOptions = [
@@ -129,20 +142,20 @@ export default function AdminAddProductPage() {
         {/* Form + Live Card Preview Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Add Product Form (Col 1 & 2) */}
+          {/* Add Product Form */}
           <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
             <div className="border-b border-white/10 pb-4">
               <h2 className="text-xl font-serif text-white flex items-center gap-2">
                 <Plus className="w-5 h-5 text-[#D95D27]" />
                 <span>Add New Article</span>
               </h2>
-              <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product instantly to E-Mall PK.</p>
+              <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product live to the server API.</p>
             </div>
 
             {successMessage && (
               <div className="bg-emerald-950/80 border border-emerald-500/50 p-4 rounded-2xl text-emerald-300 text-xs flex items-center gap-3 font-bold">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                <span>Product published successfully! Check your homepage to see it live.</span>
+                <span>Product published live to server! It is now visible to all customers.</span>
               </div>
             )}
 
@@ -154,7 +167,7 @@ export default function AdminAddProductPage() {
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Khaadi Embroidered Raw Silk Kurta"
+                  placeholder="e.g. Breakout Leather Wallet"
                   className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
                 />
               </div>
@@ -208,7 +221,7 @@ export default function AdminAddProductPage() {
                   required
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  placeholder="e.g. 4500"
+                  placeholder="e.g. 1349"
                   className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
                 />
               </div>
@@ -226,27 +239,28 @@ export default function AdminAddProductPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Description (Fabric / Details)</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Description</label>
                 <textarea
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="e.g. 100% Cotton embroidered V-neck kurta with relaxed fit."
+                  placeholder="e.g. Genuine leather compact bi-fold wallet."
                   className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2"
+                disabled={loading}
+                className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Plus className="w-4 h-4" />
-                <span>Publish Article to E-Mall PK</span>
+                <span>{loading ? 'Publishing...' : 'Publish Article Live'}</span>
               </button>
             </form>
           </div>
 
-          {/* Live Preview Card (Col 3) */}
+          {/* Live Preview Card */}
           <div className="space-y-4">
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27] block">Live Product Card Preview</span>
             
@@ -258,7 +272,7 @@ export default function AdminAddProductPage() {
                   ) : (
                     <div className="text-center p-6 space-y-2">
                       <ImageIcon className="w-8 h-8 mx-auto text-gray-500" />
-                      <p className="text-[10px] uppercase font-bold text-gray-500">Image Preview Will Appear Here</p>
+                      <p className="text-[10px] uppercase font-bold text-gray-500">Image Preview</p>
                     </div>
                   )}
                   <div className="absolute top-3 left-3 bg-[#090807]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
@@ -272,7 +286,7 @@ export default function AdminAddProductPage() {
                     {title || 'Sample Article Name'}
                   </h3>
                   <p className="text-gray-400 text-xs mt-2 line-clamp-2 leading-relaxed font-light">
-                    {description || 'Short product fabric description details will appear here.'}
+                    {description || 'Short product fabric description details.'}
                   </p>
                 </div>
               </div>
@@ -285,9 +299,6 @@ export default function AdminAddProductPage() {
                       PKR {price ? parseFloat(price).toLocaleString() : '0'}
                     </span>
                   </div>
-                  <span className="px-4 py-2 bg-white/10 text-gray-400 font-bold text-[10px] rounded-full">
-                    Preview
-                  </span>
                 </div>
               </div>
             </div>
