@@ -7,29 +7,20 @@ import {
   ShoppingBag,
   Store,
   MapPin,
-  CheckCircle2,
   Trash2,
-  Star,
-  ShieldCheck,
   Tag,
-  Sparkles,
   X,
   ArrowRight,
   Truck,
   MessageCircle,
-  Phone,
   Mail,
-  Camera,
-  UserPlus,
-  HelpCircle,
-  Shirt,
-  Crown,
-  Coffee,
-  Gamepad2,
-  ArrowUpRight,
+  Phone,
   Building2,
-  Send,
-  Heart
+  ArrowUpRight,
+  Sparkles,
+  Gift,
+  ShieldCheck,
+  CreditCard
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -46,11 +37,15 @@ export default function HomePage() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
-  // Customer Form Fields
+  // Promo Banner State
+  const [showPromoBanner, setShowPromoBanner] = useState(true);
+
+  // Customer Form & Payment Method Fields
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerCity, setCustomerCity] = useState('Lahore');
   const [customerAddress, setCustomerAddress] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'PREPAID'>('PREPAID');
   const [orderNotes, setOrderNotes] = useState('');
 
   useEffect(() => {
@@ -88,36 +83,37 @@ export default function HomePage() {
   };
 
   const PLATFORM_FEE = 50;
-  const DELIVERY_FEE = 195;
+  const COD_DELIVERY_FEE = 195;
+  const deliveryFee = paymentMethod === 'PREPAID' ? 0 : COD_DELIVERY_FEE;
 
   const handleFinalCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
 
     const shopBreakdown: any = {};
-    let totalSellerCommission = 0;
-    let totalVendorDeliveryFees = 0;
+    let totalHardworkProfit = 0; // 5% profit for reselling/sourcing effort
 
     cart.forEach((item) => {
-      const shopName = item.shop?.name || 'Verified Partner';
-      const commissionRate = item.shop?.commissionRate || 5.0;
-      const commissionAmount = (item.price * commissionRate) / 100;
-      totalSellerCommission += commissionAmount;
+      const shopName = item.shop?.name || 'Verified Brand Partner';
+      const commissionRate = item.shop?.commissionRate || 5.0; // 5% profit
+      const profitAmount = (item.price * commissionRate) / 100;
+      totalHardworkProfit += profitAmount;
 
       if (!shopBreakdown[shopName]) {
         shopBreakdown[shopName] = {
           shopName,
           items: [],
           subtotal: 0,
-          commission: 0,
-          vendorDeliveryCharge: DELIVERY_FEE,
+          profitMargin: 0,
         };
-        totalVendorDeliveryFees += DELIVERY_FEE;
       }
       shopBreakdown[shopName].items.push(item);
       shopBreakdown[shopName].subtotal += item.price;
-      shopBreakdown[shopName].commission += commissionAmount;
+      shopBreakdown[shopName].profitMargin += profitAmount;
     });
+
+    const itemsSubtotal = calculateSubtotal();
+    const totalAmount = itemsSubtotal + PLATFORM_FEE + deliveryFee;
 
     const orderReceipt = {
       orderId: `EMALL-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -126,17 +122,15 @@ export default function HomePage() {
       customerPhone,
       customerCity,
       customerAddress,
+      paymentMethod,
       orderNotes,
       cartItems: [...cart],
       shopBreakdown,
-      itemsSubtotal: calculateSubtotal(),
+      itemsSubtotal,
       buyerFee: PLATFORM_FEE,
-      buyerDeliveryFee: DELIVERY_FEE,
-      totalVendorDeliveryFees,
-      totalLogisticsPoolCollected: DELIVERY_FEE + totalVendorDeliveryFees,
-      totalSellerCommission,
-      totalOwnerProfit: PLATFORM_FEE + (DELIVERY_FEE + totalVendorDeliveryFees - 195) + totalSellerCommission,
-      totalAmount: calculateSubtotal() + PLATFORM_FEE + DELIVERY_FEE,
+      buyerDeliveryFee: deliveryFee,
+      totalHardworkProfit,
+      totalAmount,
     };
 
     setLastOrder(orderReceipt);
@@ -145,16 +139,15 @@ export default function HomePage() {
     setShowInvoice(true);
   };
 
-  const categories = ['All', 'Fashion & Apparel', 'Artificial Jewelry', 'Bags & Accessories', 'Home Decoration', 'Shoes & Footwear', 'Watches', 'Toys & Games', 'Groceries & Food'];
+  const categories = ['All', 'Fashion & Apparel', 'Shoes & Footwear', 'Artificial Jewelry', 'Bags & Accessories', 'Home Decoration', 'Watches', 'Toys & Games', 'Groceries & Food'];
 
   const brands = [
     { name: 'KHAADI', slug: 'khaadi-official', badge: 'Official Partner' },
     { name: 'SAPPHIRE', slug: 'sapphire-official', badge: 'Official Partner' },
-    { name: 'SANA SAFINAZ', slug: 'sana-safinaz', badge: 'Official Partner' },
+    { name: 'SAYA', slug: 'saya-official', badge: 'Azadi Partner' },
+    { name: 'ETHNIC', slug: 'ethnic-official', badge: 'Official Partner' },
     { name: 'J. JUNAID JAMSHED', slug: 'j-official', badge: 'Official Partner' },
-    { name: 'LIMELIGHT', slug: 'limelight-official', badge: 'Official Partner' },
-    { name: 'NESTLÉ', slug: 'nestle-store', badge: 'Global Partner' },
-    { name: 'TOYS GALAXY', slug: 'toys-galaxy', badge: 'Verified Partner' },
+    { name: 'LIMELIGHT', slug: 'limelight-official', badge: 'Verified Partner' },
   ];
 
   const filteredProducts = products.filter((p) => {
@@ -167,7 +160,20 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#090807] text-[#E6DFD5] bg-grid font-sans selection:bg-[#D95D27] selection:text-white relative overflow-x-hidden">
       
-      {/* Minimalist Editorial Navbar */}
+      {/* PROMO BANNER FOR FREE PREPAID DELIVERY */}
+      {showPromoBanner && (
+        <div className="bg-gradient-to-r from-amber-600 via-[#D95D27] to-amber-700 text-white text-[11px] font-bold py-2.5 px-4 text-center relative flex items-center justify-center gap-2 shadow-lg">
+          <Sparkles className="w-4 h-4 text-amber-200 animate-pulse" />
+          <span>
+            🎉 <strong>SPECIAL PROMO:</strong> Enjoy <strong>FREE DELIVERY</strong> on all <strong>Prepaid Orders!</strong> (Cash on Delivery: PKR 195).
+          </span>
+          <button onClick={() => setShowPromoBanner(false)} className="absolute right-4 text-white/80 hover:text-white font-bold text-xs">
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* Navbar */}
       <nav className="bg-[#090807]/90 backdrop-blur-2xl border-b border-white/10 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center gap-6">
           
@@ -186,7 +192,7 @@ export default function HomePage() {
 
             <div className="hidden lg:flex items-center gap-2 text-[11px] text-gray-400 uppercase tracking-widest bg-white/5 px-4 py-2 rounded-full border border-white/10">
               <MapPin className="w-3.5 h-3.5 text-[#D95D27]" />
-              <span>Deliver to: <strong className="text-white">Lahore, PK</strong></span>
+              <span>Deliver to: <strong className="text-white">Lahore & All Pakistan</strong></span>
             </div>
           </div>
 
@@ -197,28 +203,16 @@ export default function HomePage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search Khaadi, Sapphire, Sana Safinaz, J., Nestle..."
+              placeholder="Search Khaadi, Sapphire, Saya, Ethnic, J..."
               className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#D95D27] transition-all"
             />
           </div>
 
           {/* Actions */}
           <div className="flex items-center gap-5 text-xs font-bold tracking-wider uppercase">
-            <Link href="/track-order" className="hidden sm:inline-block text-gray-400 hover:text-white transition-colors">
-              Track Order
-            </Link>
-            <Link href="/register" className="hidden sm:inline-block text-gray-300 hover:text-[#D95D27] transition-colors">
-              Become a Seller
-            </Link>
-
             {user ? (
               <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10">
                 <span className="text-white text-xs">{user.name}</span>
-                {user.role === 'SELLER' && (
-                  <Link href="/seller/dashboard" className="px-3 py-1 bg-[#D95D27] text-white text-[10px] rounded-full">
-                    Hub
-                  </Link>
-                )}
                 <button onClick={() => { localStorage.removeItem('user'); setUser(null); }} className="text-gray-500 hover:text-red-400">
                   Exit
                 </button>
@@ -246,29 +240,29 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative py-24 px-8 text-center border-b border-white/10">
+      <div className="relative py-20 px-8 text-center border-b border-white/10">
         <div className="max-w-4xl mx-auto">
           <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#D95D27] block mb-4">
-            The Prestige Marketplace
+            Official Multi-Brand Destination
           </span>
 
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-serif font-normal text-white tracking-tight leading-[1.05] mb-6">
+          <h1 className="text-5xl sm:text-7xl font-serif font-normal text-white tracking-tight leading-[1.05] mb-6">
             Endless Brands. <br />
             <span className="italic text-[#E6DFD5] font-light">One Easy Checkout.</span>
           </h1>
 
-          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed mb-10">
-            Why visit ten stores? Skip the mall rush—your favorite stores live here now. One order. Zero hassle. All the brands you love.
+          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed mb-8">
+            Shop directly from Khaadi, Sapphire, Saya, and Ethnic in one single cart with 100% original brand guarantee.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-6 text-xs text-gray-300 font-medium">
-            <div className="flex items-center gap-2 bg-white/5 px-5 py-3 rounded-full border border-white/10 backdrop-blur-xl">
-              <Truck className="w-4 h-4 text-[#D95D27]" />
-              <span>Lahore Express Delivery (PKR 195)</span>
+          <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-300 font-medium">
+            <div className="flex items-center gap-2 bg-emerald-950/50 border border-emerald-500/30 text-emerald-300 px-5 py-3 rounded-full backdrop-blur-xl">
+              <Gift className="w-4 h-4 text-emerald-400" />
+              <span>FREE Delivery on All Prepaid Orders</span>
             </div>
             <div className="flex items-center gap-2 bg-white/5 px-5 py-3 rounded-full border border-white/10 backdrop-blur-xl">
-              <Tag className="w-4 h-4 text-emerald-400" />
-              <span>PKR 50 Buyer Protection Fee</span>
+              <Truck className="w-4 h-4 text-[#D95D27]" />
+              <span>Cash on Delivery: PKR 195</span>
             </div>
           </div>
         </div>
@@ -278,15 +272,13 @@ export default function HomePage() {
       <div className="border-b border-white/10 bg-black/40 py-5 overflow-hidden">
         <div className="flex items-center gap-12 animate-marquee whitespace-nowrap">
           {[...brands, ...brands, ...brands].map((b, idx) => (
-            <Link
+            <div
               key={idx}
-              href={`/shop/${b.slug}`}
               className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors cursor-pointer group"
             >
               <span className="text-sm font-black tracking-[0.2em] font-sans group-hover:text-[#D95D27] transition-colors">{b.name}</span>
               <span className="text-[9px] bg-white/10 text-gray-300 px-2.5 py-0.5 rounded-full font-mono">{b.badge}</span>
-              <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#D95D27]" />
-            </Link>
+            </div>
           ))}
         </div>
       </div>
@@ -296,7 +288,7 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-white/10 pb-8">
           <div>
             <span className="text-[10px] font-bold tracking-[0.25em] text-[#D95D27] uppercase block mb-1">Curated Inventory</span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white">Marketplace Catalog</h2>
+            <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white">Latest Collections</h2>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -320,15 +312,14 @@ export default function HomePage() {
         <div className="mt-12 mb-28">
           {filteredProducts.length === 0 ? (
             <div className="bg-white/5 border border-white/10 rounded-3xl p-20 text-center text-gray-400 font-serif text-lg">
-              No products found.
+              No products found in this category.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {filteredProducts.map((product) => {
                 let images = [];
                 try { images = JSON.parse(product.images || '[]'); } catch (e) { images = [product.images]; }
-                const displayImg = images[0] || 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?q=80&w=600';
-                const isOutOfStock = product.stock <= 0;
+                const displayImg = images[0] || 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800';
 
                 return (
                   <div
@@ -336,28 +327,20 @@ export default function HomePage() {
                     className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl hover:border-[#D95D27]/50 hover:bg-white/10 transition-all duration-500 group flex flex-col justify-between"
                   >
                     <div>
-                      <div className="relative h-64 w-full overflow-hidden bg-black/60">
+                      <div className="relative h-72 w-full overflow-hidden bg-black/60">
                         <img
                           src={displayImg}
                           alt={product.title}
-                          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${isOutOfStock ? 'opacity-40 grayscale' : 'opacity-90 group-hover:opacity-100'}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
                         />
-                        <div className="absolute top-3 left-3 bg-[#090807]/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[9px] font-bold text-gray-200 uppercase tracking-widest flex items-center gap-1.5">
+                        <div className="absolute top-3 left-3 bg-[#090807]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
                           <Store className="w-3 h-3 text-[#D95D27]" />
                           {product.shop?.name || 'Verified Partner'}
                         </div>
 
-                        {isOutOfStock ? (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                            <span className="bg-red-600 text-white text-xs font-black px-4 py-1.5 rounded-full border border-red-400 shadow-xl uppercase tracking-widest">
-                              Out of Stock
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 text-[10px] font-bold text-amber-300">
-                            ★ 5.0
-                          </div>
-                        )}
+                        <div className="absolute top-3 right-3 bg-emerald-950/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-emerald-500/40 text-[9px] font-bold text-emerald-300">
+                          100% Original
+                        </div>
                       </div>
 
                       <div className="p-6">
@@ -373,15 +356,14 @@ export default function HomePage() {
                     <div className="p-6 pt-0">
                       <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                         <div>
-                          <span className="text-[9px] uppercase font-bold text-gray-500 block tracking-widest">Price</span>
+                          <span className="text-[9px] uppercase font-bold text-gray-500 block tracking-widest">Original Retail</span>
                           <span className="text-xl font-extrabold text-white">PKR {product.price.toLocaleString()}</span>
                         </div>
                         <button
                           onClick={() => addToCart(product)}
-                          disabled={isOutOfStock}
-                          className="px-5 py-2.5 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-bold text-xs rounded-full shadow-lg shadow-[#D95D27]/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="px-5 py-2.5 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-bold text-xs rounded-full shadow-lg shadow-[#D95D27]/20 transition-all"
                         >
-                          {isOutOfStock ? 'Sold Out' : '+ Add'}
+                          + Add to Cart
                         </button>
                       </div>
                     </div>
@@ -402,29 +384,6 @@ export default function HomePage() {
         <span>24/7 Support</span>
       </button>
 
-      {/* Support Pop-up */}
-      {showSupport && (
-        <div className="fixed bottom-24 right-8 z-50 bg-[#090807] border border-white/10 p-6 rounded-3xl shadow-2xl w-80 text-xs text-gray-300 space-y-4 backdrop-blur-2xl">
-          <div className="flex justify-between items-center border-b border-white/10 pb-3">
-            <h3 className="font-bold text-white text-sm font-serif">E-Mall Support Hub</h3>
-            <button onClick={() => setShowSupport(false)} className="text-gray-500 hover:text-white font-bold">✕</button>
-          </div>
-          <p className="text-gray-400 text-[11px] leading-relaxed">
-            Need help with your multi-brand order or seller onboarding? Contact E-Mall team:
-          </p>
-          <div className="space-y-2">
-            <a href="https://wa.me/923000000000" target="_blank" rel="noreferrer" className="flex items-center gap-3 bg-emerald-950/60 border border-emerald-800/40 p-3 rounded-2xl text-emerald-300 font-bold">
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
-              <span>WhatsApp Live Support</span>
-            </a>
-            <div className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 text-gray-300">
-              <Mail className="w-4 h-4 text-[#D95D27]" />
-              <span>support@emall.pk</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Cart Drawer */}
       {showCart && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex justify-end z-50">
@@ -433,7 +392,7 @@ export default function HomePage() {
               <div className="flex justify-between items-center pb-5 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <ShoppingBag className="w-5 h-5 text-[#D95D27]" />
-                  <h3 className="text-lg font-bold text-white font-serif">Unified Multi-Vendor Cart</h3>
+                  <h3 className="text-lg font-bold text-white font-serif">Your Multi-Brand Cart</h3>
                 </div>
                 <button onClick={() => setShowCart(false)} className="p-1 text-gray-400 hover:text-white">
                   <X className="w-5 h-5" />
@@ -449,7 +408,7 @@ export default function HomePage() {
                       <div>
                         <h4 className="text-sm font-bold text-white line-clamp-1">{item.title}</h4>
                         <span className="text-[10px] font-bold text-[#D95D27] block mt-0.5">
-                          Shop: {item.shop?.name || 'Verified Partner'}
+                          Brand: {item.shop?.name}
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
@@ -472,23 +431,15 @@ export default function HomePage() {
                   <span>Buyer Protection Fee:</span>
                   <span className="font-bold">PKR {PLATFORM_FEE}</span>
                 </div>
-                <div className="flex justify-between text-indigo-400 font-semibold">
-                  <span>Lahore Express Delivery Fee:</span>
-                  <span className="font-bold">PKR {DELIVERY_FEE}</span>
-                </div>
-                <div className="flex justify-between text-base font-black text-white pt-3 border-t border-white/10">
-                  <span>Total Amount:</span>
-                  <span className="text-emerald-400">PKR {(calculateSubtotal() + PLATFORM_FEE + DELIVERY_FEE).toLocaleString()}</span>
-                </div>
 
                 <button
                   onClick={() => {
                     setShowCart(false);
                     setShowCheckoutForm(true);
                   }}
-                  className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-extrabold text-sm rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-extrabold text-sm rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2 mt-4"
                 >
-                  <span>Proceed to Delivery Address</span>
+                  <span>Proceed to Checkout</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -497,21 +448,21 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* CUSTOMER CHECKOUT ADDRESS & PHONE FORM MODAL */}
+      {/* CHECKOUT FORM MODAL WITH PREPAID vs COD SWITCH */}
       {showCheckoutForm && (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
           <div className="bg-[#090807] border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl text-xs space-y-4">
             <div className="flex justify-between items-center border-b border-white/10 pb-4">
               <div>
-                <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest">Single-Box Delivery</span>
-                <h3 className="text-xl font-serif text-white mt-1">Delivery Address & Contact</h3>
+                <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest">Single-Box Consolidated Delivery</span>
+                <h3 className="text-xl font-serif text-white mt-1">Delivery & Payment Details</h3>
               </div>
               <button onClick={() => setShowCheckoutForm(false)} className="text-gray-500 hover:text-white font-bold">✕</button>
             </div>
 
             <form onSubmit={handleFinalCheckout} className="space-y-3.5">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Full Customer Name</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Full Name</label>
                 <input
                   type="text"
                   required
@@ -523,7 +474,7 @@ export default function HomePage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">WhatsApp / Contact Phone Number</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">WhatsApp Phone Number</label>
                 <input
                   type="tel"
                   required
@@ -535,57 +486,80 @@ export default function HomePage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">City</label>
-                <select
-                  value={customerCity}
-                  onChange={(e) => setCustomerCity(e.target.value)}
-                  className="w-full px-4 py-3 bg-[#090807] border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                >
-                  <option value="Lahore">Lahore (Express Single-Box Rider)</option>
-                  <option value="Karachi">Karachi</option>
-                  <option value="Islamabad">Islamabad</option>
-                  <option value="Rawalpindi">Rawalpindi</option>
-                  <option value="Faisalabad">Faisalabad</option>
-                  <option value="Multan">Multan</option>
-                  <option value="Other">Other City in Pakistan</option>
-                </select>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Select Payment Option</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('PREPAID')}
+                    className={`p-3 rounded-2xl border text-left flex flex-col justify-between transition-all ${
+                      paymentMethod === 'PREPAID'
+                        ? 'bg-emerald-950/80 border-emerald-500 text-white shadow-lg'
+                        : 'bg-white/5 border-white/10 text-gray-400'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <CreditCard className="w-4 h-4 text-emerald-400" />
+                      <span className="text-[9px] bg-emerald-500 text-black font-black px-1.5 py-0.5 rounded">FREE SHIPPING</span>
+                    </div>
+                    <div className="mt-2">
+                      <p className="font-bold text-xs text-white">Prepaid Order</p>
+                      <p className="text-[9px] text-emerald-300">JazzCash / EasyPaisa / Bank</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('COD')}
+                    className={`p-3 rounded-2xl border text-left flex flex-col justify-between transition-all ${
+                      paymentMethod === 'COD'
+                        ? 'bg-[#D95D27]/20 border-[#D95D27] text-white shadow-lg'
+                        : 'bg-white/5 border-white/10 text-gray-400'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <Truck className="w-4 h-4 text-[#D95D27]" />
+                      <span className="text-[9px] bg-white/10 text-gray-300 px-1.5 py-0.5 rounded">+ PKR 195</span>
+                    </div>
+                    <div className="mt-2">
+                      <p className="font-bold text-xs text-white">Cash on Delivery</p>
+                      <p className="text-[9px] text-gray-400">Pay upon rider arrival</p>
+                    </div>
+                  </button>
+                </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Full Delivery Street Address</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Full Street Address & City</label>
                 <textarea
                   rows={2}
                   required
                   value={customerAddress}
                   onChange={(e) => setCustomerAddress(e.target.value)}
-                  placeholder="House #, Street #, Sector, Area Name..."
+                  placeholder="House #, Street Name, Sector, City..."
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
                 />
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Order Notes (Optional)</label>
-                <input
-                  type="text"
-                  value={orderNotes}
-                  onChange={(e) => setOrderNotes(e.target.value)}
-                  placeholder="e.g. Call before arrival / leave at security gate"
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                />
-              </div>
-
-              <div className="pt-2 border-t border-white/10 flex justify-between items-center text-xs text-gray-300">
-                <span>Total Cash on Delivery:</span>
-                <span className="text-emerald-400 font-extrabold text-sm">
-                  PKR {(calculateSubtotal() + PLATFORM_FEE + DELIVERY_FEE).toLocaleString()}
-                </span>
+              <div className="pt-2 border-t border-white/10 space-y-1 text-xs">
+                <div className="flex justify-between text-gray-400">
+                  <span>Delivery Fee:</span>
+                  <span className={paymentMethod === 'PREPAID' ? 'text-emerald-400 font-bold' : 'text-white font-bold'}>
+                    {paymentMethod === 'PREPAID' ? 'FREE (PKR 0)' : 'PKR 195'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-white font-extrabold text-sm pt-1">
+                  <span>Total Payable:</span>
+                  <span className="text-emerald-400">
+                    PKR {(calculateSubtotal() + PLATFORM_FEE + deliveryFee).toLocaleString()}
+                  </span>
+                </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-extrabold text-sm rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all"
+                className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-extrabold text-sm rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all mt-2"
               >
-                Confirm & Place Cash on Delivery Order
+                Confirm & Submit Order
               </button>
             </form>
           </div>
@@ -599,33 +573,34 @@ export default function HomePage() {
             <div className="flex justify-between items-start border-b border-white/10 pb-4">
               <div>
                 <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-3 py-1 rounded-full uppercase">
-                  Order Confirmed ✓
+                  Order Submitted ✓
                 </span>
-                <h3 className="text-2xl font-serif text-white mt-2">Digital Invoice Receipt</h3>
+                <h3 className="text-2xl font-serif text-white mt-2">Order Invoice Receipt</h3>
                 <p className="text-gray-500 text-[11px] mt-0.5">Order ID: {lastOrder.orderId} • {lastOrder.date}</p>
               </div>
               <button onClick={() => setShowInvoice(false)} className="text-gray-500 hover:text-white font-bold text-base">✕</button>
             </div>
 
             <div className="bg-white/5 border border-white/10 p-4 rounded-2xl space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Customer Delivery Details:</span>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Customer Details:</span>
+                <span className="text-[10px] font-bold bg-white/10 px-2 py-0.5 rounded text-emerald-300">
+                  {lastOrder.paymentMethod === 'PREPAID' ? 'Prepaid (Free Delivery)' : 'Cash on Delivery'}
+                </span>
+              </div>
               <p className="text-white font-bold text-xs mt-1">{lastOrder.customerName} ({lastOrder.customerPhone})</p>
-              <p className="text-gray-400 text-[11px]">{lastOrder.customerAddress}, {lastOrder.customerCity}</p>
-              {lastOrder.orderNotes && <p className="text-amber-400/90 text-[10px] italic mt-1">Note: "{lastOrder.orderNotes}"</p>}
+              <p className="text-gray-400 text-[11px]">{lastOrder.customerAddress}</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">
-                Multi-Vendor Sub-Orders Breakdown:
+                Ordered Brand Items:
               </span>
 
               {Object.values(lastOrder.shopBreakdown).map((sub: any, idx: number) => (
                 <div key={idx} className="bg-white/5 border border-white/10 p-4 rounded-2xl space-y-2">
                   <div className="flex justify-between font-bold text-white text-xs border-b border-white/10 pb-2">
-                    <span className="flex items-center gap-1.5 text-[#D95D27]">
-                      <Store className="w-3.5 h-3.5" />
-                      {sub.shopName}
-                    </span>
+                    <span className="text-[#D95D27]">{sub.shopName}</span>
                     <span>Subtotal: PKR {sub.subtotal.toLocaleString()}</span>
                   </div>
                   <div className="space-y-1 text-[11px] text-gray-400">
@@ -636,9 +611,9 @@ export default function HomePage() {
                       </div>
                     ))}
                   </div>
-                  <div className="text-[10px] text-amber-400/90 pt-1 border-t border-white/5 flex justify-between">
-                    <span>5% Vendor Commission Kept by E-Mall:</span>
-                    <span className="font-bold">PKR {sub.commission.toFixed(2)}</span>
+                  <div className="text-[10px] text-amber-400 pt-1 border-t border-white/5 flex justify-between font-bold">
+                    <span>5% Service & Sourcing Margin:</span>
+                    <span>PKR {sub.profitMargin.toFixed(2)}</span>
                   </div>
                 </div>
               ))}
@@ -654,17 +629,15 @@ export default function HomePage() {
                 <span className="font-bold">PKR {lastOrder.buyerFee}</span>
               </div>
               <div className="flex justify-between text-indigo-400">
-                <span>Lahore Express Delivery Fee:</span>
-                <span className="font-bold">PKR {lastOrder.buyerDeliveryFee}</span>
+                <span>Delivery Charge:</span>
+                <span className="font-bold">
+                  {lastOrder.buyerDeliveryFee === 0 ? 'FREE (Prepaid Offer)' : `PKR ${lastOrder.buyerDeliveryFee}`}
+                </span>
               </div>
               <div className="flex justify-between text-emerald-400 text-sm font-extrabold pt-2 border-t border-white/10">
-                <span>Total Cash on Delivery:</span>
+                <span>Total Amount:</span>
                 <span>PKR {lastOrder.totalAmount.toLocaleString()}</span>
               </div>
-            </div>
-
-            <div className="bg-[#D95D27]/10 border border-[#D95D27]/30 p-3 rounded-2xl text-[10px] text-gray-300 text-center leading-relaxed">
-              📦 <strong>Single-Box Delivery:</strong> Items from all vendors consolidated at Lahore Center & delivered in 1 shipment!
             </div>
 
             <button
@@ -677,98 +650,13 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* LUXURY SAPPHIRE / SANA SAFINAZ 5-COLUMN FOOTER */}
+      {/* Footer */}
       <footer className="bg-black/90 border-t border-white/10 mt-28 pt-16 pb-12 px-8 text-xs text-gray-400 font-sans">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
-          
-          {/* Col 1: Contact Us (Matching Sapphire Reference!) */}
-          <div className="space-y-3">
-            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Contact Us</h4>
-            <div className="space-y-2 text-gray-400 text-[11px]">
-              <p className="flex items-center gap-2 text-white">
-                <Mail className="w-3.5 h-3.5 text-[#D95D27]" />
-                <span>support@emall.pk</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-gray-400" />
-                <span>+92(0)42 323-882-45</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-gray-400" />
-                <span>+92(0)42 111-738-245</span>
-              </p>
-              <p className="text-gray-500 pt-1">Lahore Fulfillment Hub, Punjab, Pakistan</p>
-            </div>
-          </div>
-
-          {/* Col 2: Customer Care */}
-          <div className="space-y-3">
-            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Customer Care</h4>
-            <ul className="space-y-2 text-gray-400 text-[11px]">
-              <li><Link href="/track-order" className="hover:text-[#D95D27] transition-colors">Track Your Order</Link></li>
-              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Exchange & Return Policy</Link></li>
-              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Single-Box Delivery Guarantee</Link></li>
-              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">FAQs & Support</Link></li>
-            </ul>
-          </div>
-
-          {/* Col 3: Company / Information */}
-          <div className="space-y-3">
-            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Information</h4>
-            <ul className="space-y-2 text-gray-400 text-[11px]">
-              <li><Link href="/register" className="hover:text-[#D95D27] transition-colors">Become a Seller (5% Fee)</Link></li>
-              <li><Link href="/login" className="hover:text-[#D95D27] transition-colors">Partner Store Sign In</Link></li>
-              <li><Link href="/admin/dashboard" className="hover:text-[#D95D27] transition-colors">Super Admin Master Hub</Link></li>
-              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Privacy & Cookie Policy</Link></li>
-            </ul>
-          </div>
-
-          {/* Col 4: Delivery Partners */}
-          <div className="space-y-3">
-            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Logistics Partners</h4>
-            <p className="text-gray-500 text-[11px]">Authorized Delivery Partners in Pakistan:</p>
-            <div className="flex items-center gap-2 pt-1">
-              <span className="bg-red-600/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-lg font-black text-xs">
-                SKYNET Express
-              </span>
-              <span className="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-3 py-1 rounded-full font-black text-xs">
-                TCS Logistics
-              </span>
-            </div>
-          </div>
-
-          {/* Col 5: Newsletter Signup (Matching Sana Safinaz Reference!) */}
-          <div className="space-y-3">
-            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Newsletter Signup</h4>
-            <p className="text-gray-400 text-[11px]">Subscribe to discover our latest multi-brand collections & sales</p>
-            
-            <form onSubmit={(e) => { e.preventDefault(); setNewsletterSuccess(true); }} className="space-y-2">
-              <div className="flex bg-white/5 border border-white/10 rounded-full p-1 focus-within:border-[#D95D27]">
-                <input
-                  type="email"
-                  required
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="EMAIL ADDRESS"
-                  className="w-full px-4 py-2 bg-transparent text-xs text-white placeholder-gray-500 focus:outline-none"
-                />
-                <button type="submit" className="px-5 py-2 bg-[#D95D27] text-white font-extrabold text-[10px] rounded-full uppercase tracking-wider">
-                  Subscribe
-                </button>
-              </div>
-              {newsletterSuccess && <p className="text-emerald-400 text-[10px] font-bold">Subscribed successfully! 🎉</p>}
-            </form>
-          </div>
-        </div>
-
-        {/* Footer Bottom Bar */}
-        <div className="max-w-7xl mx-auto pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500">
           <p>© COPYRIGHT 2026 E-MALL PAKISTAN. CREATED BY HARIS KHAN. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-3 text-gray-400 font-bold">
             <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">Cash on Delivery</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">UnionPay</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">MasterCard</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">VISA</span>
+            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">JazzCash / EasyPaisa</span>
           </div>
         </div>
       </footer>
