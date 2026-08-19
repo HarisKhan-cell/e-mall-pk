@@ -17,178 +17,133 @@ import {
   CreditCard
 } from 'lucide-react';
 
-const REAL_PRODUCTS = [
-  // --- KHAADI PRODUCTS ---
+const KHAADI_PRODUCTS = [
   {
     id: 'khaadi-1',
-    title: 'Khaadi Cotton Dobby Kurta',
-    description: 'Multi-colored cotton dobby embroidered kurta with relaxed V-neckline.',
-    price: 3990,
-    stock: 15,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800'])
-  },
-  {
-    id: 'khaadi-2',
-    title: 'Khaadi Floral V-Neck Printed Kurta',
-    description: 'Elegant floral print cotton kurta with relaxed fit and embroidered finish.',
+    title: 'Khaadi Floral V-Neck Kurta',
+    description: 'Embroidered Cambric Cotton floral V-neck kurta (2-26-203-A-G1).',
     price: 4490,
     stock: 12,
     category: { name: 'Fashion & Apparel' },
     shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=800'])
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'
+    ])
   },
   {
-    id: 'khaadi-3',
-    title: 'Khaadi V-Neck Cotton Kurta',
-    description: 'Classic lawn cotton kurta with intricate neck detail.',
-    price: 3690,
-    stock: 20,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800'])
-  },
-  {
-    id: 'khaadi-4',
+    id: 'khaadi-2',
     title: 'Khaadi Beige V-Neck Kurta',
-    description: 'Neutral tone subtle embroidered cotton kurta for summer.',
+    description: 'Embroidered Cotton Viscose kurta with subtle beige tones (1-26-118-A-F).',
     price: 4290,
     stock: 10,
     category: { name: 'Fashion & Apparel' },
     shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1563178406-4cdc2923acbc?q=80&w=800'])
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dwf6e45b4b/images/hi-res/1-26-128-a-e_multi_1.jpg?sw=800',
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw168e98e2/images/hi-res/1-26-128-a-e_multi_2.jpg?sw=800'
+    ])
   },
-
-  // --- SAPPHIRE PRODUCTS ---
   {
-    id: 'sapphire-1',
-    title: 'Sapphire 2-Piece Embroidered Lawn Suit',
-    description: 'Dark blue embroidered straight lawn shirt with farshi cambric shalwar (PRW26SSTV961).',
-    price: 12990,
+    id: 'khaadi-3',
+    title: 'Khaadi Dyed Raw Silk Kurta',
+    description: '100% Cotton Raw Silk finish dyed kurta (8-26-301-A-D1).',
+    price: 4000,
+    stock: 20,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/8-26-301-a-d1_multi_1.jpg?sw=800'
+    ])
+  },
+  {
+    id: 'khaadi-4',
+    title: 'Khaadi Raw Silk Black Co-Ord 3-Piece Set',
+    description: 'Luxury Raw Silk kurta, pants, and sequin embroidered dupatta (5-26-201-F-H).',
+    price: 25000,
+    stock: 5,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw15321f8a/images/hi-res/5-26-201-f-h_multi_1.jpg?sw=800',
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw542129ba/images/hi-res/5-26-201-f-h_multi_2.jpg?sw=800'
+    ])
+  },
+  {
+    id: 'khaadi-5',
+    title: 'Khaadi Floral Tailored Set',
+    description: 'Tailored Cotton Satin / Viscose 2-Piece Set (T-A33-26-202FC1).',
+    price: 6990,
     stock: 8,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Sapphire Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800'])
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw83741829/images/hi-res/t-a33-26-202fc1_multi_1.jpg?sw=800'
+    ])
   },
   {
-    id: 'sapphire-2',
-    title: 'Sapphire Ready to Wear Stitched Suit',
-    description: '2-Piece stitched lawn suit with fine lace accents (PR26SCSTV810).',
-    price: 5990,
-    stock: 8,
+    id: 'khaadi-6',
+    title: 'Khaadi Embroidered Raw Silk Kurta',
+    description: 'Raw silk off-white V-neck embroidered thread work kurta (2-26-209-A-I1).',
+    price: 4500,
+    stock: 12,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Sapphire Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800'])
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/2-26-209-a-i1_multi_1.jpg?sw=800'
+    ])
   },
   {
-    id: 'sapphire-3',
-    title: 'Sapphire Stitched Luxury Suit',
-    description: '3-Piece stitched luxury cotton lawn suit with chiffon dupatta (PR26SCSTV813).',
-    price: 7490,
-    stock: 6,
+    id: 'khaadi-7',
+    title: 'Khaadi Printed Lawn 3-Piece Fabrics Suit',
+    description: '3-Piece unstitched printed lawn shirt, dupatta & trouser (A22-26-202FH1-E).',
+    price: 5490,
+    stock: 15,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Sapphire Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=800'])
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1-e_multi_1.jpg?sw=800'
+    ])
   },
   {
-    id: 'sapphire-4',
-    title: 'Sapphire Floral Ready to Wear Top',
-    description: 'Contemporary floral printed cotton kurta (PRW26SSTV921).',
-    price: 3290,
-    stock: 14,
+    id: 'khaadi-8',
+    title: 'Khaadi Embroidered Textured Lawn 2-Piece',
+    description: 'Digital printed textured lawn shirt (3m) & cambric trouser (2.5m) (A112-26-120ED1).',
+    price: 3150,
+    stock: 18,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Sapphire Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800'])
-  },
-
-  // --- SAYA PRODUCTS ---
-  {
-    id: 'saya-1',
-    title: 'Saya Unstitched Printed Lawn 3-Piece',
-    description: 'Premium printed lawn shirt, dupatta, and dyed trouser (WUNS-5595-R).',
-    price: 2699,
-    stock: 25,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'SAYA Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=800'])
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-120ed1_multi_1.jpg?sw=800'
+    ])
   },
   {
-    id: 'saya-2',
-    title: 'Saya Unstitched Lawn 2-Piece (Shirt + Trouser)',
-    description: 'Summer lawn shirt piece with plain dyed trouser (WU2P-5882).',
-    price: 1699,
-    stock: 30,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'SAYA Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?q=80&w=800'])
-  },
-  {
-    id: 'saya-3',
-    title: 'Saya Unstitched Lawn 2-Piece (Shirt + Dupatta)',
-    description: 'Vibrant printed lawn shirt with lawn dupatta (WU2P-6716).',
-    price: 1799,
+    id: 'khaadi-9',
+    title: 'Khaadi Puff Paste Printed Cambric 2-Piece',
+    description: 'Puff paste printed cambric shirt (3m) & dyed trouser (2.5m) (A112-26-112EC1).',
+    price: 2800,
     stock: 22,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'SAYA Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=800'])
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-112ec1_multi_1.jpg?sw=800'
+    ])
   },
   {
-    id: 'saya-4',
-    title: 'Saya Premium Printed Lawn 2-Piece',
-    description: 'Azadi Sale Edition printed premium lawn suit (WU2P-6793).',
-    price: 1899,
-    stock: 19,
+    id: 'khaadi-10',
+    title: 'Khaadi Printed Lawn 3-Piece Suit (Classic)',
+    description: 'Printed lawn shirt (3m), dupatta (2.5m) & cambric trouser (2.5m) (A22-26-202FH1).',
+    price: 5490,
+    stock: 14,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'SAYA Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800'])
-  },
-
-  // --- ETHNIC FOOTWEAR ---
-  {
-    id: 'ethnic-1',
-    title: 'Ethnic Braided Strap Flat Sandal (Peanut)',
-    description: 'Jet-black sole with crystalline braided strap (E1203/109/808).',
-    price: 4000,
-    stock: 10,
-    category: { name: 'Shoes & Footwear' },
-    shop: { name: 'ETHNIC Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=800'])
-  },
-  {
-    id: 'ethnic-2',
-    title: 'Ethnic Embroidered Traditional Sandal',
-    description: 'Traditional embellished flat sandal for festive & casual wear (E1103/109/901).',
-    price: 3990,
-    stock: 12,
-    category: { name: 'Shoes & Footwear' },
-    shop: { name: 'ETHNIC Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1562273138-f46be4ebdf33?q=80&w=800'])
-  },
-  {
-    id: 'ethnic-3',
-    title: 'Ethnic Minimalist Flat Sandal',
-    description: 'Sleek everyday slip-on flat sandal (E1084/109/318).',
-    price: 2990,
-    stock: 15,
-    category: { name: 'Shoes & Footwear' },
-    shop: { name: 'ETHNIC Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1603808033192-082d6919d3e1?q=80&w=800'])
-  },
-  {
-    id: 'ethnic-4',
-    title: 'Ethnic Comfort Strap Sandal',
-    description: 'Soft padded strap casual sandal (E1101/109/901).',
-    price: 3290,
-    stock: 11,
-    category: { name: 'Shoes & Footwear' },
-    shop: { name: 'ETHNIC Official', commissionRate: 5.0 },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=800'])
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify([
+      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1_multi_1.jpg?sw=800'
+    ])
   }
 ];
 
 export default function HomePage() {
-  const [products] = useState<any[]>(REAL_PRODUCTS);
+  const [products] = useState<any[]>(KHAADI_PRODUCTS);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
@@ -406,7 +361,7 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-white/10 pb-8">
           <div>
             <span className="text-[10px] font-bold tracking-[0.25em] text-[#D95D27] uppercase block mb-1">Curated Inventory</span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white">Latest Collections</h2>
+            <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white">Khaadi Official Collection</h2>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -445,7 +400,7 @@ export default function HomePage() {
                     className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl hover:border-[#D95D27]/50 hover:bg-white/10 transition-all duration-500 group flex flex-col justify-between"
                   >
                     <div>
-                      <div className="relative h-72 w-full overflow-hidden bg-black/60">
+                      <div className="relative h-80 w-full overflow-hidden bg-black/60">
                         <img
                           src={displayImg}
                           alt={product.title}
