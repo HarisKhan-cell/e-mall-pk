@@ -792,7 +792,7 @@ export default function HomePage() {
                   </div>
                   <div className="text-[10px] text-amber-400 pt-1 border-t border-white/5 flex justify-between font-bold">
                     <span>5% Service & Sourcing Margin:</span>
-                    <span>PKR {profitMargin.toFixed(2)}</span>
+                    <span>PKR {sub.profitMargin.toFixed(2)}</span>
                   </div>
                 </div>
               ))}
