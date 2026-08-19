@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const products = [
-    // --- KHAADI PRODUCTS ---
+    // --- KHAADI OFFICIAL PRODUCTS ---
     {
       id: 'khaadi-1',
-      title: 'Khaadi Cotton Dobby Kurta',
-      description: 'Multi-colored cotton dobby embroidered kurta with relaxed V-neckline.',
+      title: 'Khaadi Multi Cotton Dobby Kurta',
+      description: 'Embroidered cotton dobby V-neck kurta with multi-color detailing (1-26-245-A-F1).',
       price: 3990,
       stock: 15,
       category: { name: 'Fashion & Apparel' },
@@ -15,8 +15,8 @@ export async function GET() {
     },
     {
       id: 'khaadi-2',
-      title: 'Khaadi Floral V-Neck Printed Kurta',
-      description: 'Elegant floral print cotton kurta with relaxed fit and embroidered finish.',
+      title: 'Khaadi Floral V-Neck Kurta',
+      description: 'Cambric embroidered floral V-neck kurta (2-26-203-A-G1).',
       price: 4490,
       stock: 12,
       category: { name: 'Fashion & Apparel' },
@@ -26,7 +26,7 @@ export async function GET() {
     {
       id: 'khaadi-3',
       title: 'Khaadi V-Neck Cotton Kurta',
-      description: 'Classic lawn cotton kurta with intricate neck detail.',
+      description: 'Classic embroidered cotton lawn kurta (1-26-226-A-I1).',
       price: 3690,
       stock: 20,
       category: { name: 'Fashion & Apparel' },
@@ -36,7 +36,7 @@ export async function GET() {
     {
       id: 'khaadi-4',
       title: 'Khaadi Beige V-Neck Kurta',
-      description: 'Neutral tone subtle embroidered cotton kurta for summer.',
+      description: 'Subtle beige cotton viscose kurta (2-26-201-A-E).',
       price: 4290,
       stock: 10,
       category: { name: 'Fashion & Apparel' },
@@ -44,11 +44,11 @@ export async function GET() {
       images: JSON.stringify(['https://images.unsplash.com/photo-1563178406-4cdc2923acbc?q=80&w=800'])
     },
 
-    // --- SAPPHIRE PRODUCTS ---
+    // --- SAPPHIRE OFFICIAL PRODUCTS ---
     {
       id: 'sapphire-1',
       title: 'Sapphire 2-Piece Embroidered Lawn Suit',
-      description: 'Dark blue embroidered straight lawn shirt with farshi cambric shalwar (PRW26SSTV961).',
+      description: 'Dark blue embroidered lawn straight shirt with cambric farshi shalwar (PRW26SSTV961_999).',
       price: 12990,
       stock: 8,
       category: { name: 'Fashion & Apparel' },
@@ -57,8 +57,8 @@ export async function GET() {
     },
     {
       id: 'sapphire-2',
-      title: 'Sapphire Ready to Wear Stitched Suit',
-      description: '2-Piece stitched lawn suit with fine lace accents (PR26SCSTV810).',
+      title: 'Sapphire Stitched Lawn Suit',
+      description: '2-Piece stitched lawn suit with fine lace accents (PR26SCSTV810_999).',
       price: 5990,
       stock: 8,
       category: { name: 'Fashion & Apparel' },
@@ -67,8 +67,8 @@ export async function GET() {
     },
     {
       id: 'sapphire-3',
-      title: 'Sapphire Stitched Luxury Suit',
-      description: '3-Piece stitched luxury cotton lawn suit with chiffon dupatta (PR26SCSTV813).',
+      title: 'Sapphire Stitched Luxury Lawn Suit',
+      description: '3-Piece stitched luxury cotton lawn suit with chiffon dupatta (PR26SCSTV813_999).',
       price: 7490,
       stock: 6,
       category: { name: 'Fashion & Apparel' },
@@ -77,8 +77,8 @@ export async function GET() {
     },
     {
       id: 'sapphire-4',
-      title: 'Sapphire Floral Ready to Wear Top',
-      description: 'Contemporary floral printed cotton kurta (PRW26SSTV921).',
+      title: 'Sapphire Floral Ready To Wear Top',
+      description: 'Contemporary floral printed cotton lawn kurta (PRW26SSTV921_999).',
       price: 3290,
       stock: 14,
       category: { name: 'Fashion & Apparel' },
@@ -86,11 +86,11 @@ export async function GET() {
       images: JSON.stringify(['https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800'])
     },
 
-    // --- SAYA PRODUCTS ---
+    // --- SAYA OFFICIAL PRODUCTS ---
     {
       id: 'saya-1',
       title: 'Saya Unstitched Printed Lawn 3-Piece',
-      description: 'Premium printed lawn shirt, dupatta, and dyed trouser (WUNS-5595-R).',
+      description: 'Premium printed lawn shirt, lawn dupatta, and dyed trouser (WUNS-5595-R).',
       price: 2699,
       stock: 25,
       category: { name: 'Fashion & Apparel' },
@@ -100,7 +100,7 @@ export async function GET() {
     {
       id: 'saya-2',
       title: 'Saya Unstitched Lawn 2-Piece (Shirt + Trouser)',
-      description: 'Summer lawn shirt piece with plain dyed trouser (WU2P-5882).',
+      description: 'Summer printed lawn shirt piece with plain dyed trouser (WU2P-5882).',
       price: 1699,
       stock: 30,
       category: { name: 'Fashion & Apparel' },
@@ -132,7 +132,7 @@ export async function GET() {
     {
       id: 'ethnic-1',
       title: 'Ethnic Braided Strap Flat Sandal (Peanut)',
-      description: 'Jet-black sole with crystalline braided strap (E1203/109/808).',
+      description: 'Jet-black sole with crystalline braided strap in Peanut color (E1203/109/808).',
       price: 4000,
       stock: 10,
       category: { name: 'Shoes & Footwear' },
