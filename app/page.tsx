@@ -14,10 +14,11 @@ import {
   Building2,
   Sparkles,
   Gift,
-  CreditCard
+  CreditCard,
+  Plus
 } from 'lucide-react';
 
-const ALL_PRODUCTS = [
+const INITIAL_PRODUCTS = [
   // Khaadi (10)
   {
     id: 'khaadi-1',
@@ -213,7 +214,7 @@ const ALL_PRODUCTS = [
 ];
 
 export default function HomePage() {
-  const [products] = useState<any[]>(ALL_PRODUCTS);
+  const [products, setProducts] = useState<any[]>(INITIAL_PRODUCTS);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
@@ -230,6 +231,23 @@ export default function HomePage() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'PREPAID'>('PREPAID');
+
+  // Sync Products from Admin Portal LocalStorage
+  useEffect(() => {
+    const storedCustoms = localStorage.getItem('emall_custom_products');
+    if (storedCustoms) {
+      try {
+        const parsed = JSON.parse(storedCustoms);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProducts(parsed);
+        }
+      } catch (err) {
+        console.error('Error reading custom products:', err);
+      }
+    } else {
+      localStorage.setItem('emall_custom_products', JSON.stringify(INITIAL_PRODUCTS));
+    }
+  }, []);
 
   const addToCart = (product: any) => {
     setCart((prev) => [...prev, product]);
@@ -301,8 +319,8 @@ export default function HomePage() {
 
   const brands = [
     { name: 'ALL BRANDS', filter: 'All', badge: 'Catalog' },
-    { name: 'KHAADI', filter: 'Khaadi Official', badge: '10 Items' },
-    { name: 'BREAKOUT', filter: 'Breakout Official', badge: '11 Items' },
+    { name: 'KHAADI', filter: 'Khaadi Official', badge: 'Official' },
+    { name: 'BREAKOUT', filter: 'Breakout Official', badge: 'Official' },
     { name: 'SAPPHIRE', filter: 'Sapphire Official', badge: 'Partner' },
     { name: 'SAYA', filter: 'SAYA Official', badge: 'Partner' },
     { name: 'ETHNIC', filter: 'ETHNIC Official', badge: 'Partner' },
@@ -368,7 +386,15 @@ export default function HomePage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-5 text-xs font-bold tracking-wider uppercase">
+          <div className="flex items-center gap-4 text-xs font-bold tracking-wider uppercase">
+            <Link
+              href="/admin/add-product"
+              className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 text-amber-300 rounded-full border border-amber-500/30 transition-all text-[11px]"
+            >
+              <Plus className="w-3.5 h-3.5 text-amber-400" />
+              <span>Admin Portal</span>
+            </Link>
+
             <button
               onClick={() => setShowCart(true)}
               className="relative p-2.5 bg-[#D95D27] hover:bg-[#c44e1d] text-white rounded-full shadow-lg shadow-[#D95D27]/20 transition-all"
@@ -397,7 +423,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed mb-8">
-            Shop directly from Khaadi and Breakout in one single cart with 100% original brand guarantee.
+            Shop directly from verified brand stores in one single cart with 100% original brand guarantee.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-300 font-medium">
@@ -413,9 +439,9 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Brand Filter Bar / Ticker */}
+      {/* Brand Filter Bar */}
       <div className="border-b border-white/10 bg-black/40 py-5 overflow-hidden">
-        <div className="flex items-center justify-center gap-6 flex-wrap px-4">
+        <div className="flex items-center justify-center gap-4 flex-wrap px-4">
           {brands.map((b, idx) => (
             <button
               key={idx}
@@ -427,7 +453,6 @@ export default function HomePage() {
               }`}
             >
               <span className="tracking-widest font-sans">{b.name}</span>
-              <span className="text-[9px] bg-white/10 text-gray-300 px-2 py-0.5 rounded-full font-mono">{b.badge}</span>
             </button>
           ))}
         </div>
@@ -438,10 +463,10 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-white/10 pb-8">
           <div>
             <span className="text-[10px] font-bold tracking-[0.25em] text-[#D95D27] uppercase block mb-1">
-              {selectedBrand === 'All' ? 'Curated Inventory' : `${selectedBrand} Collection`}
+              {selectedBrand === 'All' ? 'Curated Inventory' : `${selectedBrand}`}
             </span>
             <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white">
-              {selectedBrand === 'All' ? 'All Verified Brands (21 Items)' : selectedBrand}
+              {selectedBrand === 'All' ? `All Active Items (${filteredProducts.length})` : `${selectedBrand} Collection`}
             </h2>
           </div>
 
@@ -767,7 +792,7 @@ export default function HomePage() {
                   </div>
                   <div className="text-[10px] text-amber-400 pt-1 border-t border-white/5 flex justify-between font-bold">
                     <span>5% Service & Sourcing Margin:</span>
-                    <span>PKR {sub.profitMargin.toFixed(2)}</span>
+                    <span>PKR {profitMargin.toFixed(2)}</span>
                   </div>
                 </div>
               ))}
