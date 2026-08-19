@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const products = [
+    // --- KHAADI OFFICIAL PRODUCTS (10) ---
     {
       id: 'khaadi-1',
       title: 'Khaadi Floral V-Neck Kurta',
@@ -10,9 +11,7 @@ export async function GET() {
       stock: 12,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-2',
@@ -22,10 +21,7 @@ export async function GET() {
       stock: 10,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dwf6e45b4b/images/hi-res/1-26-128-a-e_multi_1.jpg?sw=800',
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw168e98e2/images/hi-res/1-26-128-a-e_multi_2.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dwf6e45b4b/images/hi-res/1-26-128-a-e_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-3',
@@ -35,9 +31,7 @@ export async function GET() {
       stock: 20,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/8-26-301-a-d1_multi_1.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/8-26-301-a-d1_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-4',
@@ -47,10 +41,7 @@ export async function GET() {
       stock: 5,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw15321f8a/images/hi-res/5-26-201-f-h_multi_1.jpg?sw=800',
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw542129ba/images/hi-res/5-26-201-f-h_multi_2.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw15321f8a/images/hi-res/5-26-201-f-h_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-5',
@@ -60,9 +51,7 @@ export async function GET() {
       stock: 8,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw83741829/images/hi-res/t-a33-26-202fc1_multi_1.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw83741829/images/hi-res/t-a33-26-202fc1_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-6',
@@ -72,9 +61,7 @@ export async function GET() {
       stock: 12,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/2-26-209-a-i1_multi_1.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/2-26-209-a-i1_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-7',
@@ -84,9 +71,7 @@ export async function GET() {
       stock: 15,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1-e_multi_1.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1-e_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-8',
@@ -96,9 +81,7 @@ export async function GET() {
       stock: 18,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-120ed1_multi_1.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-120ed1_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-9',
@@ -108,9 +91,7 @@ export async function GET() {
       stock: 22,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-112ec1_multi_1.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-112ec1_multi_1.jpg?sw=800'])
     },
     {
       id: 'khaadi-10',
@@ -120,9 +101,119 @@ export async function GET() {
       stock: 14,
       category: { name: 'Fashion & Apparel' },
       shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-      images: JSON.stringify([
-        'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1_multi_1.jpg?sw=800'
-      ])
+      images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1_multi_1.jpg?sw=800'])
+    },
+
+    // --- BREAKOUT OFFICIAL PRODUCTS (11) ---
+    {
+      id: 'breakout-1',
+      title: 'Breakout Printed Button Down Shirt',
+      description: '100% Cotton printed button down shirt with modern classic silhouette (6DSWT912-MTO).',
+      price: 2249,
+      stock: 20,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6DSWT912-MTO_6.jpg?v=1782899185&width=1920'])
+    },
+    {
+      id: 'breakout-2',
+      title: 'Breakout Boys Striped Tee',
+      description: '100% Cotton knit everyday boys striped tee (K6DST673-MLT).',
+      price: 699,
+      stock: 25,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6DST673-MLT_1.jpg?v=1779280870&width=1920'])
+    },
+    {
+      id: 'breakout-3',
+      title: "Breakout Men's Textured Tee (Brown)",
+      description: '50% Cotton, 45% Polyester, 5% Spandex textured finish tee (6ESHT844-BRN).',
+      price: 3899,
+      stock: 15,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6ESHT844-BRN_1.jpg?v=1782899185&width=1920'])
+    },
+    {
+      id: 'breakout-4',
+      title: 'Breakout Boys Contrast Rib Tee (Ecru)',
+      description: '100% Cotton knit sporty contrast rib tee for boys (K6DST639-ECR).',
+      price: 699,
+      stock: 30,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6DST639-ECR_1.jpg?v=1778504092&width=1920'])
+    },
+    {
+      id: 'breakout-5',
+      title: "Breakout Men's Baggy Fit Denim Jeans (Blue)",
+      description: '100% Cotton Denim contemporary baggy fit jeans (6ESMD839-BLU).',
+      price: 4999,
+      stock: 12,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6ESMD839-BLU_1.jpg?v=1782899185&width=1920'])
+    },
+    {
+      id: 'breakout-6',
+      title: 'Breakout Boys Graphic Tee (Black)',
+      description: '100% Cotton knit crew neck graphic tee for boys (K6EST820-BLK).',
+      price: 1699,
+      stock: 18,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6EST820-BLK_1.jpg?v=1782899185&width=1920'])
+    },
+    {
+      id: 'breakout-7',
+      title: 'Breakout Boys Textured Polo Shirt (Burgundy)',
+      description: '50% Cotton, 50% Polyester breathable textured polo shirt (K6ESP826-BRG).',
+      price: 2099,
+      stock: 16,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ESP826-BRG_1.jpg?v=1786362306'])
+    },
+    {
+      id: 'breakout-8',
+      title: 'Breakout Boys Textured Striped Shirt (Navy & White)',
+      description: '100% Polyester smart casual textured striped shirt (K6ESW806-NNW).',
+      price: 2199,
+      stock: 14,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ESW806-NNW_1.jpg?v=1782899185&width=1920'])
+    },
+    {
+      id: 'breakout-9',
+      title: 'Breakout Boys Color Block Tee (Multi)',
+      description: '100% Cotton knit vibrant multi-colored panel tee (K6EST692-MLT).',
+      price: 1099,
+      stock: 22,
+      category: { name: 'Fashion & Apparel' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6EST692-MLT_1.jpg?v=1782899185&width=1920'])
+    },
+    {
+      id: 'breakout-10',
+      title: 'Breakout Boys Smurf Perfume (50ml / Blue)',
+      description: 'Refreshing, long-lasting 50ml fragrance for boys (K6ASBF03-BLU).',
+      price: 1849,
+      stock: 25,
+      category: { name: 'Perfumes & Accessories' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ASBF03-BLU_2_dba2b513-f441-47a0-9e44-5f4e277dd32e.jpg?v=1777985061&width=1920'])
+    },
+    {
+      id: 'breakout-11',
+      title: 'Breakout Boys Hero Perfume (50ml / Black)',
+      description: 'Refreshing signature 50ml fragrance for boys (K6ASBF01-BLK).',
+      price: 1849,
+      stock: 25,
+      category: { name: 'Perfumes & Accessories' },
+      shop: { name: 'Breakout Official', commissionRate: 5.0 },
+      images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ASBF01-BLK_1.jpg?v=1777985061&width=1920'])
     }
   ];
 

@@ -17,133 +17,203 @@ import {
   CreditCard
 } from 'lucide-react';
 
-const KHAADI_PRODUCTS = [
+const ALL_PRODUCTS = [
+  // Khaadi (10)
   {
     id: 'khaadi-1',
     title: 'Khaadi Floral V-Neck Kurta',
     description: 'Embroidered Cambric Cotton floral V-neck kurta (2-26-203-A-G1).',
     price: 4490,
-    stock: 12,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-2',
     title: 'Khaadi Beige V-Neck Kurta',
     description: 'Embroidered Cotton Viscose kurta with subtle beige tones (1-26-118-A-F).',
     price: 4290,
-    stock: 10,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dwf6e45b4b/images/hi-res/1-26-128-a-e_multi_1.jpg?sw=800',
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw168e98e2/images/hi-res/1-26-128-a-e_multi_2.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dwf6e45b4b/images/hi-res/1-26-128-a-e_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-3',
     title: 'Khaadi Dyed Raw Silk Kurta',
     description: '100% Cotton Raw Silk finish dyed kurta (8-26-301-A-D1).',
     price: 4000,
-    stock: 20,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/8-26-301-a-d1_multi_1.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/8-26-301-a-d1_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-4',
     title: 'Khaadi Raw Silk Black Co-Ord 3-Piece Set',
     description: 'Luxury Raw Silk kurta, pants, and sequin embroidered dupatta (5-26-201-F-H).',
     price: 25000,
-    stock: 5,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw15321f8a/images/hi-res/5-26-201-f-h_multi_1.jpg?sw=800',
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw542129ba/images/hi-res/5-26-201-f-h_multi_2.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw15321f8a/images/hi-res/5-26-201-f-h_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-5',
     title: 'Khaadi Floral Tailored Set',
     description: 'Tailored Cotton Satin / Viscose 2-Piece Set (T-A33-26-202FC1).',
     price: 6990,
-    stock: 8,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw83741829/images/hi-res/t-a33-26-202fc1_multi_1.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw83741829/images/hi-res/t-a33-26-202fc1_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-6',
     title: 'Khaadi Embroidered Raw Silk Kurta',
     description: 'Raw silk off-white V-neck embroidered thread work kurta (2-26-209-A-I1).',
     price: 4500,
-    stock: 12,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/2-26-209-a-i1_multi_1.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/2-26-209-a-i1_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-7',
     title: 'Khaadi Printed Lawn 3-Piece Fabrics Suit',
     description: '3-Piece unstitched printed lawn shirt, dupatta & trouser (A22-26-202FH1-E).',
     price: 5490,
-    stock: 15,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1-e_multi_1.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1-e_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-8',
     title: 'Khaadi Embroidered Textured Lawn 2-Piece',
     description: 'Digital printed textured lawn shirt (3m) & cambric trouser (2.5m) (A112-26-120ED1).',
     price: 3150,
-    stock: 18,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-120ed1_multi_1.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-120ed1_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-9',
     title: 'Khaadi Puff Paste Printed Cambric 2-Piece',
     description: 'Puff paste printed cambric shirt (3m) & dyed trouser (2.5m) (A112-26-112EC1).',
     price: 2800,
-    stock: 22,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-112ec1_multi_1.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-112ec1_multi_1.jpg?sw=800'])
   },
   {
     id: 'khaadi-10',
     title: 'Khaadi Printed Lawn 3-Piece Suit (Classic)',
     description: 'Printed lawn shirt (3m), dupatta (2.5m) & cambric trouser (2.5m) (A22-26-202FH1).',
     price: 5490,
-    stock: 14,
     category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
-    images: JSON.stringify([
-      'https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1_multi_1.jpg?sw=800'
-    ])
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1_multi_1.jpg?sw=800'])
+  },
+
+  // Breakout (11)
+  {
+    id: 'breakout-1',
+    title: 'Breakout Printed Button Down Shirt',
+    description: '100% Cotton printed button down shirt with modern classic silhouette (6DSWT912-MTO).',
+    price: 2249,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6DSWT912-MTO_6.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-2',
+    title: 'Breakout Boys Striped Tee',
+    description: '100% Cotton knit everyday boys striped tee (K6DST673-MLT).',
+    price: 699,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6DST673-MLT_1.jpg?v=1779280870&width=1920'])
+  },
+  {
+    id: 'breakout-3',
+    title: "Breakout Men's Textured Tee (Brown)",
+    description: '50% Cotton, 45% Polyester, 5% Spandex textured finish tee (6ESHT844-BRN).',
+    price: 3899,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6ESHT844-BRN_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-4',
+    title: 'Breakout Boys Contrast Rib Tee (Ecru)',
+    description: '100% Cotton knit sporty contrast rib tee for boys (K6DST639-ECR).',
+    price: 699,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6DST639-ECR_1.jpg?v=1778504092&width=1920'])
+  },
+  {
+    id: 'breakout-5',
+    title: "Breakout Men's Baggy Fit Denim Jeans (Blue)",
+    description: '100% Cotton Denim contemporary baggy fit jeans (6ESMD839-BLU).',
+    price: 4999,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6ESMD839-BLU_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-6',
+    title: 'Breakout Boys Graphic Tee (Black)',
+    description: '100% Cotton knit crew neck graphic tee for boys (K6EST820-BLK).',
+    price: 1699,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6EST820-BLK_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-7',
+    title: 'Breakout Boys Textured Polo Shirt (Burgundy)',
+    description: '50% Cotton, 50% Polyester breathable textured polo shirt (K6ESP826-BRG).',
+    price: 2099,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ESP826-BRG_1.jpg?v=1786362306'])
+  },
+  {
+    id: 'breakout-8',
+    title: 'Breakout Boys Textured Striped Shirt (Navy & White)',
+    description: '100% Polyester smart casual textured striped shirt (K6ESW806-NNW).',
+    price: 2199,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ESW806-NNW_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-9',
+    title: 'Breakout Boys Color Block Tee (Multi)',
+    description: '100% Cotton knit vibrant multi-colored panel tee (K6EST692-MLT).',
+    price: 1099,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6EST692-MLT_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-10',
+    title: 'Breakout Boys Smurf Perfume (50ml / Blue)',
+    description: 'Refreshing, long-lasting 50ml fragrance for boys (K6ASBF03-BLU).',
+    price: 1849,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ASBF03-BLU_2_dba2b513-f441-47a0-9e44-5f4e277dd32e.jpg?v=1777985061&width=1920'])
+  },
+  {
+    id: 'breakout-11',
+    title: 'Breakout Boys Hero Perfume (50ml / Black)',
+    description: 'Refreshing signature 50ml fragrance for boys (K6ASBF01-BLK).',
+    price: 1849,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ASBF01-BLK_1.jpg?v=1777985061&width=1920'])
   }
 ];
 
 export default function HomePage() {
-  const [products] = useState<any[]>(KHAADI_PRODUCTS);
+  const [products] = useState<any[]>(ALL_PRODUCTS);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
@@ -152,6 +222,7 @@ export default function HomePage() {
   const [lastOrder, setLastOrder] = useState<any>(null);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedBrand, setSelectedBrand] = useState('All');
   const [showPromoBanner, setShowPromoBanner] = useState(true);
 
   // Customer Form & Payment Method Fields
@@ -226,22 +297,23 @@ export default function HomePage() {
     setShowInvoice(true);
   };
 
-  const categories = ['All', 'Fashion & Apparel', 'Shoes & Footwear', 'Artificial Jewelry', 'Bags & Accessories', 'Home Decoration', 'Watches', 'Toys & Games', 'Groceries & Food'];
+  const categories = ['All', 'Fashion & Apparel', 'Perfumes & Accessories', 'Shoes & Footwear'];
 
   const brands = [
-    { name: 'KHAADI', slug: 'khaadi-official', badge: 'Official Partner' },
-    { name: 'SAPPHIRE', slug: 'sapphire-official', badge: 'Official Partner' },
-    { name: 'SAYA', slug: 'saya-official', badge: 'Azadi Partner' },
-    { name: 'ETHNIC', slug: 'ethnic-official', badge: 'Official Partner' },
-    { name: 'J. JUNAID JAMSHED', slug: 'j-official', badge: 'Official Partner' },
-    { name: 'LIMELIGHT', slug: 'limelight-official', badge: 'Verified Partner' },
+    { name: 'ALL BRANDS', filter: 'All', badge: 'Catalog' },
+    { name: 'KHAADI', filter: 'Khaadi Official', badge: '10 Items' },
+    { name: 'BREAKOUT', filter: 'Breakout Official', badge: '11 Items' },
+    { name: 'SAPPHIRE', filter: 'Sapphire Official', badge: 'Partner' },
+    { name: 'SAYA', filter: 'SAYA Official', badge: 'Partner' },
+    { name: 'ETHNIC', filter: 'ETHNIC Official', badge: 'Partner' },
   ];
 
   const filteredProducts = products.filter((p) => {
     const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
                           p.description?.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || p.category?.name === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesBrand = selectedBrand === 'All' || p.shop?.name === selectedBrand;
+    return matchesSearch && matchesCategory && matchesBrand;
   });
 
   return (
@@ -290,7 +362,7 @@ export default function HomePage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search Khaadi, Sapphire, Saya, Ethnic, J..."
+              placeholder="Search Khaadi, Breakout, Sapphire, Saya, Ethnic..."
               className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#D95D27] transition-all"
             />
           </div>
@@ -325,7 +397,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed mb-8">
-            Shop directly from Khaadi, Sapphire, Saya, and Ethnic in one single cart with 100% original brand guarantee.
+            Shop directly from Khaadi and Breakout in one single cart with 100% original brand guarantee.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-300 font-medium">
@@ -341,17 +413,22 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Brand Ticker */}
+      {/* Brand Filter Bar / Ticker */}
       <div className="border-b border-white/10 bg-black/40 py-5 overflow-hidden">
-        <div className="flex items-center gap-12 animate-marquee whitespace-nowrap">
-          {[...brands, ...brands, ...brands].map((b, idx) => (
-            <div
+        <div className="flex items-center justify-center gap-6 flex-wrap px-4">
+          {brands.map((b, idx) => (
+            <button
               key={idx}
-              className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors cursor-pointer group"
+              onClick={() => setSelectedBrand(b.filter)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs transition-all border ${
+                selectedBrand === b.filter
+                  ? 'bg-[#D95D27] text-white border-[#D95D27] shadow-lg shadow-[#D95D27]/30 font-bold'
+                  : 'bg-white/5 text-gray-400 border-white/10 hover:text-white'
+              }`}
             >
-              <span className="text-sm font-black tracking-[0.2em] font-sans group-hover:text-[#D95D27] transition-colors">{b.name}</span>
-              <span className="text-[9px] bg-white/10 text-gray-300 px-2.5 py-0.5 rounded-full font-mono">{b.badge}</span>
-            </div>
+              <span className="tracking-widest font-sans">{b.name}</span>
+              <span className="text-[9px] bg-white/10 text-gray-300 px-2 py-0.5 rounded-full font-mono">{b.badge}</span>
+            </button>
           ))}
         </div>
       </div>
@@ -360,8 +437,12 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto px-8 py-16">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-white/10 pb-8">
           <div>
-            <span className="text-[10px] font-bold tracking-[0.25em] text-[#D95D27] uppercase block mb-1">Curated Inventory</span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white">Khaadi Official Collection</h2>
+            <span className="text-[10px] font-bold tracking-[0.25em] text-[#D95D27] uppercase block mb-1">
+              {selectedBrand === 'All' ? 'Curated Inventory' : `${selectedBrand} Collection`}
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white">
+              {selectedBrand === 'All' ? 'All Verified Brands (21 Items)' : selectedBrand}
+            </h2>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -385,7 +466,7 @@ export default function HomePage() {
         <div className="mt-12 mb-28">
           {filteredProducts.length === 0 ? (
             <div className="bg-white/5 border border-white/10 rounded-3xl p-20 text-center text-gray-400 font-serif text-lg">
-              No products found in this category.
+              No products found for this filter.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
