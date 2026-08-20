@@ -19,6 +19,7 @@ import {
   UserPlus,
   Phone,
   ExternalLink,
+  Copy,
   FileText
 } from 'lucide-react';
 
@@ -29,6 +30,7 @@ export default function AdminMasterPortal() {
   const [orders, setOrders] = useState<any[]>([]);
   const [vendorApps, setVendorApps] = useState<any[]>([]);
   const [successMessage, setSuccessMessage] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Form State
   const [title, setTitle] = useState('');
@@ -73,12 +75,20 @@ export default function AdminMasterPortal() {
     };
   }, []);
 
-  // Product Add / Delete
   const saveAndUpdateProducts = (newList: any[]) => {
     setProducts(newList);
     localStorage.setItem('emall_custom_products', JSON.stringify(newList));
     localStorage.setItem('emall_active_products', JSON.stringify(newList));
     window.dispatchEvent(new Event('emall_products_updated'));
+  };
+
+  const handleExportAllJSON = () => {
+    const activeStr = localStorage.getItem('emall_custom_products') || localStorage.getItem('emall_active_products');
+    if (activeStr) {
+      navigator.clipboard.writeText(activeStr);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }
   };
 
   const handleAddProduct = (e: React.FormEvent) => {
@@ -357,6 +367,26 @@ export default function AdminMasterPortal() {
         {/* TAB 2: PRODUCT MANAGEMENT */}
         {activeTab === 'products' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* GLOBAL EXPORT BUTTON BAR */}
+            <div className="lg:col-span-3 bg-amber-950/40 border border-amber-500/30 p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <span className="bg-amber-500 text-black text-[9px] font-black px-2.5 py-0.5 rounded uppercase tracking-widest block w-fit mb-1">
+                  Global Server Sync
+                </span>
+                <h3 className="text-lg font-serif text-white">Make All 50 Products Global Across All Phones</h3>
+                <p className="text-gray-300 text-xs mt-0.5">Click the button on the right to copy your 50 products data, then paste it in our chat!</p>
+              </div>
+
+              <button
+                onClick={handleExportAllJSON}
+                className="px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs rounded-2xl shadow-xl flex items-center gap-2 uppercase tracking-wider transition-all whitespace-nowrap"
+              >
+                <Copy className="w-4 h-4" />
+                <span>{copied ? '✓ Copied to Clipboard!' : 'Copy 50 Products Data'}</span>
+              </button>
+            </div>
+
             {/* Add Product Form */}
             <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
               <div className="border-b border-white/10 pb-4">
