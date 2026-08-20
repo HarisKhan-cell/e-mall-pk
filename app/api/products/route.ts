@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 
-let globalProducts: any[] = [
+const CLOUD_BIN_URL = 'https://api.jsonbin.io/v3/b/66c4c021ad19ca34f8997a38';
+const CLOUD_KEY = '$2a$10$MvXpL/k4yQ6QxO3l3x1y3eW1x3v3w3x3y3z3a3b3c3d3e3f3g';
+
+// Base initial 50 products fallback
+const BASE_50_PRODUCTS = [
   // --- OUTFITTERS (10) ---
   {
     id: 'outfitters-1',
@@ -465,16 +469,52 @@ let globalProducts: any[] = [
 ];
 
 export async function GET() {
-  return NextResponse.json(globalProducts);
+  try {
+    const res = await fetch(CLOUD_BIN_URL, {
+      headers: { 'X-Master-Key': CLOUD_KEY }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data.record) && data.record.length > 0) {
+        return NextResponse.json(data.record);
+      }
+    }
+  } catch (e) {
+    console.error('Cloud fetch fallback:', e);
+  }
+
+  return NextResponse.json(BASE_50_PRODUCTS);
 }
 
 export async function POST(req: Request) {
   try {
     const newProduct = await req.json();
-    globalProducts = [newProduct, ...globalProducts];
-    return NextResponse.json({ success: true, products: globalProducts });
+    
+    // Fetch current cloud list
+    let currentList = BASE_50_PRODUCTS;
+    try {
+      const res = await fetch(CLOUD_BIN_URL, { headers: { 'X-Master-Key': CLOUD_KEY } });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.record)) currentList = data.record;
+      }
+    } catch (e) {}
+
+    const updatedList = [newProduct, ...currentList];
+
+    // Save to Cloud Bin
+    await fetch(CLOUD_BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': CLOUD_KEY
+      },
+      body: JSON.stringify(updatedList)
+    });
+
+    return NextResponse.json({ success: true, products: updatedList });
   } catch (err) {
-    return NextResponse.json({ error: 'Failed to add product' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to add product to Cloud' }, { status: 500 });
   }
 }
 
@@ -482,11 +522,30 @@ export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
-    if (id) {
-      globalProducts = globalProducts.filter((p) => p.id !== id);
-    }
-    return NextResponse.json({ success: true, products: globalProducts });
+
+    let currentList = BASE_50_PRODUCTS;
+    try {
+      const res = await fetch(CLOUD_BIN_URL, { headers: { 'X-Master-Key': CLOUD_KEY } });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.record)) currentList = data.record;
+      }
+    } catch (e) {}
+
+    const updatedList = currentList.filter((p) => p.id !== id);
+
+    // Save updated list to Cloud Bin
+    await fetch(CLOUD_BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': CLOUD_KEY
+      },
+      body: JSON.stringify(updatedList)
+    });
+
+    return NextResponse.json({ success: true, products: updatedList });
   } catch (err) {
-    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to delete product from Cloud' }, { status: 500 });
   }
 }
