@@ -1,7 +1,276 @@
 import { NextResponse } from 'next/server';
 
 let globalProducts: any[] = [
-  // Khaadi (10)
+  // --- OUTFITTERS (10) ---
+  {
+    id: 'outfitters-1',
+    title: 'Super Cropped Embroidered Denim Shirt',
+    description: 'Trendy embroidered cropped denim shirt.',
+    price: 4190,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-2',
+    title: 'Gathered Blouse',
+    description: 'Elegant gathered neckline blouse for daily wear.',
+    price: 3790,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-3',
+    title: 'Textured Blouse',
+    description: 'Soft lightweight textured casual top.',
+    price: 2190,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-4',
+    title: 'All-Over Print Shirt',
+    description: 'Vibrant modern digital print casual shirt.',
+    price: 2790,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-5',
+    title: 'Striped T-Shirt',
+    description: 'Classic striped crew neck cotton tee.',
+    price: 1690,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-6',
+    title: 'Graphic T-Shirt (Urban)',
+    description: 'Streetwear graphic chest print cotton tee.',
+    price: 1390,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-7',
+    title: 'Graphic T-Shirt (Pro Edition)',
+    description: 'Heavyweight cotton graphic tee.',
+    price: 3090,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-8',
+    title: 'All Over Print Casual Shirt',
+    description: 'Relaxed fit printed button down shirt.',
+    price: 3090,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-9',
+    title: 'Striped Resort Shirt',
+    description: 'Breathable vacation style striped shirt.',
+    price: 3090,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-10',
+    title: 'Knitted Striped Shirt',
+    description: 'Premium soft knit striped casual shirt.',
+    price: 3790,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=800'])
+  },
+
+  // --- LAMA (13) ---
+  {
+    id: 'lama-1',
+    title: 'SHADOW TEXTURED SHIRT',
+    description: 'LAMA Shadow textured button down shirt.',
+    price: 6950,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1603252109303-2751441dd157?q=80&w=800'])
+  },
+  {
+    id: 'lama-2',
+    title: 'EMBROIDERED DOBBY SHIRT',
+    description: 'Fine embroidered dobby cotton shirt.',
+    price: 6450,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=800'])
+  },
+  {
+    id: 'lama-3',
+    title: 'STRIPED JACQUARD SHIRT',
+    description: 'Luxury striped jacquard weave button shirt.',
+    price: 8450,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1589310243389-96a5483213a8?q=80&w=800'])
+  },
+  {
+    id: 'lama-4',
+    title: 'EVERYDAY TEE',
+    description: 'LAMA classic everyday cotton crew tee.',
+    price: 4950,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=800'])
+  },
+  {
+    id: 'lama-5',
+    title: 'OVERSIZED TEE',
+    description: 'Heavyweight dropped shoulder oversized tee.',
+    price: 3950,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=800'])
+  },
+  {
+    id: 'lama-6',
+    title: 'HOTEL METROPOLE TEE',
+    description: 'Minimalist chest logo streetwear tee.',
+    price: 3450,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=800'])
+  },
+  {
+    id: 'lama-7',
+    title: 'SEA BUCKTHORN TEE',
+    description: 'Botanical dye relaxed cotton crew tee.',
+    price: 3450,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?q=80&w=800'])
+  },
+  {
+    id: 'lama-8',
+    title: 'PLEATED WAIST TEE',
+    description: 'Couture pleated waist accent top.',
+    price: 5950,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800'])
+  },
+  {
+    id: 'lama-9',
+    title: 'BANANA ROAD OPENER TEE',
+    description: 'Graphic print casual cotton tee.',
+    price: 3950,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=800'])
+  },
+  {
+    id: 'lama-10',
+    title: 'HENLEY CREW TEE',
+    description: 'Classic 3-button placket henley tee.',
+    price: 4950,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800'])
+  },
+  {
+    id: 'lama-11',
+    title: 'TEXTURED BLOUSON KNIT TOP',
+    description: 'Blouson sleeve knit top with rib trim.',
+    price: 5450,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1563178406-4cdc2923acbc?q=80&w=800'])
+  },
+  {
+    id: 'lama-12',
+    title: 'ASSYMETRICAL CUT TEE',
+    description: 'Modern asymmetrical hem casual tee.',
+    price: 4950,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800'])
+  },
+  {
+    id: 'lama-13',
+    title: 'FUNNEL NECK KNIT TOP',
+    description: 'Chic funnel neck winter knit top.',
+    price: 4946,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=800'])
+  },
+
+  // --- BEAUTY & ACCESSORIES (4) ---
+  {
+    id: 'beauty-1',
+    title: '9-Piece Powder Puff Set – Green',
+    description: 'Delicate & soft multi-purpose powder puff set.',
+    price: 754,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'Color Moor', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800'])
+  },
+  {
+    id: 'beauty-2',
+    title: 'Rivaj Photo Focus Foundation (30ml)',
+    description: 'Flawless photo focus liquid foundation 30ml.',
+    price: 1645,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'Rivaj', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?q=80&w=800'])
+  },
+  {
+    id: 'beauty-3',
+    title: 'J. Wasim Akram 502 Perfume',
+    description: 'Signature 502 fragrance by Junaid Jamshed.',
+    price: 350,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'J. Junaid Jamshed', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=800'])
+  },
+  {
+    id: 'beauty-4',
+    title: 'Flormar Waterproof Eyeliner Pencil',
+    description: 'Long-lasting waterproof eyeliner pencil.',
+    price: 1060,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'Flormar', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1583241800698-e8ab01c85b27?q=80&w=800'])
+  },
+
+  // --- BREAKOUT ACCESSORIES (2) ---
+  {
+    id: 'acc-1',
+    title: 'SHOULDER BAG',
+    description: 'Compact faux leather shoulder bag.',
+    price: 3249,
+    category: { name: 'Bags & Accessories' },
+    shop: { name: 'Breakout Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800'])
+  },
+  {
+    id: 'acc-2',
+    title: 'LEATHER WALLET',
+    description: 'Genuine leather bi-fold compact wallet.',
+    price: 1349,
+    category: { name: 'Bags & Accessories' },
+    shop: { name: 'Breakout Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=800'])
+  },
+
+  // --- KHAADI OFFICIAL (10) ---
   {
     id: 'khaadi-1',
     title: 'Khaadi Floral V-Neck Kurta',
@@ -93,7 +362,7 @@ let globalProducts: any[] = [
     images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1_multi_1.jpg?sw=800'])
   },
 
-  // Breakout (11)
+  // --- BREAKOUT OFFICIAL (11) ---
   {
     id: 'breakout-1',
     title: 'Breakout Printed Button Down Shirt',
