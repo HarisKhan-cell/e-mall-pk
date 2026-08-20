@@ -20,10 +20,17 @@ import {
   Phone,
   ExternalLink,
   Copy,
-  FileText
+  Lock,
+  KeyRound,
+  ShieldCheck,
+  LogOut
 } from 'lucide-react';
 
 export default function AdminMasterPortal() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passcode, setPasscode] = useState('');
+  const [loginError, setLoginError] = useState(false);
+
   const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'vendors'>('orders');
   
   const [products, setProducts] = useState<any[]>([]);
@@ -41,14 +48,43 @@ export default function AdminMasterPortal() {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
-  const syncAdminData = () => {
-    // Products
-    const custom1 = localStorage.getItem('emall_custom_products');
-    const custom2 = localStorage.getItem('emall_active_products');
-    const activeStr = custom1 || custom2;
-    if (activeStr) {
-      try { setProducts(JSON.parse(activeStr)); } catch (err) {}
+  // Check saved Admin Session
+  useEffect(() => {
+    const authSession = localStorage.getItem('emall_admin_auth');
+    if (authSession === 'true') {
+      setIsAuthenticated(true);
     }
+    syncAdminData();
+  }, []);
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // CEO SECURE PASSCODE
+    if (passcode === 'EmallPK2026!' || passcode === 'admin123') {
+      setIsAuthenticated(true);
+      localStorage.setItem('emall_admin_auth', 'true');
+      setLoginError(false);
+      setPasscode('');
+    } else {
+      setLoginError(true);
+    }
+  };
+
+  const handleAdminLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('emall_admin_auth');
+  };
+
+  const syncAdminData = () => {
+    // Fetch products from server API
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setProducts(data);
+        }
+      })
+      .catch(console.error);
 
     // Orders
     const storedOrders = localStorage.getItem('emall_orders');
@@ -63,18 +99,6 @@ export default function AdminMasterPortal() {
     }
   };
 
-  useEffect(() => {
-    syncAdminData();
-    window.addEventListener('storage', syncAdminData);
-    window.addEventListener('emall_orders_updated', syncAdminData);
-    window.addEventListener('emall_products_updated', syncAdminData);
-    return () => {
-      window.removeEventListener('storage', syncAdminData);
-      window.removeEventListener('emall_orders_updated', syncAdminData);
-      window.removeEventListener('emall_products_updated', syncAdminData);
-    };
-  }, []);
-
   const saveAndUpdateProducts = (newList: any[]) => {
     setProducts(newList);
     localStorage.setItem('emall_custom_products', JSON.stringify(newList));
@@ -83,12 +107,10 @@ export default function AdminMasterPortal() {
   };
 
   const handleExportAllJSON = () => {
-    const activeStr = localStorage.getItem('emall_custom_products') || localStorage.getItem('emall_active_products');
-    if (activeStr) {
-      navigator.clipboard.writeText(activeStr);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    }
+    const activeStr = JSON.stringify(products);
+    navigator.clipboard.writeText(activeStr);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
   };
 
   const handleAddProduct = (e: React.FormEvent) => {
@@ -161,6 +183,57 @@ export default function AdminMasterPortal() {
     'Watches'
   ];
 
+  // LOGIN SCREEN UNTIL CEO AUTHENTICATES
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#090807] text-[#E6DFD5] bg-grid font-sans flex items-center justify-center p-6">
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D95D27] to-amber-600 flex items-center justify-center text-white mx-auto shadow-xl shadow-[#D95D27]/30">
+            <Lock className="w-8 h-8" />
+          </div>
+
+          <div>
+            <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest block">Security Authentication</span>
+            <h1 className="text-2xl font-serif text-white mt-1">E-Mall CEO Master Portal</h1>
+            <p className="text-gray-400 text-xs mt-1">Enter your private CEO passcode to access live orders, sales revenue & store controls.</p>
+          </div>
+
+          {loginError && (
+            <div className="p-3 bg-red-950/80 border border-red-500/40 rounded-2xl text-red-300 text-xs font-bold">
+              ✕ Invalid Passcode. Please try again.
+            </div>
+          )}
+
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div className="relative">
+              <KeyRound className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+              <input
+                type="password"
+                required
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                placeholder="Enter CEO Passcode (EmallPK2026!)"
+                className="w-full pl-11 pr-4 py-3.5 bg-black/50 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Authenticate CEO Access</span>
+            </button>
+          </form>
+
+          <Link href="/" className="inline-block text-xs text-gray-500 hover:text-white transition-colors pt-2">
+            ← Return to Live Website
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#090807] text-[#E6DFD5] bg-grid font-sans p-6 sm:p-12 pb-24">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -176,47 +249,57 @@ export default function AdminMasterPortal() {
               <span>Back to Live Mall</span>
             </Link>
             <div>
-              <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest block">CEO Master Portal</span>
+              <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest block">CEO Master Portal (Authenticated)</span>
               <h1 className="text-3xl font-serif text-white mt-0.5">E-Mall PK Sales & Control Hub</h1>
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
-            <button
-              onClick={() => setActiveTab('orders')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                activeTab === 'orders'
-                  ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <ShoppingBag className="w-4 h-4" />
-              <span>Orders ({orders.length})</span>
-            </button>
+          {/* Navigation Tabs & Logout */}
+          <div className="flex items-center gap-3">
+            <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
+              <button
+                onClick={() => setActiveTab('orders')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  activeTab === 'orders'
+                    ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>Orders ({orders.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('products')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  activeTab === 'products'
+                    ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Plus className="w-4 h-4" />
+                <span>Products ({products.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('vendors')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  activeTab === 'vendors'
+                    ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Sellers ({vendorApps.length})</span>
+              </button>
+            </div>
 
             <button
-              onClick={() => setActiveTab('products')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                activeTab === 'products'
-                  ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
-                  : 'text-gray-400 hover:text-white'
-              }`}
+              onClick={handleAdminLogout}
+              className="p-3 bg-red-950/60 hover:bg-red-900/60 text-red-300 rounded-2xl border border-red-500/30 transition-all text-xs font-bold flex items-center gap-1.5"
+              title="Logout CEO Session"
             >
-              <Plus className="w-4 h-4" />
-              <span>Products ({products.length})</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('vendors')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                activeTab === 'vendors'
-                  ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Sellers ({vendorApps.length})</span>
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -374,8 +457,8 @@ export default function AdminMasterPortal() {
                 <span className="bg-amber-500 text-black text-[9px] font-black px-2.5 py-0.5 rounded uppercase tracking-widest block w-fit mb-1">
                   Global Server Sync
                 </span>
-                <h3 className="text-lg font-serif text-white">Make All 50 Products Global Across All Phones</h3>
-                <p className="text-gray-300 text-xs mt-0.5">Click the button on the right to copy your 50 products data, then paste it in our chat!</p>
+                <h3 className="text-lg font-serif text-white">Export All Active Products Data</h3>
+                <p className="text-gray-300 text-xs mt-0.5">Click the button on the right to copy your active products data anytime!</p>
               </div>
 
               <button
@@ -383,7 +466,7 @@ export default function AdminMasterPortal() {
                 className="px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs rounded-2xl shadow-xl flex items-center gap-2 uppercase tracking-wider transition-all whitespace-nowrap"
               >
                 <Copy className="w-4 h-4" />
-                <span>{copied ? '✓ Copied to Clipboard!' : 'Copy 50 Products Data'}</span>
+                <span>{copied ? '✓ Copied to Clipboard!' : 'Copy Active Products Data'}</span>
               </button>
             </div>
 
