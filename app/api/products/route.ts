@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient } from 'redis';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const CLOUD_BIN_URL = 'https://api.jsonbin.io/v3/b/66c4c021ad19ca34f8997a38';
+const CLOUD_KEY = '$2a$10$MvXpL/k4yQ6QxO3l3x1y3eW1x3v3w3x3y3z3a3b3c3d3e3f3g';
 
 const BASE_PRODUCTS: any[] = [
   // --- OUTFITTERS (10) ---
@@ -469,65 +472,77 @@ const BASE_PRODUCTS: any[] = [
 
 export async function GET() {
   try {
-    const url = process.env.STORAGE_URL || process.env.REDIS_URL || process.env.STORAGE_REDIS_URL;
-    if (url) {
-      const client = createClient({ url });
-      await client.connect();
-      const cached = await client.get('emall_cloud_products');
-      await client.disconnect();
-      if (cached) {
-        return NextResponse.json(JSON.parse(cached));
+    const res = await fetch(CLOUD_BIN_URL, {
+      headers: { 'X-Master-Key': CLOUD_KEY }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data.record) && data.record.length > 0) {
+        return NextResponse.json(data.record);
       }
     }
-  } catch (e) {
-    console.error('Redis GET Error:', e);
-  }
+  } catch (e) {}
+
   return NextResponse.json(BASE_PRODUCTS);
 }
 
 export async function POST(req: Request) {
   try {
     const newProduct = await req.json();
-    const url = process.env.STORAGE_URL || process.env.REDIS_URL || process.env.STORAGE_REDIS_URL;
-
+    
     let currentList = BASE_PRODUCTS;
-    if (url) {
-      const client = createClient({ url });
-      await client.connect();
-      const cached = await client.get('emall_cloud_products');
-      if (cached) currentList = JSON.parse(cached);
+    try {
+      const res = await fetch(CLOUD_BIN_URL, { headers: { 'X-Master-Key': CLOUD_KEY } });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.record)) currentList = data.record;
+      }
+    } catch (e) {}
 
-      const updated = [newProduct, ...currentList];
-      await client.set('emall_cloud_products', JSON.stringify(updated));
-      await client.disconnect();
-      return NextResponse.json({ success: true, products: updated });
-    }
+    const updatedList = [newProduct, ...currentList];
+
+    await fetch(CLOUD_BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': CLOUD_KEY
+      },
+      body: JSON.stringify(updatedList)
+    });
+
+    return NextResponse.json({ success: true, products: updatedList });
   } catch (err) {
-    console.error('Redis POST Error:', err);
+    return NextResponse.json({ error: 'Failed' }, { status: 500 });
   }
-  return NextResponse.json({ error: 'Failed to add product to Cloud' }, { status: 500 });
 }
 
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
-    const url = process.env.STORAGE_URL || process.env.REDIS_URL || process.env.STORAGE_REDIS_URL;
 
     let currentList = BASE_PRODUCTS;
-    if (url && id) {
-      const client = createClient({ url });
-      await client.connect();
-      const cached = await client.get('emall_cloud_products');
-      if (cached) currentList = JSON.parse(cached);
+    try {
+      const res = await fetch(CLOUD_BIN_URL, { headers: { 'X-Master-Key': CLOUD_KEY } });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.record)) currentList = data.record;
+      }
+    } catch (e) {}
 
-      const updated = currentList.filter((p: any) => p.id !== id);
-      await client.set('emall_cloud_products', JSON.stringify(updated));
-      await client.disconnect();
-      return NextResponse.json({ success: true, products: updated });
-    }
+    const updatedList = currentList.filter((p) => p.id !== id);
+
+    await fetch(CLOUD_BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': CLOUD_KEY
+      },
+      body: JSON.stringify(updatedList)
+    });
+
+    return NextResponse.json({ success: true, products: updatedList });
   } catch (err) {
-    console.error('Redis DELETE Error:', err);
+    return NextResponse.json({ error: 'Failed' }, { status: 500 });
   }
-  return NextResponse.json({ error: 'Failed to delete product from Cloud' }, { status: 500 });
 }
