@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Truck,
   MessageCircle,
+  Building2,
   Sparkles,
   Gift,
   CreditCard,
@@ -345,6 +346,7 @@ export default function HomePage() {
   if (paymentMethod === 'COD') deliveryFee = 195;
   if (paymentMethod === 'EXPRESS_COD') deliveryFee = 350;
 
+  // HANDLE CHECKOUT & SAVE ORDER TO ADMIN PORTAL
   const handleFinalCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
@@ -387,7 +389,14 @@ export default function HomePage() {
       buyerDeliveryFee: deliveryFee,
       totalHardworkProfit,
       totalAmount,
+      status: 'Pending Dispatch'
     };
+
+    // Save order globally to localStorage for Admin Hub
+    const existingOrders = JSON.parse(localStorage.getItem('emall_orders') || '[]');
+    const updatedOrders = [orderReceipt, ...existingOrders];
+    localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
+    window.dispatchEvent(new Event('emall_orders_updated'));
 
     setLastOrder(orderReceipt);
     setCart([]);
@@ -395,8 +404,23 @@ export default function HomePage() {
     setShowInvoice(true);
   };
 
+  // HANDLE VENDOR APPLICATION & SAVE TO ADMIN PORTAL
   const handleVendorSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const newApp = {
+      vendorName,
+      vendorPhone,
+      vendorInsta,
+      vendorCity,
+      date: new Date().toLocaleDateString('en-PK')
+    };
+
+    const existingVendors = JSON.parse(localStorage.getItem('emall_vendor_apps') || '[]');
+    const updatedVendors = [newApp, ...existingVendors];
+    localStorage.setItem('emall_vendor_apps', JSON.stringify(updatedVendors));
+    window.dispatchEvent(new Event('emall_vendors_updated'));
+
     setVendorSuccess(true);
     setTimeout(() => {
       setVendorSuccess(false);
@@ -448,7 +472,6 @@ export default function HomePage() {
           
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-3 group">
-              {/* ICONIC E-MALL MONOGRAM SYMBOL */}
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#121110] to-[#1a1816] border border-amber-500/30 flex items-center justify-center shadow-lg shadow-[#D95D27]/20 group-hover:scale-105 transition-all">
                 <EMallLogoSymbol />
               </div>
@@ -511,7 +534,7 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero Section with Neutral Dark Luxury Background Image */}
+      {/* Hero Section */}
       <div className="relative py-24 px-8 text-center border-b border-white/10 overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1920')" }}>
         <div className="absolute inset-0 bg-gradient-to-t from-[#090807] via-[#090807]/85 to-[#090807]/75 backdrop-blur-sm" />
 
@@ -656,7 +679,6 @@ export default function HomePage() {
                           <h3 className="text-base font-bold text-white group-hover:text-[#D95D27] transition-colors line-clamp-1 font-sans">
                             {product.title}
                           </h3>
-                          {/* COLOR SWATCH PREVIEW DOTS */}
                           <div className="flex items-center gap-1">
                             <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
                             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
