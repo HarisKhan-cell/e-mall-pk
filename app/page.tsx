@@ -15,11 +15,215 @@ import {
   Sparkles,
   Gift,
   CreditCard,
-  Plus
+  Plus,
+  ShieldCheck,
+  Award,
+  FileText,
+  Check,
+  Minus,
+  CheckCircle2,
+  Clock,
+  Mail,
+  Phone
 } from 'lucide-react';
 
+const INITIAL_PRODUCTS = [
+  // Khaadi (10)
+  {
+    id: 'khaadi-1',
+    title: 'Khaadi Floral V-Neck Kurta',
+    description: 'Embroidered Cambric Cotton floral V-neck kurta (2-26-203-A-G1).',
+    price: 4490,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-2',
+    title: 'Khaadi Beige V-Neck Kurta',
+    description: 'Embroidered Cotton Viscose kurta with subtle beige tones (1-26-118-A-F).',
+    price: 4290,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dwf6e45b4b/images/hi-res/1-26-128-a-e_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-3',
+    title: 'Khaadi Dyed Raw Silk Kurta',
+    description: '100% Cotton Raw Silk finish dyed kurta (8-26-301-A-D1).',
+    price: 4000,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/8-26-301-a-d1_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-4',
+    title: 'Khaadi Raw Silk Black Co-Ord 3-Piece Set',
+    description: 'Luxury Raw Silk kurta, pants, and sequin embroidered dupatta (5-26-201-F-H).',
+    price: 25000,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw15321f8a/images/hi-res/5-26-201-f-h_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-5',
+    title: 'Khaadi Floral Tailored Set',
+    description: 'Tailored Cotton Satin / Viscose 2-Piece Set (T-A33-26-202FC1).',
+    price: 6990,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw83741829/images/hi-res/t-a33-26-202fc1_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-6',
+    title: 'Khaadi Embroidered Raw Silk Kurta',
+    description: 'Raw silk off-white V-neck embroidered thread work kurta (2-26-209-A-I1).',
+    price: 4500,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/2-26-209-a-i1_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-7',
+    title: 'Khaadi Printed Lawn 3-Piece Fabrics Suit',
+    description: '3-Piece unstitched printed lawn shirt, dupatta & trouser (A22-26-202FH1-E).',
+    price: 5490,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1-e_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-8',
+    title: 'Khaadi Embroidered Textured Lawn 2-Piece',
+    description: 'Digital printed textured lawn shirt (3m) & cambric trouser (2.5m) (A112-26-120ED1).',
+    price: 3150,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-120ed1_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-9',
+    title: 'Khaadi Puff Paste Printed Cambric 2-Piece',
+    description: 'Puff paste printed cambric shirt (3m) & dyed trouser (2.5m) (A112-26-112EC1).',
+    price: 2800,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a112-26-112ec1_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-10',
+    title: 'Khaadi Printed Lawn 3-Piece Suit (Classic)',
+    description: 'Printed lawn shirt (3m), dupatta (2.5m) & cambric trouser (2.5m) (A22-26-202FH1).',
+    price: 5490,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/a22-26-202fh1_multi_1.jpg?sw=800'])
+  },
+
+  // Breakout (11)
+  {
+    id: 'breakout-1',
+    title: 'Breakout Printed Button Down Shirt',
+    description: '100% Cotton printed button down shirt with modern classic silhouette (6DSWT912-MTO).',
+    price: 2249,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6DSWT912-MTO_6.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-2',
+    title: 'Breakout Boys Striped Tee',
+    description: '100% Cotton knit everyday boys striped tee (K6DST673-MLT).',
+    price: 699,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6DST673-MLT_1.jpg?v=1779280870&width=1920'])
+  },
+  {
+    id: 'breakout-3',
+    title: "Breakout Men's Textured Tee (Brown)",
+    description: '50% Cotton, 45% Polyester, 5% Spandex textured finish tee (6ESHT844-BRN).',
+    price: 3899,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6ESHT844-BRN_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-4',
+    title: 'Breakout Boys Contrast Rib Tee (Ecru)',
+    description: '100% Cotton knit sporty contrast rib tee for boys (K6DST639-ECR).',
+    price: 699,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6DST639-ECR_1.jpg?v=1778504092&width=1920'])
+  },
+  {
+    id: 'breakout-5',
+    title: "Breakout Men's Baggy Fit Denim Jeans (Blue)",
+    description: '100% Cotton Denim contemporary baggy fit jeans (6ESMD839-BLU).',
+    price: 4999,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6ESMD839-BLU_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-6',
+    title: 'Breakout Boys Graphic Tee (Black)',
+    description: '100% Cotton knit crew neck graphic tee for boys (K6EST820-BLK).',
+    price: 1699,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6EST820-BLK_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-7',
+    title: 'Breakout Boys Textured Polo Shirt (Burgundy)',
+    description: '50% Cotton, 50% Polyester breathable textured polo shirt (K6ESP826-BRG).',
+    price: 2099,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ESP826-BRG_1.jpg?v=1786362306'])
+  },
+  {
+    id: 'breakout-8',
+    title: 'Breakout Boys Textured Striped Shirt (Navy & White)',
+    description: '100% Polyester smart casual textured striped shirt (K6ESW806-NNW).',
+    price: 2199,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ESW806-NNW_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-9',
+    title: 'Breakout Boys Color Block Tee (Multi)',
+    description: '100% Cotton knit vibrant multi-colored panel tee (K6EST692-MLT).',
+    price: 1099,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6EST692-MLT_1.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-10',
+    title: 'Breakout Boys Smurf Perfume (50ml / Blue)',
+    description: 'Refreshing, long-lasting 50ml fragrance for boys (K6ASBF03-BLU).',
+    price: 1849,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ASBF03-BLU_2_dba2b513-f441-47a0-9e44-5f4e277dd32e.jpg?v=1777985061&width=1920'])
+  },
+  {
+    id: 'breakout-11',
+    title: 'Breakout Boys Hero Perfume (50ml / Black)',
+    description: 'Refreshing signature 50ml fragrance for boys (K6ASBF01-BLK).',
+    price: 1849,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ASBF01-BLK_1.jpg?v=1777985061&width=1920'])
+  }
+];
+
 export default function HomePage() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>(INITIAL_PRODUCTS);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
@@ -31,30 +235,68 @@ export default function HomePage() {
   const [selectedBrand, setSelectedBrand] = useState('All');
   const [showPromoBanner, setShowPromoBanner] = useState(true);
 
+  // Quick View Product Modal States
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedQty, setSelectedQty] = useState(1);
+  const [isGiftWrap, setIsGiftWrap] = useState(false);
+
   // Customer Form & Payment Method Fields
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'PREPAID'>('PREPAID');
+  const [paymentMethod, setPaymentMethod] = useState<'PREPAID' | 'COD' | 'EXPRESS_COD'>('PREPAID');
 
-  const fetchProducts = async () => {
-    try {
-      const res = await fetch('/api/products');
-      if (res.ok) {
-        const data = await res.json();
-        setProducts(data);
+  const syncActiveProducts = () => {
+    const stored = localStorage.getItem('emall_active_products');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProducts(parsed);
+          return;
+        }
+      } catch (err) {
+        console.error('Error syncing products:', err);
       }
-    } catch (err) {
-      console.error('Failed to load live products:', err);
     }
+    localStorage.setItem('emall_active_products', JSON.stringify(INITIAL_PRODUCTS));
+    setProducts(INITIAL_PRODUCTS);
   };
 
   useEffect(() => {
-    fetchProducts();
+    syncActiveProducts();
+    window.addEventListener('storage', syncActiveProducts);
+    window.addEventListener('emall_products_updated', syncActiveProducts);
+    return () => {
+      window.removeEventListener('storage', syncActiveProducts);
+      window.removeEventListener('emall_products_updated', syncActiveProducts);
+    };
   }, []);
 
-  const addToCart = (product: any) => {
-    setCart((prev) => [...prev, product]);
+  const handleOpenProduct = (product: any) => {
+    setSelectedProduct(product);
+    setSelectedSize('M');
+    setSelectedQty(1);
+    setIsGiftWrap(false);
+  };
+
+  const handleAddToCartFromModal = () => {
+    if (!selectedProduct) return;
+
+    const cartItem = {
+      ...selectedProduct,
+      cartId: `${selectedProduct.id}-${selectedSize}-${Date.now()}`,
+      selectedSize,
+      quantity: selectedQty,
+      isGiftWrap,
+      price: selectedProduct.price,
+      totalPrice: (selectedProduct.price * selectedQty) + (isGiftWrap ? 150 : 0)
+    };
+
+    setCart((prev) => [...prev, cartItem]);
+    setSelectedProduct(null);
+    setShowCart(true);
   };
 
   const removeFromCart = (index: number) => {
@@ -62,12 +304,14 @@ export default function HomePage() {
   };
 
   const calculateSubtotal = () => {
-    return cart.reduce((total, item) => total + item.price, 0);
+    return cart.reduce((total, item) => total + item.totalPrice, 0);
   };
 
   const PLATFORM_FEE = 50;
-  const COD_DELIVERY_FEE = 195;
-  const deliveryFee = paymentMethod === 'PREPAID' ? 0 : COD_DELIVERY_FEE;
+  
+  let deliveryFee = 0;
+  if (paymentMethod === 'COD') deliveryFee = 195;
+  if (paymentMethod === 'EXPRESS_COD') deliveryFee = 350;
 
   const handleFinalCheckout = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +322,7 @@ export default function HomePage() {
 
     cart.forEach((item) => {
       const shopName = item.shop?.name || 'Verified Brand Partner';
-      const profitAmount = (item.price * 5.0) / 100;
+      const profitAmount = (item.price * item.quantity * 5.0) / 100;
       totalHardworkProfit += profitAmount;
 
       if (!shopBreakdown[shopName]) {
@@ -90,7 +334,7 @@ export default function HomePage() {
         };
       }
       shopBreakdown[shopName].items.push(item);
-      shopBreakdown[shopName].subtotal += item.price;
+      shopBreakdown[shopName].subtotal += item.totalPrice;
       shopBreakdown[shopName].profitMargin += profitAmount;
     });
 
@@ -119,15 +363,15 @@ export default function HomePage() {
     setShowInvoice(true);
   };
 
-  const categories = ['All', 'Fashion & Apparel', 'Perfumes & Accessories', 'Shoes & Footwear'];
+  const categories = ['All', 'Fashion & Apparel', 'Perfumes & Accessories', 'Shoes & Footwear', 'Bags & Accessories'];
 
   const brands = [
-    { name: 'ALL BRANDS', filter: 'All', badge: 'Catalog' },
-    { name: 'KHAADI', filter: 'Khaadi Official', badge: 'Official' },
-    { name: 'BREAKOUT', filter: 'Breakout Official', badge: 'Official' },
-    { name: 'SAPPHIRE', filter: 'Sapphire Official', badge: 'Partner' },
-    { name: 'SAYA', filter: 'SAYA Official', badge: 'Partner' },
-    { name: 'ETHNIC', filter: 'ETHNIC Official', badge: 'Partner' },
+    { name: 'ALL BRANDS', filter: 'All' },
+    { name: 'KHAADI', filter: 'Khaadi Official' },
+    { name: 'BREAKOUT', filter: 'Breakout Official' },
+    { name: 'SAPPHIRE', filter: 'Sapphire Official' },
+    { name: 'SAYA', filter: 'SAYA Official' },
+    { name: 'ETHNIC', filter: 'ETHNIC Official' },
   ];
 
   const filteredProducts = products.filter((p) => {
@@ -146,7 +390,7 @@ export default function HomePage() {
         <div className="bg-gradient-to-r from-amber-600 via-[#D95D27] to-amber-700 text-white text-[11px] font-bold py-2.5 px-4 text-center relative flex items-center justify-center gap-2 shadow-lg z-50">
           <Sparkles className="w-4 h-4 text-amber-200 animate-pulse" />
           <span>
-            🎉 <strong>SPECIAL PROMO:</strong> Enjoy <strong>FREE DELIVERY</strong> on all <strong>Prepaid Orders!</strong> (Cash on Delivery: PKR 195).
+            🎉 <strong>SPECIAL PROMO:</strong> Enjoy <strong>FREE DELIVERY</strong> on all <strong>Prepaid Orders!</strong> (Cash on Delivery: PKR 195 | Express 24H: PKR 350).
           </span>
           <button onClick={() => setShowPromoBanner(false)} className="absolute right-4 text-white/80 hover:text-white font-bold text-xs">
             ✕
@@ -307,7 +551,8 @@ export default function HomePage() {
                 return (
                   <div
                     key={product.id}
-                    className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl hover:border-[#D95D27]/50 hover:bg-white/10 transition-all duration-500 group flex flex-col justify-between"
+                    onClick={() => handleOpenProduct(product)}
+                    className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl hover:border-[#D95D27]/50 hover:bg-white/10 transition-all duration-500 group flex flex-col justify-between cursor-pointer"
                   >
                     <div>
                       <div className="relative h-80 w-full overflow-hidden bg-black/60">
@@ -343,10 +588,13 @@ export default function HomePage() {
                           <span className="text-xl font-extrabold text-white">PKR {product.price.toLocaleString()}</span>
                         </div>
                         <button
-                          onClick={() => addToCart(product)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenProduct(product);
+                          }}
                           className="px-5 py-2.5 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-bold text-xs rounded-full shadow-lg shadow-[#D95D27]/20 transition-all"
                         >
-                          + Add to Cart
+                          Select Size & Add
                         </button>
                       </div>
                     </div>
@@ -357,6 +605,124 @@ export default function HomePage() {
           )}
         </div>
       </div>
+
+      {/* QUICK VIEW PRODUCT MODAL WITH SIZES & QUANTITY */}
+      {selectedProduct && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div className="bg-[#090807] border border-white/10 rounded-3xl p-8 max-w-2xl w-full shadow-2xl text-xs space-y-6 relative overflow-y-auto max-h-[90vh]">
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-6 right-6 p-2 text-gray-400 hover:text-white bg-white/5 rounded-full border border-white/10"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Product Photo */}
+              <div className="relative h-80 rounded-2xl overflow-hidden bg-black/60 border border-white/10">
+                <img
+                  src={
+                    (() => {
+                      try { return JSON.parse(selectedProduct.images)[0]; } catch (e) { return selectedProduct.images; }
+                    })()
+                  }
+                  alt={selectedProduct.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-3 left-3 bg-[#090807]/90 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[9px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5">
+                  <Store className="w-3 h-3 text-[#D95D27]" />
+                  {selectedProduct.shop?.name}
+                </div>
+              </div>
+
+              {/* Details & Selectors */}
+              <div className="space-y-5">
+                <div>
+                  <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest">
+                    {selectedProduct.category?.name || 'Verified Article'}
+                  </span>
+                  <h3 className="text-2xl font-serif text-white mt-1">{selectedProduct.title}</h3>
+                  <p className="text-gray-400 text-xs mt-2 leading-relaxed font-light">{selectedProduct.description}</p>
+                </div>
+
+                <div className="border-t border-b border-white/10 py-3 flex justify-between items-center">
+                  <span className="text-xs text-gray-400">Original Price:</span>
+                  <span className="text-2xl font-black text-white">PKR {selectedProduct.price.toLocaleString()}</span>
+                </div>
+
+                {/* Size Selector */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-2">
+                    Select Size:
+                  </label>
+                  <div className="flex gap-2">
+                    {['S', 'M', 'L', 'XL'].map((sz) => (
+                      <button
+                        key={sz}
+                        onClick={() => setSelectedSize(sz)}
+                        className={`w-11 h-11 rounded-xl text-xs font-bold transition-all border flex items-center justify-center ${
+                          selectedSize === sz
+                            ? 'bg-[#D95D27] text-white border-[#D95D27] shadow-lg shadow-[#D95D27]/30 scale-105'
+                            : 'bg-white/5 text-gray-400 border-white/10 hover:text-white'
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quantity Counter */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-2">
+                    Quantity:
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSelectedQty(Math.max(1, selectedQty - 1))}
+                      className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 font-bold"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="text-base font-black text-white px-3">{selectedQty}</span>
+                    <button
+                      onClick={() => setSelectedQty(selectedQty + 1)}
+                      className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 font-bold"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Gift Wrap Checkbox (+150 PKR Profit Upsell) */}
+                <label className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                  <input
+                    type="checkbox"
+                    checked={isGiftWrap}
+                    onChange={(e) => setIsGiftWrap(e.target.checked)}
+                    className="w-4 h-4 accent-[#D95D27] rounded"
+                  />
+                  <div>
+                    <p className="font-bold text-white text-xs">Add Luxury Gift Box & Handwritten Card</p>
+                    <p className="text-[10px] text-amber-400">+ PKR 150 (Festive Gift Wrap)</p>
+                  </div>
+                </label>
+
+                {/* Submit Add to Cart Button */}
+                <button
+                  onClick={handleAddToCartFromModal}
+                  className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-extrabold text-xs rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all uppercase tracking-wider flex items-center justify-center gap-2"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  <span>
+                    Add Size {selectedSize} to Cart (PKR {((selectedProduct.price * selectedQty) + (isGiftWrap ? 150 : 0)).toLocaleString()})
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Floating Support Button */}
       <button
@@ -390,12 +756,19 @@ export default function HomePage() {
                     <div key={idx} className="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/10">
                       <div>
                         <h4 className="text-sm font-bold text-white line-clamp-1">{item.title}</h4>
-                        <span className="text-[10px] font-bold text-[#D95D27] block mt-0.5">
+                        <div className="flex items-center gap-2 text-[10px] mt-1">
+                          <span className="bg-[#D95D27] text-white font-bold px-2 py-0.5 rounded">
+                            Size: {item.selectedSize}
+                          </span>
+                          <span className="text-gray-400">Qty: {item.quantity}</span>
+                          {item.isGiftWrap && <span className="text-amber-400 font-bold">🎁 Gift Wrapped</span>}
+                        </div>
+                        <span className="text-[10px] font-bold text-gray-500 block mt-1">
                           Brand: {item.shop?.name}
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-extrabold text-white">PKR {item.price.toLocaleString()}</span>
+                        <span className="text-sm font-extrabold text-white">PKR {item.totalPrice.toLocaleString()}</span>
                         <button onClick={() => removeFromCart(idx)} className="text-xs text-red-400">✕</button>
                       </div>
                     </div>
@@ -431,7 +804,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* CHECKOUT FORM MODAL WITH PREPAID vs COD SWITCH */}
+      {/* CHECKOUT FORM MODAL WITH 3 DELIVERY OPTIONS */}
       {showCheckoutForm && (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
           <div className="bg-[#090807] border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl text-xs space-y-4">
@@ -469,44 +842,65 @@ export default function HomePage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Select Payment Option</label>
-                <div className="grid grid-cols-2 gap-3">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+                  Select Delivery & Payment Speed:
+                </label>
+                <div className="space-y-2">
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('PREPAID')}
-                    className={`p-3 rounded-2xl border text-left flex flex-col justify-between transition-all ${
+                    className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
                       paymentMethod === 'PREPAID'
                         ? 'bg-emerald-950/80 border-emerald-500 text-white shadow-lg'
                         : 'bg-white/5 border-white/10 text-gray-400'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
                       <CreditCard className="w-4 h-4 text-emerald-400" />
-                      <span className="text-[9px] bg-emerald-500 text-black font-black px-1.5 py-0.5 rounded">FREE SHIPPING</span>
+                      <div>
+                        <p className="font-bold text-xs text-white">Prepaid Order (JazzCash / Bank)</p>
+                        <p className="text-[9px] text-emerald-300">Free Delivery across Pakistan</p>
+                      </div>
                     </div>
-                    <div className="mt-2">
-                      <p className="font-bold text-xs text-white">Prepaid Order</p>
-                      <p className="text-[9px] text-emerald-300">JazzCash / EasyPaisa / Bank</p>
-                    </div>
+                    <span className="text-[9px] bg-emerald-500 text-black font-black px-2 py-0.5 rounded">FREE</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('COD')}
-                    className={`p-3 rounded-2xl border text-left flex flex-col justify-between transition-all ${
+                    className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
                       paymentMethod === 'COD'
                         ? 'bg-[#D95D27]/20 border-[#D95D27] text-white shadow-lg'
                         : 'bg-white/5 border-white/10 text-gray-400'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
                       <Truck className="w-4 h-4 text-[#D95D27]" />
-                      <span className="text-[9px] bg-white/10 text-gray-300 px-1.5 py-0.5 rounded">+ PKR 195</span>
+                      <div>
+                        <p className="font-bold text-xs text-white">Standard Cash on Delivery</p>
+                        <p className="text-[9px] text-gray-400">2-3 Business Days Delivery</p>
+                      </div>
                     </div>
-                    <div className="mt-2">
-                      <p className="font-bold text-xs text-white">Cash on Delivery</p>
-                      <p className="text-[9px] text-gray-400">Pay upon rider arrival</p>
+                    <span className="text-xs text-white font-bold">PKR 195</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('EXPRESS_COD')}
+                    className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                      paymentMethod === 'EXPRESS_COD'
+                        ? 'bg-amber-950/80 border-amber-500 text-white shadow-lg'
+                        : 'bg-white/5 border-white/10 text-gray-400'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-4 h-4 text-amber-400" />
+                      <div>
+                        <p className="font-bold text-xs text-white">VIP 24-Hour Express COD (Lahore Only)</p>
+                        <p className="text-[9px] text-amber-300">Guaranteed Same-Day Rider Dispatch</p>
+                      </div>
                     </div>
+                    <span className="text-xs text-amber-300 font-bold">PKR 350</span>
                   </button>
                 </div>
               </div>
@@ -525,9 +919,9 @@ export default function HomePage() {
 
               <div className="pt-2 border-t border-white/10 space-y-1 text-xs">
                 <div className="flex justify-between text-gray-400">
-                  <span>Delivery Fee:</span>
-                  <span className={paymentMethod === 'PREPAID' ? 'text-emerald-400 font-bold' : 'text-white font-bold'}>
-                    {paymentMethod === 'PREPAID' ? 'FREE (PKR 0)' : 'PKR 195'}
+                  <span>Delivery Charge:</span>
+                  <span className="text-white font-bold">
+                    {deliveryFee === 0 ? 'FREE (Prepaid Offer)' : `PKR ${deliveryFee}`}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-white font-extrabold text-sm pt-1">
@@ -568,7 +962,7 @@ export default function HomePage() {
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Customer Details:</span>
                 <span className="text-[10px] font-bold bg-white/10 px-2 py-0.5 rounded text-emerald-300">
-                  {lastOrder.paymentMethod === 'PREPAID' ? 'Prepaid (Free Delivery)' : 'Cash on Delivery'}
+                  {lastOrder.paymentMethod}
                 </span>
               </div>
               <p className="text-white font-bold text-xs mt-1">{lastOrder.customerName} ({lastOrder.customerPhone})</p>
@@ -588,9 +982,9 @@ export default function HomePage() {
                   </div>
                   <div className="space-y-1 text-[11px] text-gray-400">
                     {sub.items.map((item: any, i: number) => (
-                      <div key={i} className="flex justify-between">
-                        <span>• {item.title}</span>
-                        <span className="text-gray-200">PKR {item.price.toLocaleString()}</span>
+                      <div key={i} className="flex justify-between items-center">
+                        <span>• {item.title} (Size: {item.selectedSize}, Qty: {item.quantity})</span>
+                        <span className="text-gray-200">PKR {item.totalPrice.toLocaleString()}</span>
                       </div>
                     ))}
                   </div>
@@ -633,13 +1027,102 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Footer */}
+      {/* LUXURY 5-COLUMN CORPORATE TRUST & LICENSING FOOTER */}
       <footer className="bg-black/90 border-t border-white/10 mt-28 pt-16 pb-12 px-8 text-xs text-gray-400 font-sans">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
+          
+          {/* Col 1: About E-Mall PK & Point of View */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-white font-serif font-bold text-sm">
+              <Building2 className="w-4 h-4 text-[#D95D27]" />
+              <span>E-MALL PAKISTAN</span>
+            </div>
+            <p className="text-gray-400 text-[11px] leading-relaxed font-light">
+              Pakistan's 1st consolidated digital mall platform. Skip the mall rush—your favorite brand stores live here now. Sourced 100% original from official brand hubs.
+            </p>
+            <div className="pt-2">
+              <span className="bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                ✓ 100% Original Brand Guarantee
+              </span>
+            </div>
+          </div>
+
+          {/* Col 2: Customer Care & Services */}
+          <div className="space-y-3">
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Customer Care</h4>
+            <ul className="space-y-2 text-gray-400 text-[11px]">
+              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Single-Box Delivery Guarantee</Link></li>
+              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">7-Day Hassle-Free Exchange Policy</Link></li>
+              <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Order Tracking & Status Lookup</Link></li>
+              <li><a href="https://wa.me/923000000000" target="_blank" rel="noreferrer" className="text-emerald-400 font-bold hover:underline">WhatsApp 24/7 Live Support</a></li>
+            </ul>
+          </div>
+
+          {/* Col 3: Corporate Trust & Licenses */}
+          <div className="space-y-3">
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Trust & Verification</h4>
+            <div className="space-y-2 text-gray-400 text-[11px]">
+              <div className="flex items-center gap-2 text-gray-300">
+                <FileText className="w-3.5 h-3.5 text-[#D95D27]" />
+                <span>FBR NTN Tax Registered Enterprise</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-300">
+                <Award className="w-3.5 h-3.5 text-amber-400" />
+                <span>Punjab E-Commerce Certified</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-300">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>256-Bit SSL Encrypted Platform</span>
+              </div>
+              <p className="text-[10px] text-gray-500 pt-1">Lahore Consolidated Fulfillment Center, Punjab, Pakistan</p>
+            </div>
+          </div>
+
+          {/* Col 4: Authorized Logistics Partners */}
+          <div className="space-y-3">
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Logistics Networks</h4>
+            <p className="text-gray-400 text-[11px]">Authorized Delivery Networks across Pakistan:</p>
+            <div className="flex flex-col gap-2 pt-1">
+              <span className="bg-red-600/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl font-black text-xs text-center">
+                SKYNET Express Delivery
+              </span>
+              <span className="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-3 py-1.5 rounded-xl font-black text-xs text-center">
+                TCS Logistics
+              </span>
+            </div>
+          </div>
+
+          {/* Col 5: Contact & Payment Methods */}
+          <div className="space-y-3">
+            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] font-serif">Contact Hub</h4>
+            <div className="space-y-2 text-gray-400 text-[11px]">
+              <p className="flex items-center gap-2 text-white">
+                <Mail className="w-3.5 h-3.5 text-[#D95D27]" />
+                <span>support@emall.pk</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 text-gray-400" />
+                <span>+92 (0)42 111-362-557</span>
+              </p>
+            </div>
+
+            <div className="pt-3 border-t border-white/10 space-y-1">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Accepted Payments:</span>
+              <div className="flex gap-1.5 text-[9px] font-bold text-gray-300 flex-wrap">
+                <span className="bg-white/10 px-2 py-0.5 rounded">Cash on Delivery</span>
+                <span className="bg-white/10 px-2 py-0.5 rounded">JazzCash</span>
+                <span className="bg-white/10 px-2 py-0.5 rounded">EasyPaisa</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Footer Bottom Copyright */}
+        <div className="max-w-7xl mx-auto pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500">
           <p>© COPYRIGHT 2026 E-MALL PAKISTAN. CREATED BY HARIS KHAN. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-3 text-gray-400 font-bold">
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">Cash on Delivery</span>
-            <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">JazzCash / EasyPaisa</span>
+            <Link href="/admin/add-product" className="hover:text-[#D95D27] transition-colors">Admin Management Portal</Link>
           </div>
         </div>
       </footer>
