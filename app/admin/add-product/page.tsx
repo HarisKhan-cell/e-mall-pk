@@ -15,7 +15,6 @@ import {
 export default function AdminAddProductPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [successMessage, setSuccessMessage] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   // Form State
   const [title, setTitle] = useState('');
@@ -26,22 +25,39 @@ export default function AdminAddProductPage() {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
-  const loadProducts = () => {
-    fetch('/api/products')
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch(console.error);
+  const syncAdminProducts = () => {
+    const custom1 = localStorage.getItem('emall_custom_products');
+    const custom2 = localStorage.getItem('emall_active_products');
+    const activeStr = custom1 || custom2;
+
+    if (activeStr) {
+      try {
+        const parsed = JSON.parse(activeStr);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProducts(parsed);
+          return;
+        }
+      } catch (err) {
+        console.error('Error reading custom products in Admin:', err);
+      }
+    }
   };
 
   useEffect(() => {
-    loadProducts();
+    syncAdminProducts();
   }, []);
 
-  const handleAddProduct = async (e: React.FormEvent) => {
+  const saveAndUpdateProducts = (newList: any[]) => {
+    setProducts(newList);
+    localStorage.setItem('emall_custom_products', JSON.stringify(newList));
+    localStorage.setItem('emall_active_products', JSON.stringify(newList));
+    window.dispatchEvent(new Event('emall_products_updated'));
+  };
+
+  const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price || !imageUrl) return;
 
-    setLoading(true);
     const finalBrand = brand === 'Custom' ? customBrand : brand;
 
     const newProduct = {
@@ -54,42 +70,20 @@ export default function AdminAddProductPage() {
       images: JSON.stringify([imageUrl]),
     };
 
-    try {
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProduct),
-      });
+    const updatedList = [newProduct, ...products];
+    saveAndUpdateProducts(updatedList);
 
-      if (res.ok) {
-        const data = await res.json();
-        setProducts(data.products);
-        setTitle('');
-        setPrice('');
-        setDescription('');
-        setImageUrl('');
-        setSuccessMessage(true);
-        setTimeout(() => setSuccessMessage(false), 4000);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    setTitle('');
+    setPrice('');
+    setDescription('');
+    setImageUrl('');
+    setSuccessMessage(true);
+    setTimeout(() => setSuccessMessage(false), 4000);
   };
 
-  const handleDeleteProduct = async (id: string) => {
-    try {
-      const res = await fetch(`/api/products?id=${id}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setProducts(data.products);
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDeleteProduct = (id: string) => {
+    const updated = products.filter((p) => p.id !== id);
+    saveAndUpdateProducts(updated);
   };
 
   const brandOptions = [
@@ -149,13 +143,13 @@ export default function AdminAddProductPage() {
                 <Plus className="w-5 h-5 text-[#D95D27]" />
                 <span>Add New Article</span>
               </h2>
-              <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product live to the server API.</p>
+              <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product instantly to E-Mall PK.</p>
             </div>
 
             {successMessage && (
               <div className="bg-emerald-950/80 border border-emerald-500/50 p-4 rounded-2xl text-emerald-300 text-xs flex items-center gap-3 font-bold">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                <span>Product published live to server! It is now visible to all customers.</span>
+                <span>Product published successfully! Check your homepage to see it live.</span>
               </div>
             )}
 
@@ -251,11 +245,10 @@ export default function AdminAddProductPage() {
 
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                <span>{loading ? 'Publishing...' : 'Publish Article Live'}</span>
+                <span>Publish Article Live</span>
               </button>
             </form>
           </div>
