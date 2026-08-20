@@ -82,34 +82,21 @@ export default function HomePage() {
 
   const fetchLiveProducts = async () => {
     try {
-      const res = await fetch('/api/products');
+      const res = await fetch('/api/products', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setProducts(data);
-          localStorage.setItem('emall_custom_products', JSON.stringify(data));
-          return;
-        }
+        setProducts(data);
       }
     } catch (err) {
-      console.error('Failed to load server products:', err);
-    }
-
-    // Fallback to LocalStorage
-    const stored = localStorage.getItem('emall_custom_products') || localStorage.getItem('emall_active_products');
-    if (stored) {
-      try { setProducts(JSON.parse(stored)); } catch (e) {}
+      console.error(err);
     }
   };
 
   useEffect(() => {
     fetchLiveProducts();
-    window.addEventListener('storage', fetchLiveProducts);
-    window.addEventListener('emall_products_updated', fetchLiveProducts);
-    return () => {
-      window.removeEventListener('storage', fetchLiveProducts);
-      window.removeEventListener('emall_products_updated', fetchLiveProducts);
-    };
+    // Clear old localStorage overrides to fix caching
+    localStorage.removeItem('emall_custom_products');
+    localStorage.removeItem('emall_active_products');
   }, []);
 
   const handleOpenProduct = (product: any) => {
@@ -155,7 +142,7 @@ export default function HomePage() {
     if (cart.length === 0) return;
 
     const shopBreakdown: any = {};
-    let totalHardworkProfit = 0; // 5% profit
+    let totalHardworkProfit = 0;
 
     cart.forEach((item) => {
       const shopName = item.shop?.name || 'Verified Brand Partner';
@@ -195,7 +182,6 @@ export default function HomePage() {
       status: 'Pending Dispatch'
     };
 
-    // Save order globally to API & localStorage
     fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -205,7 +191,6 @@ export default function HomePage() {
     const existingOrders = JSON.parse(localStorage.getItem('emall_orders') || '[]');
     const updatedOrders = [orderReceipt, ...existingOrders];
     localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
-    window.dispatchEvent(new Event('emall_orders_updated'));
 
     setLastOrder(orderReceipt);
     setCart([]);
@@ -230,11 +215,6 @@ export default function HomePage() {
       body: JSON.stringify(newApp)
     }).catch(console.error);
 
-    const existingVendors = JSON.parse(localStorage.getItem('emall_vendor_apps') || '[]');
-    const updatedVendors = [newApp, ...existingVendors];
-    localStorage.setItem('emall_vendor_apps', JSON.stringify(updatedVendors));
-    window.dispatchEvent(new Event('emall_vendors_updated'));
-
     setVendorSuccess(true);
     setTimeout(() => {
       setVendorSuccess(false);
@@ -245,16 +225,15 @@ export default function HomePage() {
     }, 3000);
   };
 
-  const categories = ['All', 'Fashion & Apparel', 'Perfumes & Accessories', 'Bags & Accessories', 'Shoes & Footwear'];
+  const categories = ['All', 'Fashion & Apparel', 'Perfumes & Accessories', 'Shoes & Footwear', 'Bags & Accessories'];
 
   const brands = [
     { name: 'ALL BRANDS', filter: 'All' },
     { name: 'KHAADI', filter: 'Khaadi Official' },
     { name: 'BREAKOUT', filter: 'Breakout Official' },
-    { name: 'OUTFITTERS', filter: 'Outfitters' },
-    { name: 'LAMA', filter: 'LAMA' },
-    { name: 'J. JAMSHED', filter: 'J. Junaid Jamshed' },
-    { name: 'RIVAJ', filter: 'Rivaj' },
+    { name: 'SAPPHIRE', filter: 'Sapphire Official' },
+    { name: 'SAYA', filter: 'SAYA Official' },
+    { name: 'ETHNIC', filter: 'ETHNIC Official' },
   ];
 
   const filteredProducts = products.filter((p) => {
@@ -311,7 +290,7 @@ export default function HomePage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search Khaadi, Breakout, Outfitters, LAMA..."
+              placeholder="Search Khaadi, Breakout, Sapphire, Saya, Ethnic..."
               className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#D95D27] transition-all"
             />
           </div>
@@ -391,16 +370,16 @@ export default function HomePage() {
               <span className="bg-amber-500 text-black font-black text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-widest block w-fit mb-1">
                 Featured Vendor Spotlight
               </span>
-              <h3 className="text-xl font-serif text-white">Outfitters & LAMA Streetwear Collection 2026</h3>
-              <p className="text-gray-400 text-xs mt-0.5">Explore 23 new official articles with 100% original store guarantee.</p>
+              <h3 className="text-xl font-serif text-white">Breakout Kids & Men Collection 2026</h3>
+              <p className="text-gray-400 text-xs mt-0.5">Explore 11 official articles with 100% original store guarantee.</p>
             </div>
           </div>
 
           <button
-            onClick={() => setSelectedBrand('Outfitters')}
+            onClick={() => setSelectedBrand('Breakout Official')}
             className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs rounded-full shadow-lg uppercase tracking-wider transition-all whitespace-nowrap"
           >
-            Explore Outfitters ➔
+            Explore Breakout Store ➔
           </button>
         </div>
       </div>
@@ -544,7 +523,6 @@ export default function HomePage() {
             </button>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Product Photo */}
               <div className="relative h-80 rounded-2xl overflow-hidden bg-black/60 border border-white/10">
                 <img
                   src={
@@ -561,7 +539,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Details & Selectors */}
               <div className="space-y-5">
                 <div>
                   <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest">
@@ -576,7 +553,6 @@ export default function HomePage() {
                   <span className="text-2xl font-black text-white">PKR {selectedProduct.price?.toLocaleString()}</span>
                 </div>
 
-                {/* Size Selector */}
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-2">
                     Select Size:
@@ -598,7 +574,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Quantity Counter */}
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-300 mb-2">
                     Quantity:
@@ -620,7 +595,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Gift Wrap Checkbox (+150 PKR Profit Upsell) */}
                 <label className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
                   <input
                     type="checkbox"
@@ -634,7 +608,6 @@ export default function HomePage() {
                   </div>
                 </label>
 
-                {/* Submit Add to Cart Button */}
                 <button
                   onClick={handleAddToCartFromModal}
                   className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-extrabold text-xs rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all uppercase tracking-wider flex items-center justify-center gap-2"
