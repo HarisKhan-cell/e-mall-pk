@@ -3,8 +3,7 @@ import { NextResponse } from 'next/server';
 const CLOUD_BIN_URL = 'https://api.jsonbin.io/v3/b/66c4c021ad19ca34f8997a38';
 const CLOUD_KEY = '$2a$10$MvXpL/k4yQ6QxO3l3x1y3eW1x3v3w3x3y3z3a3b3c3d3e3f3g';
 
-// Base initial 50 products fallback
-const BASE_50_PRODUCTS = [
+let BASE_PRODUCTS: any[] = [
   // --- OUTFITTERS (10) ---
   {
     id: 'outfitters-1',
@@ -483,15 +482,14 @@ export async function GET() {
     console.error('Cloud fetch fallback:', e);
   }
 
-  return NextResponse.json(BASE_50_PRODUCTS);
+  return NextResponse.json(BASE_PRODUCTS);
 }
 
 export async function POST(req: Request) {
   try {
     const newProduct = await req.json();
     
-    // Fetch current cloud list
-    let currentList = BASE_50_PRODUCTS;
+    let currentList = BASE_PRODUCTS;
     try {
       const res = await fetch(CLOUD_BIN_URL, { headers: { 'X-Master-Key': CLOUD_KEY } });
       if (res.ok) {
@@ -502,7 +500,6 @@ export async function POST(req: Request) {
 
     const updatedList = [newProduct, ...currentList];
 
-    // Save to Cloud Bin
     await fetch(CLOUD_BIN_URL, {
       method: 'PUT',
       headers: {
@@ -523,7 +520,7 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
-    let currentList = BASE_50_PRODUCTS;
+    let currentList = BASE_PRODUCTS;
     try {
       const res = await fetch(CLOUD_BIN_URL, { headers: { 'X-Master-Key': CLOUD_KEY } });
       if (res.ok) {

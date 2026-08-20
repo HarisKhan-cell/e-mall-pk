@@ -48,7 +48,34 @@ export default function AdminMasterPortal() {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
-  // Check saved Admin Session
+  // Check saved Admin Session & Fetch Live Server Products
+  const syncAdminData = async () => {
+    try {
+      const res = await fetch('/api/products');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setProducts(data);
+          localStorage.setItem('emall_custom_products', JSON.stringify(data));
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Orders
+    const storedOrders = localStorage.getItem('emall_orders');
+    if (storedOrders) {
+      try { setOrders(JSON.parse(storedOrders)); } catch (err) {}
+    }
+
+    // Vendor Applications
+    const storedVendors = localStorage.getItem('emall_vendor_apps');
+    if (storedVendors) {
+      try { setVendorApps(JSON.parse(storedVendors)); } catch (err) {}
+    }
+  };
+
   useEffect(() => {
     const authSession = localStorage.getItem('emall_admin_auth');
     if (authSession === 'true') {
@@ -59,7 +86,6 @@ export default function AdminMasterPortal() {
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // CEO SECURE PASSCODE
     if (passcode === 'EmallPK2026!' || passcode === 'admin123') {
       setIsAuthenticated(true);
       localStorage.setItem('emall_admin_auth', 'true');
@@ -75,37 +101,6 @@ export default function AdminMasterPortal() {
     localStorage.removeItem('emall_admin_auth');
   };
 
-  const syncAdminData = () => {
-    // Fetch products from server API
-    fetch('/api/products')
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setProducts(data);
-        }
-      })
-      .catch(console.error);
-
-    // Orders
-    const storedOrders = localStorage.getItem('emall_orders');
-    if (storedOrders) {
-      try { setOrders(JSON.parse(storedOrders)); } catch (err) {}
-    }
-
-    // Vendor Applications
-    const storedVendors = localStorage.getItem('emall_vendor_apps');
-    if (storedVendors) {
-      try { setVendorApps(JSON.parse(storedVendors)); } catch (err) {}
-    }
-  };
-
-  const saveAndUpdateProducts = (newList: any[]) => {
-    setProducts(newList);
-    localStorage.setItem('emall_custom_products', JSON.stringify(newList));
-    localStorage.setItem('emall_active_products', JSON.stringify(newList));
-    window.dispatchEvent(new Event('emall_products_updated'));
-  };
-
   const handleExportAllJSON = () => {
     const activeStr = JSON.stringify(products);
     navigator.clipboard.writeText(activeStr);
@@ -113,7 +108,7 @@ export default function AdminMasterPortal() {
     setTimeout(() => setCopied(false), 3000);
   };
 
-  const handleAddProduct = (e: React.FormEvent) => {
+  const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price || !imageUrl) return;
 
@@ -129,8 +124,21 @@ export default function AdminMasterPortal() {
       images: JSON.stringify([imageUrl]),
     };
 
+    // Update UI state
     const updatedList = [newProduct, ...products];
-    saveAndUpdateProducts(updatedList);
+    setProducts(updatedList);
+    localStorage.setItem('emall_custom_products', JSON.stringify(updatedList));
+
+    // Send POST to server API
+    try {
+      await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct)
+      });
+    } catch (err) {
+      console.error('Failed to add to server:', err);
+    }
 
     setTitle('');
     setPrice('');
@@ -140,9 +148,20 @@ export default function AdminMasterPortal() {
     setTimeout(() => setSuccessMessage(false), 4000);
   };
 
-  const handleDeleteProduct = (id: string) => {
+  const handleDeleteProduct = async (id: string) => {
+    // Update UI state immediately
     const updated = products.filter((p) => p.id !== id);
-    saveAndUpdateProducts(updated);
+    setProducts(updated);
+    localStorage.setItem('emall_custom_products', JSON.stringify(updated));
+
+    // Send DELETE to server API
+    try {
+      await fetch(`/api/products?id=${id}`, {
+        method: 'DELETE'
+      });
+    } catch (err) {
+      console.error('Failed to delete on server:', err);
+    }
   };
 
   // Order Status Update
@@ -183,7 +202,6 @@ export default function AdminMasterPortal() {
     'Watches'
   ];
 
-  // LOGIN SCREEN UNTIL CEO AUTHENTICATES
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#090807] text-[#E6DFD5] bg-grid font-sans flex items-center justify-center p-6">
@@ -254,7 +272,6 @@ export default function AdminMasterPortal() {
             </div>
           </div>
 
-          {/* Navigation Tabs & Logout */}
           <div className="flex items-center gap-3">
             <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
               <button
@@ -396,7 +413,6 @@ export default function AdminMasterPortal() {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-                        {/* Customer Info */}
                         <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-1">
                           <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Customer Details:</span>
                           <p className="font-bold text-white text-xs mt-1">{o.customerName}</p>
@@ -404,7 +420,6 @@ export default function AdminMasterPortal() {
                           <p className="text-gray-400 text-[11px]">{o.customerAddress}</p>
                           <p className="text-emerald-400 text-[10px] font-bold pt-1">Payment: {o.paymentMethod}</p>
 
-                          {/* WhatsApp Direct Chat Button */}
                           <a
                             href={`https://wa.me/92${o.customerPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
                             target="_blank"
@@ -416,7 +431,6 @@ export default function AdminMasterPortal() {
                           </a>
                         </div>
 
-                        {/* Items Ordered */}
                         <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2 md:col-span-2">
                           <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Ordered Items:</span>
                           <div className="space-y-1.5 max-h-32 overflow-y-auto">
@@ -451,7 +465,6 @@ export default function AdminMasterPortal() {
         {activeTab === 'products' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            {/* GLOBAL EXPORT BUTTON BAR */}
             <div className="lg:col-span-3 bg-amber-950/40 border border-amber-500/30 p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <span className="bg-amber-500 text-black text-[9px] font-black px-2.5 py-0.5 rounded uppercase tracking-widest block w-fit mb-1">
