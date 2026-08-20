@@ -19,12 +19,13 @@ import {
   ShieldCheck,
   Award,
   FileText,
-  Check,
   Minus,
-  CheckCircle2,
   Clock,
   Mail,
-  Phone
+  Phone,
+  Megaphone,
+  UserPlus,
+  CheckCircle2
 } from 'lucide-react';
 
 const INITIAL_PRODUCTS = [
@@ -229,6 +230,7 @@ export default function HomePage() {
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
   const [showSupport, setShowSupport] = useState(false);
   const [showInvoice, setShowInvoice] = useState(false);
+  const [showVendorModal, setShowVendorModal] = useState(false);
   const [lastOrder, setLastOrder] = useState<any>(null);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -247,11 +249,22 @@ export default function HomePage() {
   const [customerAddress, setCustomerAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'PREPAID' | 'COD' | 'EXPRESS_COD'>('PREPAID');
 
+  // Vendor Onboarding Form Fields
+  const [vendorName, setVendorName] = useState('');
+  const [vendorPhone, setVendorPhone] = useState('');
+  const [vendorInsta, setVendorInsta] = useState('');
+  const [vendorCity, setVendorCity] = useState('Lahore');
+  const [vendorSuccess, setVendorSuccess] = useState(false);
+
+  // RESTORE & SYNC ALL 50 PRODUCTS FROM LOCALSTORAGE
   const syncActiveProducts = () => {
-    const stored = localStorage.getItem('emall_active_products');
-    if (stored) {
+    const custom1 = localStorage.getItem('emall_custom_products');
+    const custom2 = localStorage.getItem('emall_active_products');
+    const activeStr = custom1 || custom2;
+
+    if (activeStr) {
       try {
-        const parsed = JSON.parse(stored);
+        const parsed = JSON.parse(activeStr);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setProducts(parsed);
           return;
@@ -260,7 +273,7 @@ export default function HomePage() {
         console.error('Error syncing products:', err);
       }
     }
-    localStorage.setItem('emall_active_products', JSON.stringify(INITIAL_PRODUCTS));
+    localStorage.setItem('emall_custom_products', JSON.stringify(INITIAL_PRODUCTS));
     setProducts(INITIAL_PRODUCTS);
   };
 
@@ -363,6 +376,18 @@ export default function HomePage() {
     setShowInvoice(true);
   };
 
+  const handleVendorSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setVendorSuccess(true);
+    setTimeout(() => {
+      setVendorSuccess(false);
+      setShowVendorModal(false);
+      setVendorName('');
+      setVendorPhone('');
+      setVendorInsta('');
+    }, 3000);
+  };
+
   const categories = ['All', 'Fashion & Apparel', 'Perfumes & Accessories', 'Shoes & Footwear', 'Bags & Accessories'];
 
   const brands = [
@@ -435,6 +460,14 @@ export default function HomePage() {
 
           {/* Actions */}
           <div className="flex items-center gap-4 text-xs font-bold tracking-wider uppercase">
+            <button
+              onClick={() => setShowVendorModal(true)}
+              className="hidden lg:flex items-center gap-1.5 px-4 py-2 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 rounded-full border border-emerald-500/30 transition-all text-[11px]"
+            >
+              <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Become a Seller</span>
+            </button>
+
             <Link
               href="/admin/add-product"
               className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 text-amber-300 rounded-full border border-amber-500/30 transition-all text-[11px]"
@@ -480,10 +513,35 @@ export default function HomePage() {
               <span>FREE Delivery on All Prepaid Orders</span>
             </div>
             <div className="flex items-center gap-2 bg-white/5 px-5 py-3 rounded-full border border-white/10 backdrop-blur-xl">
-              <Truck className="w-4 h-4 text-[#D95D27]" />
-              <span>Cash on Delivery: PKR 195</span>
+              <Clock className="w-4 h-4 text-amber-400" />
+              <span>VIP 24H Lahore Express Delivery (PKR 350)</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* FEATURED VENDOR SPOTLIGHT (SPONSORED BANNER) */}
+      <div className="max-w-7xl mx-auto px-8 my-10">
+        <div className="bg-gradient-to-r from-amber-950/60 via-black to-amber-950/60 border border-amber-500/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-bold">
+              <Megaphone className="w-6 h-6" />
+            </div>
+            <div>
+              <span className="bg-amber-500 text-black font-black text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-widest block w-fit mb-1">
+                Featured Vendor Spotlight
+              </span>
+              <h3 className="text-xl font-serif text-white">Breakout Kids & Men Collection 2026</h3>
+              <p className="text-gray-400 text-xs mt-0.5">Explore 11 official articles with 100% original store guarantee.</p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setSelectedBrand('Breakout Official')}
+            className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs rounded-full shadow-lg uppercase tracking-wider transition-all whitespace-nowrap"
+          >
+            Explore Breakout Store ➔
+          </button>
         </div>
       </div>
 
@@ -720,6 +778,92 @@ export default function HomePage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* LOCAL BOUTIQUE / SELLER ONBOARDING MODAL */}
+      {showVendorModal && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div className="bg-[#090807] border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl text-xs space-y-4">
+            <div className="flex justify-between items-center border-b border-white/10 pb-4">
+              <div>
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Vendor Registration</span>
+                <h3 className="text-xl font-serif text-white mt-1">Partner with E-Mall Pakistan</h3>
+              </div>
+              <button onClick={() => setShowVendorModal(false)} className="text-gray-500 hover:text-white font-bold">✕</button>
+            </div>
+
+            {vendorSuccess ? (
+              <div className="bg-emerald-950/80 border border-emerald-500/50 p-6 rounded-2xl text-center space-y-2">
+                <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
+                <h4 className="text-sm font-bold text-white">Application Submitted!</h4>
+                <p className="text-gray-300 text-xs">Our Merchant Onboarding Team will WhatsApp you within 2 hours.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleVendorSubmit} className="space-y-3.5">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Store / Brand Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={vendorName}
+                    onChange={(e) => setVendorName(e.target.value)}
+                    placeholder="e.g. Amber's Pret Studio"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">WhatsApp Contact Number</label>
+                  <input
+                    type="tel"
+                    required
+                    value={vendorPhone}
+                    onChange={(e) => setVendorPhone(e.target.value)}
+                    placeholder="e.g. 0300 1234567"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Instagram Page / Website Link</label>
+                  <input
+                    type="text"
+                    value={vendorInsta}
+                    onChange={(e) => setVendorInsta(e.target.value)}
+                    placeholder="e.g. instagram.com/brandname"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">City</label>
+                  <select
+                    value={vendorCity}
+                    onChange={(e) => setVendorCity(e.target.value)}
+                    className="w-full px-4 py-3 bg-[#090807] border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
+                  >
+                    <option value="Lahore">Lahore (Single-Box Center)</option>
+                    <option value="Karachi">Karachi</option>
+                    <option value="Islamabad">Islamabad</option>
+                    <option value="Faisalabad">Faisalabad</option>
+                    <option value="Other">Other City</option>
+                  </select>
+                </div>
+
+                <div className="p-3 bg-emerald-950/40 border border-emerald-500/20 rounded-xl text-[10px] text-emerald-300">
+                  💡 <strong>Commission Rate:</strong> 10% Sourcing & Marketing Commission on items sold.
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-full shadow-2xl transition-all uppercase tracking-wider"
+                >
+                  Submit Seller Application
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}
@@ -1054,7 +1198,7 @@ export default function HomePage() {
               <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Single-Box Delivery Guarantee</Link></li>
               <li><Link href="/" className="hover:text-[#D95D27] transition-colors">7-Day Hassle-Free Exchange Policy</Link></li>
               <li><Link href="/" className="hover:text-[#D95D27] transition-colors">Order Tracking & Status Lookup</Link></li>
-              <li><a href="https://wa.me/923000000000" target="_blank" rel="noreferrer" className="text-emerald-400 font-bold hover:underline">WhatsApp 24/7 Live Support</a></li>
+              <li><button onClick={() => setShowVendorModal(true)} className="text-emerald-400 font-bold hover:underline">Apply to Sell on E-Mall (10% Fee)</button></li>
             </ul>
           </div>
 
@@ -1118,9 +1262,9 @@ export default function HomePage() {
 
         </div>
 
-        {/* Footer Bottom Copyright */}
+        {/* Official Clean Copyright Footer */}
         <div className="max-w-7xl mx-auto pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500">
-          <p>© COPYRIGHT 2026 E-MALL PAKISTAN. CREATED BY HARIS KHAN. ALL RIGHTS RESERVED.</p>
+          <p>© COPYRIGHT 2026 E-MALL PAKISTAN (PVT) LTD. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-3 text-gray-400 font-bold">
             <Link href="/admin/add-product" className="hover:text-[#D95D27] transition-colors">Admin Management Portal</Link>
           </div>
