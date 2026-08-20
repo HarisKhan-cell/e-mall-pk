@@ -232,18 +232,16 @@ export default function HomePage() {
   const [vendorCity, setVendorCity] = useState('Lahore');
   const [vendorSuccess, setVendorSuccess] = useState(false);
 
- const syncMasterStore = () => {
-  const master = localStorage.getItem('emall_master_products');
-  const custom = localStorage.getItem('emall_custom_products');
-  const activeStr = master || custom;
-
+const syncMasterStore = () => {
+  const activeStr = localStorage.getItem('emall_custom_products') || 
+                    localStorage.getItem('emall_active_products') || 
+                    localStorage.getItem('emall_master_products');
   if (activeStr) {
     try {
       const parsed = JSON.parse(activeStr);
       if (Array.isArray(parsed) && parsed.length > 0) {
         setProducts(parsed);
         localStorage.setItem('emall_master_products', JSON.stringify(parsed));
-        return;
       }
     } catch (err) {}
   }
