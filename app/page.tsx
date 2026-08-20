@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Truck,
   MessageCircle,
-  Building2,
   Sparkles,
   Gift,
   CreditCard,
@@ -25,8 +24,28 @@ import {
   Phone,
   Megaphone,
   UserPlus,
-  CheckCircle2
+  CheckCircle2,
+  Home,
+  Layers,
+  Settings
 } from 'lucide-react';
+
+// ICONIC E-MALL PK MONOGRAM LOGO SVG (E + M Architecture Dual Arch)
+function EMallLogoSymbol() {
+  return (
+    <svg className="w-6 h-6" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 32V8H22C25.3137 8 28 10.6863 28 14C28 17.3137 25.3137 20 22 20H14M14 20V32M14 20H24C27.3137 20 30 22.6863 30 26C30 29.3137 27.3137 32 24 32H8" stroke="url(#emall_grad)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="32" cy="10" r="3" fill="#D95D27" />
+      <defs>
+        <linearGradient id="emall_grad" x1="8" y1="8" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#D95D27" />
+          <stop offset="0.5" stopColor="#F59E0B" />
+          <stop offset="1" stopColor="#D95D27" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
 
 const INITIAL_PRODUCTS = [
   // Khaadi (10)
@@ -256,7 +275,7 @@ export default function HomePage() {
   const [vendorCity, setVendorCity] = useState('Lahore');
   const [vendorSuccess, setVendorSuccess] = useState(false);
 
-  // RESTORE & SYNC ALL 50 PRODUCTS FROM LOCALSTORAGE
+  // RESTORE & SYNC ALL PRODUCTS FROM LOCALSTORAGE
   const syncActiveProducts = () => {
     const custom1 = localStorage.getItem('emall_custom_products');
     const custom2 = localStorage.getItem('emall_active_products');
@@ -408,7 +427,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#090807] text-[#E6DFD5] bg-grid font-sans selection:bg-[#D95D27] selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#090807] text-[#E6DFD5] bg-grid font-sans selection:bg-[#D95D27] selection:text-white relative overflow-x-hidden pb-20 md:pb-0">
       
       {/* PROMO BANNER FOR FREE PREPAID DELIVERY */}
       {showPromoBanner && (
@@ -429,8 +448,9 @@ export default function HomePage() {
           
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#D95D27] to-amber-600 flex items-center justify-center text-white shadow-lg shadow-[#D95D27]/30 group-hover:scale-105 transition-all">
-                <Building2 className="w-5 h-5 text-white" />
+              {/* ICONIC E-MALL MONOGRAM SYMBOL */}
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#121110] to-[#1a1816] border border-amber-500/30 flex items-center justify-center shadow-lg shadow-[#D95D27]/20 group-hover:scale-105 transition-all">
+                <EMallLogoSymbol />
               </div>
               <div>
                 <span className="text-xl font-bold tracking-widest text-white uppercase font-sans flex items-center gap-1.5">
@@ -491,9 +511,11 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <div className="relative py-20 px-8 text-center border-b border-white/10">
-        <div className="max-w-4xl mx-auto">
+      {/* Hero Section with Neutral Dark Luxury Background Image */}
+      <div className="relative py-24 px-8 text-center border-b border-white/10 overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1920')" }}>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#090807] via-[#090807]/85 to-[#090807]/75 backdrop-blur-sm" />
+
+        <div className="relative z-10 max-w-4xl mx-auto">
           <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#D95D27] block mb-4">
             Official Multi-Brand Destination
           </span>
@@ -503,16 +525,16 @@ export default function HomePage() {
             <span className="italic text-[#E6DFD5] font-light">One Easy Checkout.</span>
           </h1>
 
-          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed mb-8">
+          <p className="text-gray-300 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed mb-8">
             Shop directly from verified brand stores in one single cart with 100% original brand guarantee.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-300 font-medium">
-            <div className="flex items-center gap-2 bg-emerald-950/50 border border-emerald-500/30 text-emerald-300 px-5 py-3 rounded-full backdrop-blur-xl">
+            <div className="flex items-center gap-2 bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 px-5 py-3 rounded-full backdrop-blur-xl">
               <Gift className="w-4 h-4 text-emerald-400" />
               <span>FREE Delivery on All Prepaid Orders</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/5 px-5 py-3 rounded-full border border-white/10 backdrop-blur-xl">
+            <div className="flex items-center gap-2 bg-black/60 px-5 py-3 rounded-full border border-white/15 backdrop-blur-xl">
               <Clock className="w-4 h-4 text-amber-400" />
               <span>VIP 24H Lahore Express Delivery (PKR 350)</span>
             </div>
@@ -630,10 +652,19 @@ export default function HomePage() {
                       </div>
 
                       <div className="p-6">
-                        <h3 className="text-base font-bold text-white group-hover:text-[#D95D27] transition-colors line-clamp-1 font-sans">
-                          {product.title}
-                        </h3>
-                        <p className="text-gray-400 text-xs mt-2 line-clamp-2 leading-relaxed font-light">
+                        <div className="flex items-center justify-between gap-2 mb-2">
+                          <h3 className="text-base font-bold text-white group-hover:text-[#D95D27] transition-colors line-clamp-1 font-sans">
+                            {product.title}
+                          </h3>
+                          {/* COLOR SWATCH PREVIEW DOTS */}
+                          <div className="flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+                            <span className="w-2 h-2 rounded-full bg-zinc-400 inline-block" />
+                          </div>
+                        </div>
+
+                        <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed font-light">
                           {product.description}
                         </p>
                       </div>
@@ -871,7 +902,7 @@ export default function HomePage() {
       {/* Floating Support Button */}
       <button
         onClick={() => setShowSupport(!showSupport)}
-        className="fixed bottom-8 right-8 z-50 bg-[#D95D27] hover:bg-[#c44e1d] text-white px-5 py-3.5 rounded-full shadow-2xl font-bold text-xs flex items-center gap-2 border border-white/20 transition-all"
+        className="fixed bottom-20 md:bottom-8 right-8 z-40 bg-[#D95D27] hover:bg-[#c44e1d] text-white px-5 py-3.5 rounded-full shadow-2xl font-bold text-xs flex items-center gap-2 border border-white/20 transition-all"
       >
         <MessageCircle className="w-4 h-4 text-amber-200" />
         <span>24/7 Support</span>
@@ -1171,14 +1202,47 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* MOBILE BOTTOM NAVIGATION BAR */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#090807]/95 backdrop-blur-2xl border-t border-white/10 px-6 py-3 flex justify-between items-center text-[10px] font-bold uppercase text-gray-400">
+        <button onClick={() => { setSelectedBrand('All'); setSelectedCategory('All'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex flex-col items-center gap-1 hover:text-[#D95D27]">
+          <Home className="w-4 h-4 text-[#D95D27]" />
+          <span>Home</span>
+        </button>
+
+        <button onClick={() => { setSelectedBrand('All'); window.scrollTo({ top: 600, behavior: 'smooth' }); }} className="flex flex-col items-center gap-1 hover:text-white">
+          <Layers className="w-4 h-4" />
+          <span>Brands</span>
+        </button>
+
+        <button onClick={() => setShowCart(true)} className="flex flex-col items-center gap-1 relative hover:text-white">
+          <ShoppingBag className="w-4 h-4 text-amber-400" />
+          <span>Cart</span>
+          {cart.length > 0 && (
+            <span className="absolute -top-1 -right-2 bg-[#D95D27] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+              {cart.length}
+            </span>
+          )}
+        </button>
+
+        <Link href="/admin/add-product" className="flex flex-col items-center gap-1 hover:text-amber-300">
+          <Settings className="w-4 h-4 text-amber-400" />
+          <span>Admin</span>
+        </Link>
+
+        <button onClick={() => setShowSupport(!showSupport)} className="flex flex-col items-center gap-1 hover:text-white">
+          <MessageCircle className="w-4 h-4 text-emerald-400" />
+          <span>Support</span>
+        </button>
+      </div>
+
       {/* LUXURY 5-COLUMN CORPORATE TRUST & LICENSING FOOTER */}
       <footer className="bg-black/90 border-t border-white/10 mt-28 pt-16 pb-12 px-8 text-xs text-gray-400 font-sans">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
           
           {/* Col 1: About E-Mall PK & Point of View */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-white font-serif font-bold text-sm">
-              <Building2 className="w-4 h-4 text-[#D95D27]" />
+            <div className="flex items-center gap-3 text-white font-serif font-bold text-sm">
+              <EMallLogoSymbol />
               <span>E-MALL PAKISTAN</span>
             </div>
             <p className="text-gray-400 text-[11px] leading-relaxed font-light">
@@ -1262,7 +1326,7 @@ export default function HomePage() {
 
         </div>
 
-        {/* Official Clean Copyright Footer */}
+        {/* Official Corporate Copyright Footer */}
         <div className="max-w-7xl mx-auto pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-gray-500">
           <p>© COPYRIGHT 2026 E-MALL PAKISTAN (PVT) LTD. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-3 text-gray-400 font-bold">
