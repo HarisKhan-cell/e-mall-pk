@@ -24,7 +24,6 @@ import {
   KeyRound,
   ShieldCheck,
   LogOut,
-  RotateCcw,
   AlertCircle,
   RefreshCw
 } from 'lucide-react';
@@ -34,7 +33,7 @@ export default function AdminMasterPortal() {
   const [passcode, setPasscode] = useState('');
   const [loginError, setLoginError] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'vendors'>('products');
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'vendors'>('orders');
   
   const [products, setProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -43,39 +42,34 @@ export default function AdminMasterPortal() {
   const [successMessage, setSuccessMessage] = useState(false);
   const [formError, setFormError] = useState('');
 
-  // Form State
-  const [title, setTitle] = useState('');
-  const [brand, setBrand] = useState('Khaadi Official');
-  const [customBrand, setCustomBrand] = useState('');
-  const [category, setCategory] = useState('Fashion & Apparel');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-
   const syncAdminData = async () => {
+    // 1. Fetch live products from Supabase API
     try {
       const res = await fetch('/api/products', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
           setProducts(data);
-          localStorage.setItem('emall_master_products', JSON.stringify(data));
         }
       }
     } catch (e) {
       console.error(e);
     }
 
-    // Orders
+    // 2. Fetch live orders from Supabase API
     try {
       const resOrders = await fetch('/api/orders', { cache: 'no-store' });
       if (resOrders.ok) {
         const dataOrders = await resOrders.json();
-        if (Array.isArray(dataOrders)) setOrders(dataOrders);
+        if (Array.isArray(dataOrders)) {
+          setOrders(dataOrders);
+        }
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
 
-    // Vendor Applications
+    // 3. Fetch live vendor applications from Supabase API
     try {
       const resVendors = await fetch('/api/vendors', { cache: 'no-store' });
       if (resVendors.ok) {
@@ -170,7 +164,7 @@ export default function AdminMasterPortal() {
         setSuccessMessage(true);
         setTimeout(() => setSuccessMessage(false), 4000);
       } else {
-        setFormError(`Supabase Error: ${data.error || 'Failed to save product'}`);
+        setFormError(`Server error: ${data.error || 'Failed to save product'}`);
       }
     } catch (err: any) {
       setFormError(`Network error: ${err.message}`);
