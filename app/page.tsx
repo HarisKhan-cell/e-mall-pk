@@ -28,25 +28,174 @@ import {
   CheckCircle2,
   Home,
   Layers,
-  Settings
+  Settings,
+  Baby,
+  Smile
 } from 'lucide-react';
 
-// TWO-COLOR ICONIC E-MALL PK MONOGRAM LOGO SVG (Terracotta "E" + Charcoal "M")
 function EMallLogoSymbol() {
   return (
-    <svg className="w-7 h-7" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* "E" Pillar - Rich Terracotta */}
+    <svg className="w-6 h-6" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M8 32V8H22C25.3137 8 28 10.6863 28 14C28 17.3137 25.3137 20 22 20H14" stroke="#C8521B" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-      {/* "M" Pillar - Deep Charcoal */}
       <path d="M14 20V32M14 20H24C27.3137 20 30 22.6863 30 26C30 29.3137 27.3137 32 24 32H8" stroke="#1A1816" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-      {/* Gold Dot Accent */}
       <circle cx="32" cy="10" r="3" fill="#D49A37" />
     </svg>
   );
 }
 
+const INITIAL_PRODUCTS = [
+  // --- KHAADI (5) ---
+  {
+    id: 'khaadi-1',
+    title: 'Khaadi Floral V-Neck Kurta',
+    description: 'Embroidered Cambric Cotton floral V-neck kurta (2-26-203-A-G1).',
+    price: 4490,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-2',
+    title: 'Khaadi Beige V-Neck Kurta',
+    description: 'Embroidered Cotton Viscose kurta with subtle beige tones (1-26-118-A-F).',
+    price: 4290,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dwf6e45b4b/images/hi-res/1-26-128-a-e_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'khaadi-3',
+    title: 'Khaadi Raw Silk Black Co-Ord Set',
+    description: 'Luxury Raw Silk kurta, pants, and sequin embroidered dupatta (5-26-201-F-H).',
+    price: 25000,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official' },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw15321f8a/images/hi-res/5-26-201-f-h_multi_1.jpg?sw=800'])
+  },
+
+  // --- BREAKOUT (5) ---
+  {
+    id: 'breakout-1',
+    title: 'Breakout Printed Button Down Shirt',
+    description: '100% Cotton printed button down shirt with modern classic silhouette.',
+    price: 2249,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6DSWT912-MTO_6.jpg?v=1782899185&width=1920'])
+  },
+  {
+    id: 'breakout-2',
+    title: "Breakout Men's Baggy Fit Denim Jeans",
+    description: '100% Cotton Denim contemporary baggy fit jeans (6ESMD839-BLU).',
+    price: 4999,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official' },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6ESMD839-BLU_1.jpg?v=1782899185&width=1920'])
+  },
+
+  // --- LAMA (3) ---
+  {
+    id: 'lama-1',
+    title: 'LAMA Shadow Textured Shirt',
+    description: 'LAMA Shadow textured button down shirt.',
+    price: 6950,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1603252109303-2751441dd157?q=80&w=800'])
+  },
+  {
+    id: 'lama-2',
+    title: 'LAMA Striped Jacquard Shirt',
+    description: 'Luxury striped jacquard weave button shirt.',
+    price: 8450,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'LAMA' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1589310243389-96a5483213a8?q=80&w=800'])
+  },
+
+  // --- AGHA NOOR (3) ---
+  {
+    id: 'aghanoor-1',
+    title: 'Agha Noor Embroidered Organza 2-Piece Suit',
+    description: 'Luxury organza shirt with hand-crafted zardozi thread embroidery.',
+    price: 8900,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Agha Noor Official' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800'])
+  },
+  {
+    id: 'aghanoor-2',
+    title: 'Agha Noor Velvet Festive Kurti',
+    description: 'Deep maroon velvet stitched kurti with gold thread embroidery.',
+    price: 11500,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Agha Noor Official' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1563178406-4cdc2923acbc?q=80&w=800'])
+  },
+
+  // --- HEMANI NATURAL (3) ---
+  {
+    id: 'hemani-1',
+    title: 'Hemani Organic Argan Oil Facial Serum (50ml)',
+    description: '100% pure cold-pressed Moroccan Argan oil for radiant skin.',
+    price: 1450,
+    category: { name: 'Beauty & Organic' },
+    shop: { name: 'Hemani Natural' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1608248597261-83d3e6481747?q=80&w=800'])
+  },
+  {
+    id: 'hemani-2',
+    title: 'Hemani Royal Oud Luxury Perfume (100ml)',
+    description: 'Traditional long-lasting concentrated Arabian Oud perfume spray.',
+    price: 3200,
+    category: { name: 'Perfumes & Accessories' },
+    shop: { name: 'Hemani Natural' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=800'])
+  },
+
+  // --- ONE DOLLAR SHOP (3) ---
+  {
+    id: 'onedollar-1',
+    title: 'One Dollar Mini LED Touch Reading Lamp',
+    description: 'USB rechargeable flexible mini LED desk & book lamp.',
+    price: 300,
+    category: { name: 'Home & Lifestyle' },
+    shop: { name: 'One Dollar Shop' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=800'])
+  },
+  {
+    id: 'onedollar-2',
+    title: 'One Dollar Stainless Travel Bottle (500ml)',
+    description: 'Insulated vacuum flask water bottle for daily use.',
+    price: 300,
+    category: { name: 'Home & Lifestyle' },
+    shop: { name: 'One Dollar Shop' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1602143407151-7111542de6e8?q=80&w=800'])
+  },
+
+  // --- BABY SECTION (3) ---
+  {
+    id: 'baby-1',
+    title: 'Baby Section Organic Cotton 3-Pack Rompers',
+    description: 'Super soft breathable 100% organic cotton newborn romper suits.',
+    price: 2490,
+    category: { name: 'Baby & Kids' },
+    shop: { name: 'Baby Section' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=800'])
+  },
+  {
+    id: 'baby-2',
+    title: 'Baby Section Hooded Fleece Bear Blanket',
+    description: 'Ultra-warm plush fleece baby swaddle blanket.',
+    price: 1890,
+    category: { name: 'Baby & Kids' },
+    shop: { name: 'Baby Section' },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=800'])
+  }
+];
+
 export default function HomePage() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>(INITIAL_PRODUCTS);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
@@ -78,22 +227,36 @@ export default function HomePage() {
   const [vendorCity, setVendorCity] = useState('Lahore');
   const [vendorSuccess, setVendorSuccess] = useState(false);
 
-  const fetchLiveProducts = async () => {
-    try {
-      const res = await fetch('/api/products', { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setProducts(data);
+  // UNIFIED MASTER STORE SYNC
+  const syncMasterStore = () => {
+    const c1 = localStorage.getItem('emall_custom_products');
+    const c2 = localStorage.getItem('emall_active_products');
+    const c3 = localStorage.getItem('emall_master_products');
+    const activeStr = c1 || c2 || c3;
+
+    if (activeStr) {
+      try {
+        const parsed = JSON.parse(activeStr);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProducts(parsed);
+          localStorage.setItem('emall_master_products', JSON.stringify(parsed));
+          localStorage.setItem('emall_custom_products', JSON.stringify(parsed));
+          return;
         }
-      }
-    } catch (err) {
-      console.error(err);
+      } catch (err) {}
     }
+    localStorage.setItem('emall_master_products', JSON.stringify(INITIAL_PRODUCTS));
+    setProducts(INITIAL_PRODUCTS);
   };
 
   useEffect(() => {
-    fetchLiveProducts();
+    syncMasterStore();
+    window.addEventListener('storage', syncMasterStore);
+    window.addEventListener('emall_products_updated', syncMasterStore);
+    return () => {
+      window.removeEventListener('storage', syncMasterStore);
+      window.removeEventListener('emall_products_updated', syncMasterStore);
+    };
   }, []);
 
   const handleOpenProduct = (product: any) => {
@@ -179,11 +342,10 @@ export default function HomePage() {
       status: 'Pending Dispatch'
     };
 
-    fetch('/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderReceipt)
-    }).catch(console.error);
+    const existingOrders = JSON.parse(localStorage.getItem('emall_orders') || '[]');
+    const updatedOrders = [orderReceipt, ...existingOrders];
+    localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
+    window.dispatchEvent(new Event('emall_orders_updated'));
 
     setLastOrder(orderReceipt);
     setCart([]);
@@ -202,11 +364,10 @@ export default function HomePage() {
       date: new Date().toLocaleDateString('en-PK')
     };
 
-    fetch('/api/vendors', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newApp)
-    }).catch(console.error);
+    const existingVendors = JSON.parse(localStorage.getItem('emall_vendor_apps') || '[]');
+    const updatedVendors = [newApp, ...existingVendors];
+    localStorage.setItem('emall_vendor_apps', JSON.stringify(updatedVendors));
+    window.dispatchEvent(new Event('emall_vendors_updated'));
 
     setVendorSuccess(true);
     setTimeout(() => {
@@ -218,15 +379,25 @@ export default function HomePage() {
     }, 3000);
   };
 
-  const categories = ['All', 'Fashion & Apparel', 'Perfumes & Accessories', 'Shoes & Footwear', 'Bags & Accessories'];
+  const categories = [
+    'All',
+    'Fashion & Apparel',
+    'Beauty & Organic',
+    'Baby & Kids',
+    'Home & Lifestyle',
+    'Perfumes & Accessories'
+  ];
 
   const brands = [
     { name: 'ALL BRANDS', filter: 'All' },
     { name: 'KHAADI', filter: 'Khaadi Official' },
     { name: 'BREAKOUT', filter: 'Breakout Official' },
+    { name: 'LAMA', filter: 'LAMA' },
+    { name: 'AGHA NOOR', filter: 'Agha Noor Official' },
+    { name: 'HEMANI', filter: 'Hemani Natural' },
+    { name: 'ONE DOLLAR', filter: 'One Dollar Shop' },
+    { name: 'BABY SECTION', filter: 'Baby Section' },
     { name: 'SAPPHIRE', filter: 'Sapphire Official' },
-    { name: 'SAYA', filter: 'SAYA Official' },
-    { name: 'ETHNIC', filter: 'ETHNIC Official' },
   ];
 
   const filteredProducts = products.filter((p) => {
@@ -259,7 +430,6 @@ export default function HomePage() {
           
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-3 group">
-              {/* TWO-COLOR LOGO SYMBOL */}
               <div className="w-10 h-10 rounded-2xl bg-white border border-[#E6E2D8] flex items-center justify-center shadow-sm group-hover:scale-105 transition-all">
                 <EMallLogoSymbol />
               </div>
@@ -284,7 +454,7 @@ export default function HomePage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search Khaadi, Breakout, Sapphire, Saya, Ethnic..."
+              placeholder="Search Khaadi, Breakout, Agha Noor, Hemani, LAMA..."
               className="w-full pl-11 pr-4 py-2.5 bg-white border border-[#E6E2D8] rounded-full text-xs text-[#1A1816] placeholder-gray-400 focus:outline-none focus:border-[#C8521B] transition-all shadow-sm"
             />
           </div>
@@ -335,7 +505,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-[#66615C] text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed">
-            Shop directly from verified brand stores in one single cart with 100% original brand guarantee.
+            Shop directly from Khaadi, Breakout, Agha Noor, Hemani, One Dollar Shop, and Baby Section in one single cart!
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 text-xs text-[#1A1816] font-medium pt-4">
@@ -362,16 +532,16 @@ export default function HomePage() {
               <span className="bg-amber-100 text-amber-900 font-black text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-widest block w-fit mb-1 border border-amber-200">
                 Featured Vendor Spotlight
               </span>
-              <h3 className="text-xl font-serif text-[#1A1816]">Breakout & Khaadi Collection 2026</h3>
-              <p className="text-[#66615C] text-xs mt-0.5">Explore official articles with 100% original store guarantee.</p>
+              <h3 className="text-xl font-serif text-[#1A1816]">Agha Noor & Hemani Natural Collections</h3>
+              <p className="text-[#66615C] text-xs mt-0.5">Explore luxury pret embroidery and 100% organic skincare serums.</p>
             </div>
           </div>
 
           <button
-            onClick={() => setSelectedBrand('Breakout Official')}
+            onClick={() => setSelectedBrand('Agha Noor Official')}
             className="px-6 py-3 bg-[#1A1816] hover:bg-black text-white font-extrabold text-xs rounded-full shadow-md uppercase tracking-wider transition-all whitespace-nowrap"
           >
-            Explore Store ➔
+            Explore Agha Noor ➔
           </button>
         </div>
       </div>
@@ -465,11 +635,6 @@ export default function HomePage() {
                           <h3 className="text-base font-bold text-[#1A1816] group-hover:text-[#C8521B] transition-colors line-clamp-1 font-sans">
                             {product.title}
                           </h3>
-                          <div className="flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-                            <span className="w-2 h-2 rounded-full bg-zinc-400 inline-block" />
-                          </div>
                         </div>
 
                         <p className="text-[#66615C] text-xs line-clamp-2 leading-relaxed font-light">
@@ -503,7 +668,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* QUICK VIEW PRODUCT MODAL WITH SIZES & QUANTITY */}
+      {/* QUICK VIEW PRODUCT MODAL */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50">
           <div className="bg-white border border-[#E6E2D8] rounded-3xl p-8 max-w-2xl w-full shadow-2xl text-xs space-y-6 relative overflow-y-auto max-h-[90vh]">
@@ -547,7 +712,7 @@ export default function HomePage() {
 
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1A1816] mb-2">
-                    Select Size:
+                    Select Option / Size:
                   </label>
                   <div className="flex gap-2">
                     {['S', 'M', 'L', 'XL'].map((sz) => (
@@ -606,7 +771,7 @@ export default function HomePage() {
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>
-                    Add Size {selectedSize} to Cart (PKR {((selectedProduct.price * selectedQty) + (isGiftWrap ? 150 : 0)).toLocaleString()})
+                    Add to Cart (PKR {((selectedProduct.price * selectedQty) + (isGiftWrap ? 150 : 0)).toLocaleString()})
                   </span>
                 </button>
               </div>
@@ -735,7 +900,7 @@ export default function HomePage() {
                         <h4 className="text-sm font-bold text-[#1A1816] line-clamp-1">{item.title}</h4>
                         <div className="flex items-center gap-2 text-[10px] mt-1">
                           <span className="bg-[#C8521B] text-white font-bold px-2 py-0.5 rounded">
-                            Size: {item.selectedSize}
+                            Option: {item.selectedSize}
                           </span>
                           <span className="text-[#66615C]">Qty: {item.quantity}</span>
                           {item.isGiftWrap && <span className="text-amber-700 font-bold">🎁 Gift Wrapped</span>}
@@ -960,7 +1125,7 @@ export default function HomePage() {
                   <div className="space-y-1 text-[11px] text-[#66615C]">
                     {sub.items.map((item: any, i: number) => (
                       <div key={i} className="flex justify-between items-center">
-                        <span>• {item.title} (Size: {item.selectedSize}, Qty: {item.quantity})</span>
+                        <span>• {item.title} (Option: {item.selectedSize}, Qty: {item.quantity})</span>
                         <span className="text-[#1A1816] font-bold">PKR {item.totalPrice.toLocaleString()}</span>
                       </div>
                     ))}
@@ -1063,7 +1228,7 @@ export default function HomePage() {
             <ul className="space-y-2 text-gray-400 text-[11px]">
               <li><Link href="/" className="hover:text-[#C8521B] transition-colors">Single-Box Delivery Guarantee</Link></li>
               <li><Link href="/" className="hover:text-[#C8521B] transition-colors">7-Day Hassle-Free Exchange Policy</Link></li>
-              <li><Link href="/" className="hover:text-[#C8521B] transition-colors">Order Tracking & Status Lookup</Link></li>
+              <li><Link href="/track-order" className="hover:text-[#C8521B] transition-colors">Order Tracking & Status Lookup</Link></li>
               <li><button onClick={() => setShowVendorModal(true)} className="text-emerald-400 font-bold hover:underline">Apply to Sell on E-Mall (10% Fee)</button></li>
             </ul>
           </div>

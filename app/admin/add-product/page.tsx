@@ -204,24 +204,28 @@ export default function AdminMasterPortal() {
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || o.totalAmount || 0), 0);
   const totalProfit = orders.reduce((sum, o) => sum + (o.total_hardwork_profit || o.totalHardworkProfit || 0) + 50, 0);
 
-  const brandOptions = [
+ const brandOptions = [
     'Khaadi Official',
     'Breakout Official',
+    'LAMA',
+    'Agha Noor Official',
+    'Hemani Natural',
+    'One Dollar Shop',
+    'Baby Section',
     'Sapphire Official',
     'SAYA Official',
     'ETHNIC Official',
-    'J. Junaid Jamshed',
-    'Limelight Official',
     'Custom'
   ];
 
   const categories = [
     'Fashion & Apparel',
+    'Beauty & Organic',
+    'Baby & Kids',
+    'Home & Lifestyle',
     'Perfumes & Accessories',
     'Shoes & Footwear',
-    'Artificial Jewelry',
     'Bags & Accessories',
-    'Home Decoration',
     'Watches'
   ];
 
