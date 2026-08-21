@@ -23,7 +23,8 @@ import {
   Lock,
   KeyRound,
   ShieldCheck,
-  LogOut
+  LogOut,
+  RotateCcw
 } from 'lucide-react';
 
 export default function AdminMasterPortal() {
@@ -37,7 +38,6 @@ export default function AdminMasterPortal() {
   const [orders, setOrders] = useState<any[]>([]);
   const [vendorApps, setVendorApps] = useState<any[]>([]);
   const [successMessage, setSuccessMessage] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   // Form State
   const [title, setTitle] = useState('');
@@ -48,32 +48,36 @@ export default function AdminMasterPortal() {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
-  // Check saved Admin Session & Fetch Live Server Products
   const syncAdminData = async () => {
     try {
-      const res = await fetch('/api/products');
+      const res = await fetch('/api/products', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
           setProducts(data);
-          localStorage.setItem('emall_custom_products', JSON.stringify(data));
         }
       }
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
     }
 
     // Orders
-    const storedOrders = localStorage.getItem('emall_orders');
-    if (storedOrders) {
-      try { setOrders(JSON.parse(storedOrders)); } catch (err) {}
-    }
+    try {
+      const resOrders = await fetch('/api/orders', { cache: 'no-store' });
+      if (resOrders.ok) {
+        const dataOrders = await resOrders.json();
+        if (Array.isArray(dataOrders)) setOrders(dataOrders);
+      }
+    } catch (err) {}
 
     // Vendor Applications
-    const storedVendors = localStorage.getItem('emall_vendor_apps');
-    if (storedVendors) {
-      try { setVendorApps(JSON.parse(storedVendors)); } catch (err) {}
-    }
+    try {
+      const resVendors = await fetch('/api/vendors', { cache: 'no-store' });
+      if (resVendors.ok) {
+        const dataVendors = await resVendors.json();
+        if (Array.isArray(dataVendors)) setVendorApps(dataVendors);
+      }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -101,13 +105,6 @@ export default function AdminMasterPortal() {
     localStorage.removeItem('emall_admin_auth');
   };
 
-  const handleExportAllJSON = () => {
-    const activeStr = JSON.stringify(products);
-    navigator.clipboard.writeText(activeStr);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
-  };
-
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price || !imageUrl) return;
@@ -124,62 +121,62 @@ export default function AdminMasterPortal() {
       images: JSON.stringify([imageUrl]),
     };
 
-    // Update UI state
-    const updatedList = [newProduct, ...products];
-    setProducts(updatedList);
-    localStorage.setItem('emall_custom_products', JSON.stringify(updatedList));
-
-    // Send POST to server API
     try {
-      await fetch('/api/products', {
+      const res = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct)
       });
-    } catch (err) {
-      console.error('Failed to add to server:', err);
-    }
 
-    setTitle('');
-    setPrice('');
-    setDescription('');
-    setImageUrl('');
-    setSuccessMessage(true);
-    setTimeout(() => setSuccessMessage(false), 4000);
+      if (res.ok) {
+        await syncAdminData();
+        setTitle('');
+        setPrice('');
+        setDescription('');
+        setImageUrl('');
+        setSuccessMessage(true);
+        setTimeout(() => setSuccessMessage(false), 4000);
+      }
+    } catch (err) {
+      console.error('Add failed:', err);
+    }
   };
 
   const handleDeleteProduct = async (id: string) => {
-    // Update UI state immediately
-    const updated = products.filter((p) => p.id !== id);
-    setProducts(updated);
-    localStorage.setItem('emall_custom_products', JSON.stringify(updated));
-
-    // Send DELETE to server API
     try {
-      await fetch(`/api/products?id=${id}`, {
+      const res = await fetch(`/api/products?id=${id}`, {
         method: 'DELETE'
       });
+      if (res.ok) {
+        await syncAdminData();
+      }
     } catch (err) {
-      console.error('Failed to delete on server:', err);
+      console.error('Delete failed:', err);
     }
   };
 
   // Order Status Update
-  const handleUpdateOrderStatus = (orderId: string, status: string) => {
-    const updatedOrders = orders.map((o) => (o.orderId === orderId ? { ...o, status } : o));
-    setOrders(updatedOrders);
-    localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
+  const handleUpdateOrderStatus = async (orderId: string, status: string) => {
+    try {
+      await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status })
+      });
+      await syncAdminData();
+    } catch (err) {}
   };
 
-  const handleDeleteOrder = (orderId: string) => {
-    const updatedOrders = orders.filter((o) => o.orderId !== orderId);
-    setOrders(updatedOrders);
-    localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
+  const handleDeleteOrder = async (orderId: string) => {
+    try {
+      await fetch(`/api/orders?orderId=${orderId}`, { method: 'DELETE' });
+      await syncAdminData();
+    } catch (err) {}
   };
 
   // Metrics Calculations
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-  const totalProfit = orders.reduce((sum, o) => sum + (o.totalHardworkProfit || 0) + 50, 0);
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || o.totalAmount || 0), 0);
+  const totalProfit = orders.reduce((sum, o) => sum + (o.total_hardwork_profit || o.totalHardworkProfit || 0) + 50, 0);
 
   const brandOptions = [
     'Khaadi Official',
@@ -376,15 +373,23 @@ export default function AdminMasterPortal() {
             ) : (
               <div className="space-y-4">
                 {orders.map((o) => {
+                  const customerName = o.customer_name || o.customerName;
+                  const customerPhone = o.customer_phone || o.customerPhone;
+                  const customerAddress = o.customer_address || o.customerAddress;
+                  const totalAmount = o.total_amount || o.totalAmount;
+                  const profit = o.total_hardwork_profit || o.totalHardworkProfit;
+                  const orderId = o.order_id || o.orderId;
+                  const items = o.cart_items || o.cartItems || [];
+
                   const whatsappMsg = encodeURIComponent(
-                    `Assalam-o-Alaikum ${o.customerName}! Thank you for your order (${o.orderId}) on E-Mall Pakistan. We are preparing your consolidated delivery to: ${o.customerAddress}. Total Payable: PKR ${o.totalAmount?.toLocaleString()}.`
+                    `Assalam-o-Alaikum ${customerName}! Thank you for your order (${orderId}) on E-Mall Pakistan. We are preparing your consolidated delivery to: ${customerAddress}. Total Payable: PKR ${totalAmount?.toLocaleString()}.`
                   );
 
                   return (
-                    <div key={o.orderId} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4 shadow-xl">
+                    <div key={orderId} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4 shadow-xl">
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-3 text-xs">
                         <div>
-                          <span className="font-bold text-white text-sm">Order ID: {o.orderId}</span>
+                          <span className="font-bold text-white text-sm">Order ID: {orderId}</span>
                           <span className="text-gray-500 block text-[11px]">{o.date}</span>
                         </div>
 
@@ -397,7 +402,7 @@ export default function AdminMasterPortal() {
 
                           <select
                             value={o.status || 'Pending Dispatch'}
-                            onChange={(e) => handleUpdateOrderStatus(o.orderId, e.target.value)}
+                            onChange={(e) => handleUpdateOrderStatus(orderId, e.target.value)}
                             className="bg-[#090807] border border-white/10 text-xs text-white px-3 py-1.5 rounded-xl"
                           >
                             <option value="Pending Dispatch">Pending Dispatch</option>
@@ -406,7 +411,7 @@ export default function AdminMasterPortal() {
                             <option value="Cancelled">Cancelled</option>
                           </select>
 
-                          <button onClick={() => handleDeleteOrder(o.orderId)} className="text-red-400 hover:text-red-300 p-1">
+                          <button onClick={() => handleDeleteOrder(orderId)} className="text-red-400 hover:text-red-300 p-1">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -415,13 +420,13 @@ export default function AdminMasterPortal() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
                         <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-1">
                           <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Customer Details:</span>
-                          <p className="font-bold text-white text-xs mt-1">{o.customerName}</p>
-                          <p className="text-gray-400 text-[11px]">{o.customerPhone}</p>
-                          <p className="text-gray-400 text-[11px]">{o.customerAddress}</p>
-                          <p className="text-emerald-400 text-[10px] font-bold pt-1">Payment: {o.paymentMethod}</p>
+                          <p className="font-bold text-white text-xs mt-1">{customerName}</p>
+                          <p className="text-gray-400 text-[11px]">{customerPhone}</p>
+                          <p className="text-gray-400 text-[11px]">{customerAddress}</p>
+                          <p className="text-emerald-400 text-[10px] font-bold pt-1">Payment: {o.payment_method || o.paymentMethod}</p>
 
                           <a
-                            href={`https://wa.me/92${o.customerPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
+                            href={`https://wa.me/92${customerPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
                             target="_blank"
                             rel="noreferrer"
                             className="mt-3 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] rounded-xl flex items-center justify-center gap-2 transition-all"
@@ -434,7 +439,7 @@ export default function AdminMasterPortal() {
                         <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2 md:col-span-2">
                           <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Ordered Items:</span>
                           <div className="space-y-1.5 max-h-32 overflow-y-auto">
-                            {o.cartItems?.map((item: any, idx: number) => (
+                            {items.map((item: any, idx: number) => (
                               <div key={idx} className="flex justify-between items-center text-[11px] text-gray-300 border-b border-white/5 pb-1">
                                 <div>
                                   <span className="font-bold text-white">{item.title}</span>
@@ -448,8 +453,8 @@ export default function AdminMasterPortal() {
                           </div>
 
                           <div className="pt-2 border-t border-white/10 flex justify-between font-bold text-xs">
-                            <span className="text-amber-400">Our 5% Profit Margin: PKR {o.totalHardworkProfit?.toFixed(2)}</span>
-                            <span className="text-emerald-400 text-sm font-extrabold">Total Payable: PKR {o.totalAmount?.toLocaleString()}</span>
+                            <span className="text-amber-400">Our 5% Profit Margin: PKR {profit?.toFixed(2)}</span>
+                            <span className="text-emerald-400 text-sm font-extrabold">Total Payable: PKR {totalAmount?.toLocaleString()}</span>
                           </div>
                         </div>
                       </div>
@@ -464,25 +469,6 @@ export default function AdminMasterPortal() {
         {/* TAB 2: PRODUCT MANAGEMENT */}
         {activeTab === 'products' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div className="lg:col-span-3 bg-amber-950/40 border border-amber-500/30 p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div>
-                <span className="bg-amber-500 text-black text-[9px] font-black px-2.5 py-0.5 rounded uppercase tracking-widest block w-fit mb-1">
-                  Global Server Sync
-                </span>
-                <h3 className="text-lg font-serif text-white">Export All Active Products Data</h3>
-                <p className="text-gray-300 text-xs mt-0.5">Click the button on the right to copy your active products data anytime!</p>
-              </div>
-
-              <button
-                onClick={handleExportAllJSON}
-                className="px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs rounded-2xl shadow-xl flex items-center gap-2 uppercase tracking-wider transition-all whitespace-nowrap"
-              >
-                <Copy className="w-4 h-4" />
-                <span>{copied ? '✓ Copied to Clipboard!' : 'Copy Active Products Data'}</span>
-              </button>
-            </div>
-
             {/* Add Product Form */}
             <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
               <div className="border-b border-white/10 pb-4">
@@ -490,13 +476,13 @@ export default function AdminMasterPortal() {
                   <Plus className="w-5 h-5 text-[#D95D27]" />
                   <span>Add New Article</span>
                 </h2>
-                <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product instantly to E-Mall PK.</p>
+                <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product live to Supabase Cloud Database.</p>
               </div>
 
               {successMessage && (
                 <div className="bg-emerald-950/80 border border-emerald-500/50 p-4 rounded-2xl text-emerald-300 text-xs flex items-center gap-3 font-bold">
                   <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  <span>Product published successfully! Check your homepage to see it live.</span>
+                  <span>Product published live to Supabase Cloud Database!</span>
                 </div>
               )}
 
@@ -701,8 +687,13 @@ export default function AdminMasterPortal() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {vendorApps.map((v, idx) => {
+                  const vendorName = v.vendor_name || v.vendorName;
+                  const vendorPhone = v.vendor_phone || v.vendorPhone;
+                  const vendorCity = v.vendor_city || v.vendorCity;
+                  const vendorInsta = v.vendor_insta || v.vendorInsta;
+
                   const whatsappMsg = encodeURIComponent(
-                    `Assalam-o-Alaikum ${v.vendorName}! This is Haris Khan from E-Mall Pakistan. We received your seller application for ${v.vendorCity}. We would love to list your items under our 10% boutique program!`
+                    `Assalam-o-Alaikum ${vendorName}! This is Haris Khan from E-Mall Pakistan. We received your seller application for ${vendorCity}. We would love to list your items under our 10% boutique program!`
                   );
 
                   return (
@@ -712,23 +703,23 @@ export default function AdminMasterPortal() {
                           <span className="bg-emerald-950 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase">
                             10% Boutique Partner
                           </span>
-                          <span className="text-[10px] text-gray-500">{v.vendorCity}</span>
+                          <span className="text-[10px] text-gray-500">{vendorCity}</span>
                         </div>
-                        <h3 className="text-lg font-bold text-white font-serif">{v.vendorName}</h3>
+                        <h3 className="text-lg font-bold text-white font-serif">{vendorName}</h3>
                         <p className="text-gray-400 text-xs flex items-center gap-1.5">
                           <Phone className="w-3.5 h-3.5 text-[#D95D27]" />
-                          <span>{v.vendorPhone}</span>
+                          <span>{vendorPhone}</span>
                         </p>
-                        {v.vendorInsta && (
+                        {vendorInsta && (
                           <p className="text-gray-400 text-xs flex items-center gap-1.5 line-clamp-1">
                             <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
-                            <span>{v.vendorInsta}</span>
+                            <span>{vendorInsta}</span>
                           </p>
                         )}
                       </div>
 
                       <a
-                        href={`https://wa.me/92${v.vendorPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
+                        href={`https://wa.me/92${vendorPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
                         target="_blank"
                         rel="noreferrer"
                         className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl flex items-center justify-center gap-2 transition-all"
