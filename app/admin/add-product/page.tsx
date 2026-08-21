@@ -24,7 +24,6 @@ import {
   KeyRound,
   ShieldCheck,
   LogOut,
-  RotateCcw,
   AlertCircle
 } from 'lucide-react';
 
@@ -41,7 +40,6 @@ export default function AdminMasterPortal() {
   
   const [successMessage, setSuccessMessage] = useState(false);
   const [formError, setFormError] = useState('');
-  const [copied, setCopied] = useState(false);
 
   // Form State
   const [title, setTitle] = useState('');
@@ -53,45 +51,36 @@ export default function AdminMasterPortal() {
   const [imageUrl, setImageUrl] = useState('');
 
   const syncAdminData = async () => {
-    // 1. Try master local storage first
-    const c1 = localStorage.getItem('emall_custom_products');
-    const c2 = localStorage.getItem('emall_active_products');
-    const c3 = localStorage.getItem('emall_master_products');
-    const activeStr = c1 || c2 || c3;
-
-    if (activeStr) {
-      try {
-        const parsed = JSON.parse(activeStr);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setProducts(parsed);
-        }
-      } catch (err) {}
-    }
-
-    // 2. Fetch live server API
     try {
       const res = await fetch('/api/products', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setProducts(data);
           localStorage.setItem('emall_master_products', JSON.stringify(data));
-          localStorage.setItem('emall_custom_products', JSON.stringify(data));
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+    }
 
     // Orders
-    const storedOrders = localStorage.getItem('emall_orders');
-    if (storedOrders) {
-      try { setOrders(JSON.parse(storedOrders)); } catch (err) {}
-    }
+    try {
+      const resOrders = await fetch('/api/orders', { cache: 'no-store' });
+      if (resOrders.ok) {
+        const dataOrders = await resOrders.json();
+        if (Array.isArray(dataOrders)) setOrders(dataOrders);
+      }
+    } catch (err) {}
 
     // Vendor Applications
-    const storedVendors = localStorage.getItem('emall_vendor_apps');
-    if (storedVendors) {
-      try { setVendorApps(JSON.parse(storedVendors)); } catch (err) {}
-    }
+    try {
+      const resVendors = await fetch('/api/vendors', { cache: 'no-store' });
+      if (resVendors.ok) {
+        const dataVendors = await resVendors.json();
+        if (Array.isArray(dataVendors)) setVendorApps(dataVendors);
+      }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -100,14 +89,6 @@ export default function AdminMasterPortal() {
       setIsAuthenticated(true);
     }
     syncAdminData();
-    window.addEventListener('storage', syncAdminData);
-    window.addEventListener('emall_orders_updated', syncAdminData);
-    window.addEventListener('emall_products_updated', syncAdminData);
-    return () => {
-      window.removeEventListener('storage', syncAdminData);
-      window.removeEventListener('emall_orders_updated', syncAdminData);
-      window.removeEventListener('emall_products_updated', syncAdminData);
-    };
   }, []);
 
   const handleAdminLogin = (e: React.FormEvent) => {
@@ -125,21 +106,6 @@ export default function AdminMasterPortal() {
   const handleAdminLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('emall_admin_auth');
-  };
-
-  const handleExportAllJSON = () => {
-    const activeStr = JSON.stringify(products);
-    navigator.clipboard.writeText(activeStr);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
-  };
-
-  const saveAndUpdateMasterProducts = (newList: any[]) => {
-    setProducts(newList);
-    localStorage.setItem('emall_master_products', JSON.stringify(newList));
-    localStorage.setItem('emall_custom_products', JSON.stringify(newList));
-    localStorage.setItem('emall_active_products', JSON.stringify(newList));
-    window.dispatchEvent(new Event('emall_products_updated'));
   };
 
   const handleAddProduct = async (e: React.FormEvent) => {
@@ -177,19 +143,28 @@ export default function AdminMasterPortal() {
       images: JSON.stringify([cleanUrl]),
     };
 
-    // 1. Save locally
+    // Update UI immediately
     const updatedList = [newProduct, ...products];
-    saveAndUpdateMasterProducts(updatedList);
+    setProducts(updatedList);
+    localStorage.setItem('emall_master_products', JSON.stringify(updatedList));
 
-    // 2. Post to Cloud Supabase Server API
+    // Send POST request
     try {
-      await fetch('/api/products', {
+      const res = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct)
       });
+
+      if (res.ok) {
+        const resData = await res.json();
+        if (Array.isArray(resData.products)) {
+          setProducts(resData.products);
+          localStorage.setItem('emall_master_products', JSON.stringify(resData.products));
+        }
+      }
     } catch (err) {
-      console.error('Cloud add error:', err);
+      console.error('POST Error:', err);
     }
 
     setTitle('');
@@ -203,31 +178,47 @@ export default function AdminMasterPortal() {
 
   const handleDeleteProduct = async (id: string) => {
     const updated = products.filter((p) => p.id !== id);
-    saveAndUpdateMasterProducts(updated);
+    setProducts(updated);
+    localStorage.setItem('emall_master_products', JSON.stringify(updated));
 
     try {
-      await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/products?id=${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        const resData = await res.json();
+        if (Array.isArray(resData.products)) {
+          setProducts(resData.products);
+          localStorage.setItem('emall_master_products', JSON.stringify(resData.products));
+        }
+      }
     } catch (err) {
-      console.error('Cloud delete error:', err);
+      console.error('DELETE Error:', err);
     }
   };
 
   // Order Status Update
-  const handleUpdateOrderStatus = (orderId: string, status: string) => {
-    const updatedOrders = orders.map((o) => (o.orderId === orderId ? { ...o, status } : o));
-    setOrders(updatedOrders);
-    localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
+  const handleUpdateOrderStatus = async (orderId: string, status: string) => {
+    try {
+      await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status })
+      });
+      await syncAdminData();
+    } catch (err) {}
   };
 
-  const handleDeleteOrder = (orderId: string) => {
-    const updatedOrders = orders.filter((o) => o.orderId !== orderId);
-    setOrders(updatedOrders);
-    localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
+  const handleDeleteOrder = async (orderId: string) => {
+    try {
+      await fetch(`/api/orders?orderId=${orderId}`, { method: 'DELETE' });
+      await syncAdminData();
+    } catch (err) {}
   };
 
   // Metrics Calculations
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-  const totalProfit = orders.reduce((sum, o) => sum + (o.totalHardworkProfit || 0) + 50, 0);
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || o.totalAmount || 0), 0);
+  const totalProfit = orders.reduce((sum, o) => sum + (o.total_hardwork_profit || o.totalHardworkProfit || 0) + 50, 0);
 
   const brandOptions = [
     'Khaadi Official',
@@ -424,15 +415,23 @@ export default function AdminMasterPortal() {
             ) : (
               <div className="space-y-4">
                 {orders.map((o) => {
+                  const customerName = o.customer_name || o.customerName;
+                  const customerPhone = o.customer_phone || o.customerPhone;
+                  const customerAddress = o.customer_address || o.customerAddress;
+                  const totalAmount = o.total_amount || o.totalAmount;
+                  const profit = o.total_hardwork_profit || o.totalHardworkProfit;
+                  const orderId = o.order_id || o.orderId;
+                  const items = o.cart_items || o.cartItems || [];
+
                   const whatsappMsg = encodeURIComponent(
-                    `Assalam-o-Alaikum ${o.customerName}! Thank you for your order (${o.orderId}) on E-Mall Pakistan. We are preparing your consolidated delivery to: ${o.customerAddress}. Total Payable: PKR ${o.totalAmount?.toLocaleString()}.`
+                    `Assalam-o-Alaikum ${customerName}! Thank you for your order (${orderId}) on E-Mall Pakistan. We are preparing your consolidated delivery to: ${customerAddress}. Total Payable: PKR ${totalAmount?.toLocaleString()}.`
                   );
 
                   return (
-                    <div key={o.orderId} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4 shadow-xl">
+                    <div key={orderId} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4 shadow-xl">
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-3 text-xs">
                         <div>
-                          <span className="font-bold text-white text-sm">Order ID: {o.orderId}</span>
+                          <span className="font-bold text-white text-sm">Order ID: {orderId}</span>
                           <span className="text-gray-500 block text-[11px]">{o.date}</span>
                         </div>
 
@@ -445,7 +444,7 @@ export default function AdminMasterPortal() {
 
                           <select
                             value={o.status || 'Pending Dispatch'}
-                            onChange={(e) => handleUpdateOrderStatus(o.orderId, e.target.value)}
+                            onChange={(e) => handleUpdateOrderStatus(orderId, e.target.value)}
                             className="bg-[#090807] border border-white/10 text-xs text-white px-3 py-1.5 rounded-xl"
                           >
                             <option value="Pending Dispatch">Pending Dispatch</option>
@@ -454,7 +453,7 @@ export default function AdminMasterPortal() {
                             <option value="Cancelled">Cancelled</option>
                           </select>
 
-                          <button onClick={() => handleDeleteOrder(o.orderId)} className="text-red-400 hover:text-red-300 p-1">
+                          <button onClick={() => handleDeleteOrder(orderId)} className="text-red-400 hover:text-red-300 p-1">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -463,13 +462,13 @@ export default function AdminMasterPortal() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
                         <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-1">
                           <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Customer Details:</span>
-                          <p className="font-bold text-white text-xs mt-1">{o.customerName}</p>
-                          <p className="text-gray-400 text-[11px]">{o.customerPhone}</p>
-                          <p className="text-gray-400 text-[11px]">{o.customerAddress}</p>
-                          <p className="text-emerald-400 text-[10px] font-bold pt-1">Payment: {o.paymentMethod}</p>
+                          <p className="font-bold text-white text-xs mt-1">{customerName}</p>
+                          <p className="text-gray-400 text-[11px]">{customerPhone}</p>
+                          <p className="text-gray-400 text-[11px]">{customerAddress}</p>
+                          <p className="text-emerald-400 text-[10px] font-bold pt-1">Payment: {o.payment_method || o.paymentMethod}</p>
 
                           <a
-                            href={`https://wa.me/92${o.customerPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
+                            href={`https://wa.me/92${customerPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
                             target="_blank"
                             rel="noreferrer"
                             className="mt-3 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] rounded-xl flex items-center justify-center gap-2 transition-all"
@@ -482,7 +481,7 @@ export default function AdminMasterPortal() {
                         <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2 md:col-span-2">
                           <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Ordered Items:</span>
                           <div className="space-y-1.5 max-h-32 overflow-y-auto">
-                            {o.cartItems?.map((item: any, idx: number) => (
+                            {items.map((item: any, idx: number) => (
                               <div key={idx} className="flex justify-between items-center text-[11px] text-gray-300 border-b border-white/5 pb-1">
                                 <div>
                                   <span className="font-bold text-white">{item.title}</span>
@@ -496,8 +495,8 @@ export default function AdminMasterPortal() {
                           </div>
 
                           <div className="pt-2 border-t border-white/10 flex justify-between font-bold text-xs">
-                            <span className="text-amber-400">Our 5% Profit Margin: PKR {o.totalHardworkProfit?.toFixed(2)}</span>
-                            <span className="text-emerald-400 text-sm font-extrabold">Total Payable: PKR {o.totalAmount?.toLocaleString()}</span>
+                            <span className="text-amber-400">Our 5% Profit Margin: PKR {profit?.toFixed(2)}</span>
+                            <span className="text-emerald-400 text-sm font-extrabold">Total Payable: PKR {totalAmount?.toLocaleString()}</span>
                           </div>
                         </div>
                       </div>
@@ -512,25 +511,6 @@ export default function AdminMasterPortal() {
         {/* TAB 2: PRODUCT MANAGEMENT */}
         {activeTab === 'products' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div className="lg:col-span-3 bg-amber-950/40 border border-amber-500/30 p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div>
-                <span className="bg-amber-500 text-black text-[9px] font-black px-2.5 py-0.5 rounded uppercase tracking-widest block w-fit mb-1">
-                  Global Store Sync
-                </span>
-                <h3 className="text-lg font-serif text-white">Master Product Catalog Controls</h3>
-                <p className="text-gray-300 text-xs mt-0.5">Export active catalog data anytime to keep back-up files.</p>
-              </div>
-
-              <button
-                onClick={handleExportAllJSON}
-                className="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs rounded-2xl shadow-xl flex items-center gap-2 uppercase tracking-wider transition-all whitespace-nowrap"
-              >
-                <Copy className="w-4 h-4" />
-                <span>{copied ? '✓ Copied Data!' : 'Copy Products Data'}</span>
-              </button>
-            </div>
-
             {/* Add Product Form */}
             <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
               <div className="border-b border-white/10 pb-4">
@@ -538,7 +518,7 @@ export default function AdminMasterPortal() {
                   <Plus className="w-5 h-5 text-[#D95D27]" />
                   <span>Add New Article</span>
                 </h2>
-                <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product instantly to E-Mall PK.</p>
+                <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product live to E-Mall PK.</p>
               </div>
 
               {formError && (
