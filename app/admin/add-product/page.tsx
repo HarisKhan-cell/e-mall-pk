@@ -51,18 +51,28 @@ export default function AdminMasterPortal() {
   const [imageUrl, setImageUrl] = useState('');
 
   const syncAdminData = async () => {
+    // 1. Check local backup first
+    const stored = localStorage.getItem('emall_master_products');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProducts(parsed);
+        }
+      } catch (e) {}
+    }
+
+    // 2. Fetch live Cloud DB
     try {
       const res = await fetch('/api/products', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           setProducts(data);
           localStorage.setItem('emall_master_products', JSON.stringify(data));
         }
       }
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) {}
 
     // Orders
     try {
@@ -73,7 +83,7 @@ export default function AdminMasterPortal() {
       }
     } catch (err) {}
 
-    // Vendor Applications
+    // Vendors
     try {
       const resVendors = await fetch('/api/vendors', { cache: 'no-store' });
       if (resVendors.ok) {
@@ -112,16 +122,8 @@ export default function AdminMasterPortal() {
     e.preventDefault();
     setFormError('');
 
-    if (!title.trim()) {
-      setFormError('Please enter a Product Title');
-      return;
-    }
-    if (!price) {
-      setFormError('Please enter a Product Price');
-      return;
-    }
-    if (!imageUrl.trim()) {
-      setFormError('Please enter a Direct Image URL');
+    if (!title.trim() || !price || !imageUrl.trim()) {
+      setFormError('Please fill in Title, Price, and Image URL');
       return;
     }
 
@@ -143,35 +145,26 @@ export default function AdminMasterPortal() {
       images: JSON.stringify([cleanUrl]),
     };
 
-    // Update UI immediately
+    // Save locally
     const updatedList = [newProduct, ...products];
     setProducts(updatedList);
     localStorage.setItem('emall_master_products', JSON.stringify(updatedList));
 
-    // Send POST request
+    // Save to Cloud DB
     try {
-      const res = await fetch('/api/products', {
+      await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct)
       });
-
-      if (res.ok) {
-        const resData = await res.json();
-        if (Array.isArray(resData.products)) {
-          setProducts(resData.products);
-          localStorage.setItem('emall_master_products', JSON.stringify(resData.products));
-        }
-      }
     } catch (err) {
-      console.error('POST Error:', err);
+      console.error(err);
     }
 
     setTitle('');
     setPrice('');
     setDescription('');
     setImageUrl('');
-    setFormError('');
     setSuccessMessage(true);
     setTimeout(() => setSuccessMessage(false), 4000);
   };
@@ -182,18 +175,9 @@ export default function AdminMasterPortal() {
     localStorage.setItem('emall_master_products', JSON.stringify(updated));
 
     try {
-      const res = await fetch(`/api/products?id=${id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        const resData = await res.json();
-        if (Array.isArray(resData.products)) {
-          setProducts(resData.products);
-          localStorage.setItem('emall_master_products', JSON.stringify(resData.products));
-        }
-      }
+      await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
     } catch (err) {
-      console.error('DELETE Error:', err);
+      console.error(err);
     }
   };
 
