@@ -102,13 +102,20 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    syncMasterStore();
-    window.addEventListener('storage', syncMasterStore);
-    window.addEventListener('emall_products_updated', syncMasterStore);
-    return () => {
-      window.removeEventListener('storage', syncMasterStore);
-      window.removeEventListener('emall_products_updated', syncMasterStore);
-    };
+    // Force delete all old browser memory junk
+    localStorage.removeItem('emall_custom_products');
+    localStorage.removeItem('emall_active_products');
+    localStorage.removeItem('emall_master_products');
+
+    // Fetch live from Supabase Cloud Database
+    fetch('/api/products', { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setProducts(data);
+        }
+      })
+      .catch(console.error);
   }, []);
 
   const handleOpenProduct = (product: any) => {
