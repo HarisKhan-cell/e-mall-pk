@@ -24,7 +24,9 @@ import {
   KeyRound,
   ShieldCheck,
   LogOut,
-  AlertCircle
+  RotateCcw,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 
 export default function AdminMasterPortal() {
@@ -57,6 +59,7 @@ export default function AdminMasterPortal() {
         const data = await res.json();
         if (Array.isArray(data)) {
           setProducts(data);
+          localStorage.setItem('emall_master_products', JSON.stringify(data));
         }
       }
     } catch (e) {
@@ -105,6 +108,12 @@ export default function AdminMasterPortal() {
   const handleAdminLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('emall_admin_auth');
+  };
+
+  const handleClearBrowserCache = () => {
+    localStorage.clear();
+    localStorage.setItem('emall_admin_auth', 'true');
+    window.location.reload();
   };
 
   const handleAddProduct = async (e: React.FormEvent) => {
@@ -204,7 +213,7 @@ export default function AdminMasterPortal() {
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || o.totalAmount || 0), 0);
   const totalProfit = orders.reduce((sum, o) => sum + (o.total_hardwork_profit || o.totalHardworkProfit || 0) + 50, 0);
 
- const brandOptions = [
+  const brandOptions = [
     'Khaadi Official',
     'Breakout Official',
     'LAMA',
@@ -300,6 +309,14 @@ export default function AdminMasterPortal() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={handleClearBrowserCache}
+              className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 rounded-2xl transition-all text-xs font-bold flex items-center gap-1.5"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
+              <span>Clear Local Cache</span>
+            </button>
+
             <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
               <button
                 onClick={() => setActiveTab('orders')}
@@ -747,7 +764,7 @@ export default function AdminMasterPortal() {
                           <Phone className="w-3.5 h-3.5 text-[#D95D27]" />
                           <span>{vendorPhone}</span>
                         </p>
-                        {v.vendorInsta && (
+                        {vendorInsta && (
                           <p className="text-gray-400 text-xs flex items-center gap-1.5 line-clamp-1">
                             <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
                             <span>{vendorInsta}</span>
