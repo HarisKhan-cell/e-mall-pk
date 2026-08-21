@@ -51,28 +51,17 @@ export default function AdminMasterPortal() {
   const [imageUrl, setImageUrl] = useState('');
 
   const syncAdminData = async () => {
-    // 1. Check local backup first
-    const stored = localStorage.getItem('emall_master_products');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setProducts(parsed);
-        }
-      } catch (e) {}
-    }
-
-    // 2. Fetch live Cloud DB
     try {
       const res = await fetch('/api/products', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setProducts(data);
-          localStorage.setItem('emall_master_products', JSON.stringify(data));
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+    }
 
     // Orders
     try {
@@ -83,7 +72,7 @@ export default function AdminMasterPortal() {
       }
     } catch (err) {}
 
-    // Vendors
+    // Vendor Applications
     try {
       const resVendors = await fetch('/api/vendors', { cache: 'no-store' });
       if (resVendors.ok) {
@@ -122,8 +111,16 @@ export default function AdminMasterPortal() {
     e.preventDefault();
     setFormError('');
 
-    if (!title.trim() || !price || !imageUrl.trim()) {
-      setFormError('Please fill in Title, Price, and Image URL');
+    if (!title.trim()) {
+      setFormError('Please enter a Product Title');
+      return;
+    }
+    if (!price) {
+      setFormError('Please enter a Product Price');
+      return;
+    }
+    if (!imageUrl.trim()) {
+      setFormError('Please enter a Direct Image URL');
       return;
     }
 
@@ -145,39 +142,42 @@ export default function AdminMasterPortal() {
       images: JSON.stringify([cleanUrl]),
     };
 
-    // Save locally
-    const updatedList = [newProduct, ...products];
-    setProducts(updatedList);
-    localStorage.setItem('emall_master_products', JSON.stringify(updatedList));
-
-    // Save to Cloud DB
     try {
-      await fetch('/api/products', {
+      const res = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct)
       });
-    } catch (err) {
-      console.error(err);
-    }
 
-    setTitle('');
-    setPrice('');
-    setDescription('');
-    setImageUrl('');
-    setSuccessMessage(true);
-    setTimeout(() => setSuccessMessage(false), 4000);
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        await syncAdminData();
+        setTitle('');
+        setPrice('');
+        setDescription('');
+        setImageUrl('');
+        setFormError('');
+        setSuccessMessage(true);
+        setTimeout(() => setSuccessMessage(false), 4000);
+      } else {
+        setFormError(`Supabase Error: ${data.error || 'Failed to save product'}`);
+      }
+    } catch (err: any) {
+      setFormError(`Network error: ${err.message}`);
+    }
   };
 
   const handleDeleteProduct = async (id: string) => {
-    const updated = products.filter((p) => p.id !== id);
-    setProducts(updated);
-    localStorage.setItem('emall_master_products', JSON.stringify(updated));
-
     try {
-      await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/products?id=${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        await syncAdminData();
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Delete failed:', err);
     }
   };
 
@@ -502,7 +502,7 @@ export default function AdminMasterPortal() {
                   <Plus className="w-5 h-5 text-[#D95D27]" />
                   <span>Add New Article</span>
                 </h2>
-                <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product live to E-Mall PK.</p>
+                <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product live to Supabase Cloud Database.</p>
               </div>
 
               {formError && (
@@ -515,7 +515,7 @@ export default function AdminMasterPortal() {
               {successMessage && (
                 <div className="bg-emerald-950/80 border border-emerald-500/50 p-4 rounded-2xl text-emerald-300 text-xs flex items-center gap-3 font-bold">
                   <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  <span>Product published successfully! Check your homepage to see it live.</span>
+                  <span>Product published live to Supabase Cloud Database!</span>
                 </div>
               )}
 
@@ -743,7 +743,7 @@ export default function AdminMasterPortal() {
                           <Phone className="w-3.5 h-3.5 text-[#D95D27]" />
                           <span>{vendorPhone}</span>
                         </p>
-                        {vendorInsta && (
+                        {v.vendorInsta && (
                           <p className="text-gray-400 text-xs flex items-center gap-1.5 line-clamp-1">
                             <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
                             <span>{vendorInsta}</span>

@@ -33,21 +33,37 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const newProduct = await req.json();
+    const body = await req.json();
+    
+    const payload = {
+      id: body.id || `custom-${Date.now()}`,
+      title: body.title,
+      description: body.description || '100% Original Brand Guaranteed article.',
+      price: Number(body.price),
+      category: typeof body.category === 'object' ? body.category : { name: body.category || 'Fashion & Apparel' },
+      shop: typeof body.shop === 'object' ? body.shop : { name: body.shop || 'Verified Partner', commissionRate: 5.0 },
+      images: typeof body.images === 'string' ? body.images : JSON.stringify(body.images || [])
+    };
+
     const res = await fetch(SUPABASE_URL, {
       method: 'POST',
       headers: getHeaders(),
-      body: JSON.stringify(newProduct)
+      body: JSON.stringify(payload)
     });
 
+    const resText = await res.text();
+
     if (res.ok) {
-      const data = await res.json();
+      const data = JSON.parse(resText);
       return NextResponse.json({ success: true, data });
+    } else {
+      console.error('Supabase POST Error:', res.status, resText);
+      return NextResponse.json({ error: resText }, { status: res.status });
     }
-  } catch (err) {
-    console.error('Supabase POST Error:', err);
+  } catch (err: any) {
+    console.error('Supabase POST Exception:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-  return NextResponse.json({ error: 'Failed to add product' }, { status: 500 });
 }
 
 export async function DELETE(req: Request) {
@@ -68,5 +84,5 @@ export async function DELETE(req: Request) {
   } catch (err) {
     console.error('Supabase DELETE Error:', err);
   }
-  return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
+  return NextResponse.json({ error: 'Failed to delete' }, { status: 500 });
 }
