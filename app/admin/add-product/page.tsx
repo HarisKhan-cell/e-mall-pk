@@ -29,21 +29,35 @@ import {
 } from 'lucide-react';
 
 export default function AdminMasterPortal() {
+  // Security States
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [loginError, setLoginError] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'vendors'>('orders');
+  // Tab State
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'vendors'>('products');
   
+  // Data States
   const [products, setProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [vendorApps, setVendorApps] = useState<any[]>([]);
   
+  // UI Notification States
   const [successMessage, setSuccessMessage] = useState(false);
   const [formError, setFormError] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  // Form State Declarations
+  const [title, setTitle] = useState('');
+  const [brand, setBrand] = useState('Khaadi Official');
+  const [customBrand, setCustomBrand] = useState('');
+  const [category, setCategory] = useState('Fashion & Apparel');
+  const [price, setPrice] = useState('');
+  const [description, setDescription] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
   const syncAdminData = async () => {
-    // 1. Fetch live products from Supabase API
+    // 1. Fetch live products from API
     try {
       const res = await fetch('/api/products', { cache: 'no-store' });
       if (res.ok) {
@@ -56,7 +70,7 @@ export default function AdminMasterPortal() {
       console.error(e);
     }
 
-    // 2. Fetch live orders from Supabase API
+    // 2. Fetch live orders from API
     try {
       const resOrders = await fetch('/api/orders', { cache: 'no-store' });
       if (resOrders.ok) {
@@ -69,7 +83,7 @@ export default function AdminMasterPortal() {
       console.error(err);
     }
 
-    // 3. Fetch live vendor applications from Supabase API
+    // 3. Fetch live vendor applications from API
     try {
       const resVendors = await fetch('/api/vendors', { cache: 'no-store' });
       if (resVendors.ok) {
@@ -110,11 +124,18 @@ export default function AdminMasterPortal() {
     window.location.reload();
   };
 
+  const handleExportAllJSON = () => {
+    const activeStr = JSON.stringify(products);
+    navigator.clipboard.writeText(activeStr);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
+  };
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
 
-    if (!title.trim()) {
+    if (!title || !title.trim()) {
       setFormError('Please enter a Product Title');
       return;
     }
@@ -122,7 +143,7 @@ export default function AdminMasterPortal() {
       setFormError('Please enter a Product Price');
       return;
     }
-    if (!imageUrl.trim()) {
+    if (!imageUrl || !imageUrl.trim()) {
       setFormError('Please enter a Direct Image URL');
       return;
     }
