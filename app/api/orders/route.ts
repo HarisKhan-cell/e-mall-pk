@@ -35,15 +35,26 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    // Parse cartItems and shopBreakdown safely for JSONB columns
+    let cartItemsObj = body.cartItems || body.cart_items || [];
+    if (typeof cartItemsObj === 'string') {
+      try { cartItemsObj = JSON.parse(cartItemsObj); } catch (e) {}
+    }
+
+    let shopBreakdownObj = body.shopBreakdown || body.shop_breakdown || {};
+    if (typeof shopBreakdownObj === 'string') {
+      try { shopBreakdownObj = JSON.parse(shopBreakdownObj); } catch (e) {}
+    }
+
     const orderData = {
-      order_id: body.orderId || body.order_id || `EMALL-${Date.now()}`,
+      order_id: body.orderId || body.order_id || `EMALL-${Math.floor(100000 + Math.random() * 900000)}`,
       date: body.date || new Date().toLocaleDateString('en-PK'),
       customer_name: body.customerName || body.customer_name || 'Customer',
       customer_phone: body.customerPhone || body.customer_phone || '',
       customer_address: body.customerAddress || body.customer_address || '',
       payment_method: body.paymentMethod || body.payment_method || 'COD',
-      cart_items: typeof body.cartItems === 'string' ? body.cartItems : JSON.stringify(body.cartItems || []),
-      shop_breakdown: typeof body.shopBreakdown === 'string' ? body.shopBreakdown : JSON.stringify(body.shopBreakdown || {}),
+      cart_items: cartItemsObj,
+      shop_breakdown: shopBreakdownObj,
       items_subtotal: Number(body.itemsSubtotal || body.items_subtotal || 0),
       buyer_fee: Number(body.buyerFee || body.buyer_fee || 50),
       buyer_delivery_fee: Number(body.buyerDeliveryFee || body.buyer_delivery_fee || 195),
