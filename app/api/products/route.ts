@@ -13,18 +13,59 @@ const headers = {
   Prefer: 'return=representation'
 };
 
+const BASE_PRODUCTS = [
+  {
+    id: 'outfitters-1',
+    title: 'Super Cropped Embroidered Denim Shirt',
+    description: 'Trendy embroidered cropped denim shirt.',
+    price: 4190,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800'])
+  },
+  {
+    id: 'outfitters-2',
+    title: 'Gathered Blouse',
+    description: 'Elegant gathered neckline blouse for daily wear.',
+    price: 3790,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Outfitters', commissionRate: 5.0 },
+    images: JSON.stringify(['https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800'])
+  },
+  {
+    id: 'khaadi-1',
+    title: 'Khaadi Floral V-Neck Kurta',
+    description: 'Embroidered Cambric Cotton floral V-neck kurta.',
+    price: 4490,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Khaadi Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'])
+  },
+  {
+    id: 'breakout-1',
+    title: 'Breakout Printed Button Down Shirt',
+    description: '100% Cotton printed button down shirt.',
+    price: 2249,
+    category: { name: 'Fashion & Apparel' },
+    shop: { name: 'Breakout Official', commissionRate: 5.0 },
+    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6DSWT912-MTO_6.jpg?v=1782899185&width=1920'])
+  }
+];
+
 export async function GET() {
   try {
     const res = await fetch(`${SUPABASE_URL}?select=*&order=created_at.desc`, { headers });
     if (res.ok) {
       const data = await res.json();
-      return NextResponse.json(data);
+      if (Array.isArray(data) && data.length > 0) {
+        return NextResponse.json(data);
+      }
     }
   } catch (e) {
     console.error('Supabase GET Error:', e);
   }
 
-  return NextResponse.json([]);
+  return NextResponse.json(BASE_PRODUCTS);
 }
 
 export async function POST(req: Request) {
@@ -42,7 +83,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error('Supabase POST Error:', err);
   }
-  return NextResponse.json({ error: 'Failed to add product to Supabase' }, { status: 500 });
+  return NextResponse.json({ error: 'Failed to add' }, { status: 500 });
 }
 
 export async function DELETE(req: Request) {
@@ -63,5 +104,5 @@ export async function DELETE(req: Request) {
   } catch (err) {
     console.error('Supabase DELETE Error:', err);
   }
-  return NextResponse.json({ error: 'Failed to delete product from Supabase' }, { status: 500 });
+  return NextResponse.json({ error: 'Failed to delete' }, { status: 500 });
 }
