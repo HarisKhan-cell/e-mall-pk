@@ -47,160 +47,8 @@ function EMallLogoSymbol() {
   );
 }
 
-const INITIAL_PRODUCTS = [
-  // Outfitters (10)
-  {
-    id: 'outfitters-1',
-    title: 'Super Cropped Embroidered Denim Shirt',
-    description: 'Trendy embroidered cropped denim shirt.',
-    price: 4190,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Outfitters' },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800'])
-  },
-  {
-    id: 'outfitters-2',
-    title: 'Gathered Blouse',
-    description: 'Elegant gathered neckline blouse for daily wear.',
-    price: 3790,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Outfitters' },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800'])
-  },
-  {
-    id: 'outfitters-3',
-    title: 'Textured Blouse',
-    description: 'Soft lightweight textured casual top.',
-    price: 2190,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Outfitters' },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800'])
-  },
-  {
-    id: 'outfitters-4',
-    title: 'All-Over Print Shirt',
-    description: 'Vibrant modern digital print casual shirt.',
-    price: 2790,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Outfitters' },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800'])
-  },
-  {
-    id: 'outfitters-5',
-    title: 'Striped T-Shirt',
-    description: 'Classic striped crew neck cotton tee.',
-    price: 1690,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Outfitters' },
-    images: JSON.stringify(['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=800'])
-  },
-
-  // Khaadi (5)
-  {
-    id: 'khaadi-1',
-    title: 'Khaadi Floral V-Neck Kurta',
-    description: 'Embroidered Cambric Cotton floral V-neck kurta (2-26-203-A-G1).',
-    price: 4490,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official' },
-    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw6bc045c4/images/hi-res/1-26-111-a-f_multi_1.jpg?sw=800'])
-  },
-  {
-    id: 'khaadi-2',
-    title: 'Khaadi Beige V-Neck Kurta',
-    description: 'Embroidered Cotton Viscose kurta with subtle beige tones (1-26-118-A-F).',
-    price: 4290,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official' },
-    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dwf6e45b4b/images/hi-res/1-26-128-a-e_multi_1.jpg?sw=800'])
-  },
-  {
-    id: 'khaadi-3',
-    title: 'Khaadi Dyed Raw Silk Kurta',
-    description: '100% Cotton Raw Silk finish dyed kurta (8-26-301-A-D1).',
-    price: 4000,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official' },
-    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw18260a92/images/hi-res/8-26-301-a-d1_multi_1.jpg?sw=800'])
-  },
-  {
-    id: 'khaadi-4',
-    title: 'Khaadi Raw Silk Black Co-Ord 3-Piece Set',
-    description: 'Luxury Raw Silk kurta, pants, and sequin embroidered dupatta (5-26-201-F-H).',
-    price: 25000,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official' },
-    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw15321f8a/images/hi-res/5-26-201-f-h_multi_1.jpg?sw=800'])
-  },
-  {
-    id: 'khaadi-5',
-    title: 'Khaadi Floral Tailored Set',
-    description: 'Tailored Cotton Satin / Viscose 2-Piece Set (T-A33-26-202FC1).',
-    price: 6990,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Khaadi Official' },
-    images: JSON.stringify(['https://us.khaadi.com/dw/image/v2/BJTG_PRD/on/demandware.static/-/Sites-khaadi-master-catalog/default/dw83741829/images/hi-res/t-a33-26-202fc1_multi_1.jpg?sw=800'])
-  },
-
-  // Breakout (6)
-  {
-    id: 'breakout-1',
-    title: 'Breakout Printed Button Down Shirt',
-    description: '100% Cotton printed button down shirt with modern classic silhouette (6DSWT912-MTO).',
-    price: 2249,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Breakout Official' },
-    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6DSWT912-MTO_6.jpg?v=1782899185&width=1920'])
-  },
-  {
-    id: 'breakout-2',
-    title: 'Breakout Boys Striped Tee',
-    description: '100% Cotton knit everyday boys striped tee (K6DST673-MLT).',
-    price: 699,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Breakout Official' },
-    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6DST673-MLT_1.jpg?v=1779280870&width=1920'])
-  },
-  {
-    id: 'breakout-3',
-    title: "Breakout Men's Textured Tee (Brown)",
-    description: '50% Cotton, 45% Polyester, 5% Spandex textured finish tee (6ESHT844-BRN).',
-    price: 3899,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Breakout Official' },
-    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/6ESHT844-BRN_1.jpg?v=1782899185&width=1920'])
-  },
-  {
-    id: 'breakout-4',
-    title: 'Breakout Boys Contrast Rib Tee (Ecru)',
-    description: '100% Cotton knit sporty contrast rib tee for boys (K6DST639-ECR).',
-    price: 699,
-    category: { name: 'Fashion & Apparel' },
-    shop: { name: 'Breakout Official' },
-    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6DST639-ECR_1.jpg?v=1778504092&width=1920'])
-  },
-  {
-    id: 'breakout-5',
-    title: 'Breakout Boys Smurf Perfume (50ml / Blue)',
-    description: 'Refreshing, long-lasting 50ml fragrance for boys (K6ASBF03-BLU).',
-    price: 1849,
-    category: { name: 'Perfumes & Accessories' },
-    shop: { name: 'Breakout Official' },
-    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ASBF03-BLU_2_dba2b513-f441-47a0-9e44-5f4e277dd32e.jpg?v=1777985061&width=1920'])
-  },
-  {
-    id: 'breakout-6',
-    title: 'Breakout Boys Hero Perfume (50ml / Black)',
-    description: 'Refreshing signature 50ml fragrance for boys (K6ASBF01-BLK).',
-    price: 1849,
-    category: { name: 'Perfumes & Accessories' },
-    shop: { name: 'Breakout Official' },
-    images: JSON.stringify(['https://www.breakout.com.pk/cdn/shop/files/K6ASBF01-BLK_1.jpg?v=1777985061&width=1920'])
-  }
-];
-
 export default function HomePage() {
-  const [products, setProducts] = useState<any[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<any[]>([]);
   const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
@@ -232,29 +80,23 @@ export default function HomePage() {
   const [vendorCity, setVendorCity] = useState('Lahore');
   const [vendorSuccess, setVendorSuccess] = useState(false);
 
-const syncMasterStore = () => {
-  const activeStr = localStorage.getItem('emall_custom_products') || 
-                    localStorage.getItem('emall_active_products') || 
-                    localStorage.getItem('emall_master_products');
-  if (activeStr) {
+  const fetchLiveProducts = async () => {
     try {
-      const parsed = JSON.parse(activeStr);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        setProducts(parsed);
-        localStorage.setItem('emall_master_products', JSON.stringify(parsed));
+      const res = await fetch('/api/products', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setProducts(data);
+        }
       }
-    } catch (err) {}
-  }
-};
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    syncMasterStore();
-    window.addEventListener('storage', syncMasterStore);
-    window.addEventListener('emall_products_updated', syncMasterStore);
-    return () => {
-      window.removeEventListener('storage', syncMasterStore);
-      window.removeEventListener('emall_products_updated', syncMasterStore);
-    };
+    fetchLiveProducts();
+    localStorage.clear(); // Clear all old browser memory
   }, []);
 
   const handleOpenProduct = (product: any) => {
@@ -340,10 +182,11 @@ const syncMasterStore = () => {
       status: 'Pending Dispatch'
     };
 
-    const existingOrders = JSON.parse(localStorage.getItem('emall_orders') || '[]');
-    const updatedOrders = [orderReceipt, ...existingOrders];
-    localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
-    window.dispatchEvent(new Event('emall_orders_updated'));
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderReceipt)
+    }).catch(console.error);
 
     setLastOrder(orderReceipt);
     setCart([]);
@@ -362,10 +205,11 @@ const syncMasterStore = () => {
       date: new Date().toLocaleDateString('en-PK')
     };
 
-    const existingVendors = JSON.parse(localStorage.getItem('emall_vendor_apps') || '[]');
-    const updatedVendors = [newApp, ...existingVendors];
-    localStorage.setItem('emall_vendor_apps', JSON.stringify(updatedVendors));
-    window.dispatchEvent(new Event('emall_vendors_updated'));
+    fetch('/api/vendors', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newApp)
+    }).catch(console.error);
 
     setVendorSuccess(true);
     setTimeout(() => {
@@ -383,7 +227,9 @@ const syncMasterStore = () => {
     { name: 'ALL BRANDS', filter: 'All' },
     { name: 'KHAADI', filter: 'Khaadi Official' },
     { name: 'BREAKOUT', filter: 'Breakout Official' },
-    { name: 'OUTFITTERS', filter: 'Outfitters' },
+    { name: 'SAPPHIRE', filter: 'Sapphire Official' },
+    { name: 'SAYA', filter: 'SAYA Official' },
+    { name: 'ETHNIC', filter: 'ETHNIC Official' },
   ];
 
   const filteredProducts = products.filter((p) => {
@@ -440,7 +286,7 @@ const syncMasterStore = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search Khaadi, Breakout, Outfitters..."
+              placeholder="Search Khaadi, Breakout, Sapphire, Saya, Ethnic..."
               className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-full text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#D95D27] transition-all"
             />
           </div>
@@ -520,16 +366,16 @@ const syncMasterStore = () => {
               <span className="bg-amber-500 text-black font-black text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-widest block w-fit mb-1">
                 Featured Vendor Spotlight
               </span>
-              <h3 className="text-xl font-serif text-white">Breakout & Khaadi Collection 2026</h3>
-              <p className="text-gray-400 text-xs mt-0.5">Explore official articles with 100% original store guarantee.</p>
+              <h3 className="text-xl font-serif text-white">Consolidated Brand Marketplace 2026</h3>
+              <p className="text-gray-400 text-xs mt-0.5">Shop 100% original articles with official store guarantee.</p>
             </div>
           </div>
 
           <button
-            onClick={() => setSelectedBrand('Breakout Official')}
+            onClick={() => setSelectedBrand('All')}
             className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs rounded-full shadow-lg uppercase tracking-wider transition-all whitespace-nowrap"
           >
-            Explore Breakout Store ➔
+            Explore Marketplace ➔
           </button>
         </div>
       </div>
@@ -586,7 +432,7 @@ const syncMasterStore = () => {
         <div className="mt-12 mb-28">
           {filteredProducts.length === 0 ? (
             <div className="bg-white/5 border border-white/10 rounded-3xl p-20 text-center text-gray-400 font-serif text-lg">
-              No products found for this filter.
+              No products active in this category. Add products in the Admin Portal to populate your store!
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
