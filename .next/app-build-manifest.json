@@ -32,13 +32,6 @@
       "static/chunks/138-8dcdfd45c23189b9.js",
       "static/chunks/app/login/page-7bccf794dc97593f.js"
     ],
-    "/seller/dashboard/page": [
-      "static/chunks/webpack-4eae68c151628de8.js",
-      "static/chunks/fd9d1056-24a270b5b0bed3f7.js",
-      "static/chunks/23-36545a1d4b65201e.js",
-      "static/chunks/main-app-268a65b838c04681.js",
-      "static/chunks/app/seller/dashboard/page-0c510f13f15e69fe.js"
-    ],
     "/page": [
       "static/chunks/webpack-4eae68c151628de8.js",
       "static/chunks/fd9d1056-24a270b5b0bed3f7.js",
@@ -46,7 +39,14 @@
       "static/chunks/main-app-268a65b838c04681.js",
       "static/chunks/138-8dcdfd45c23189b9.js",
       "static/chunks/545-13a3504ba27268b1.js",
-      "static/chunks/app/page-44588a518be81be3.js"
+      "static/chunks/app/page-1c2006ed645859f3.js"
+    ],
+    "/seller/dashboard/page": [
+      "static/chunks/webpack-4eae68c151628de8.js",
+      "static/chunks/fd9d1056-24a270b5b0bed3f7.js",
+      "static/chunks/23-36545a1d4b65201e.js",
+      "static/chunks/main-app-268a65b838c04681.js",
+      "static/chunks/app/seller/dashboard/page-0c510f13f15e69fe.js"
     ],
     "/register/page": [
       "static/chunks/webpack-4eae68c151628de8.js",
