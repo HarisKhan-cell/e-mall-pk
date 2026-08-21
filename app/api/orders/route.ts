@@ -35,7 +35,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Parse cartItems and shopBreakdown safely for JSONB columns
+    // Parse cartItems and shopBreakdown safely into native JSON objects for Supabase JSONB columns
     let cartItemsObj = body.cartItems || body.cart_items || [];
     if (typeof cartItemsObj === 'string') {
       try { cartItemsObj = JSON.parse(cartItemsObj); } catch (e) {}
