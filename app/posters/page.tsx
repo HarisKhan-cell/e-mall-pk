@@ -1,14 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { Sparkles, Gift, Truck, ShieldCheck, Building2, ShoppingBag, ArrowRight, Clock, CreditCard, CheckCircle2, UserPlus, Megaphone, Flame } from 'lucide-react';
+import { Sparkles, Gift, Truck, ShieldCheck, Building2, ShoppingBag, ArrowRight, Clock, CreditCard, CheckCircle2, UserPlus, Megaphone, Flame, Camera } from 'lucide-react';
 
 function EMallLogoSymbolLarge() {
   return (
     <svg className="w-16 h-16 mx-auto" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M8 32V8H22C25.3137 8 28 10.6863 28 14C28 17.3137 25.3137 20 22 20H14" stroke="#C8521B" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M14 20V32M14 20H24C27.3137 20 30 22.6863 30 26C30 29.3137 27.3137 32 24 32H8" stroke="#FFFFFF" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="32" cy="10" r="3.5" fill="#F59E0B" />
+      <path d="M14 20V32M14 20H24C27.3137 20 30 22.6863 30 26C30 29.3137 27.3137 32 24 32H8" stroke="#1A1816" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="32" cy="10" r="3.5" fill="#D49A37" />
     </svg>
   );
 }
@@ -20,13 +20,57 @@ export default function MarketingPostersPage() {
       {/* Page Header */}
       <div className="max-w-4xl mx-auto text-center space-y-3">
         <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#C8521B]">E-Mall PK Marketing Studio</span>
-        <h1 className="text-3xl sm:text-4xl font-serif text-[#1A1816]">Official Social Media Ad Flyers</h1>
+        <h1 className="text-3xl sm:text-4xl font-serif text-[#1A1816]">Official Brand Assets & Profile Pictures</h1>
         <p className="text-xs text-[#66615C] max-w-xl mx-auto leading-relaxed">
-          Use <strong className="text-[#C8521B]">Windows Key + Shift + 4</strong> (or Mac Screenshot App) to capture these 5 flyers for Instagram, TikTok, & WhatsApp Stories!
+          Use <strong className="text-[#C8521B]">Windows Key + Shift + 4</strong> (or Mac Screenshot App) to capture these official profile picture avatars & flyers for Instagram, TikTok, & WhatsApp!
         </p>
       </div>
 
-      {/* 5-Flyer Gallery Grid */}
+      {/* SECTION 1: INSTAGRAM & TIKTOK OFFICIAL PROFILE PICTURE AVATARS */}
+      <div className="max-w-5xl mx-auto bg-white border border-[#E6E2D8] rounded-3xl p-8 sm:p-10 shadow-sm space-y-6 text-center">
+        <div>
+          <span className="bg-amber-100 text-amber-900 border border-amber-200 text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest inline-flex items-center gap-1.5 mb-2">
+            <Camera className="w-3.5 h-3.5 text-amber-800" />
+            <span>Instagram & TikTok Profile Pictures</span>
+          </span>
+          <h2 className="text-2xl font-serif text-[#1A1816]">Official Brand Avatar Logos</h2>
+          <p className="text-xs text-[#66615C] mt-1">Take a square screenshot of either avatar below to upload as your official profile picture!</p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-8 pt-4">
+          
+          {/* AVATAR 1: DARK LUXURY */}
+          <div className="space-y-3">
+            <div className="w-72 h-72 sm:w-80 sm:h-80 bg-[#090807] border-4 border-amber-500/40 rounded-full p-6 flex flex-col items-center justify-center text-center shadow-2xl space-y-3 relative mx-auto">
+              <div className="w-20 h-20 rounded-3xl bg-white/5 border border-amber-500/30 flex items-center justify-center shadow-inner">
+                <EMallLogoSymbolLarge />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold font-serif text-white tracking-widest uppercase">E-MALL <span className="text-[#C8521B]">PK</span></h3>
+                <span className="text-[9px] text-amber-400 uppercase tracking-[0.2em] font-mono block mt-0.5">Digital Mall</span>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-gray-500 block">Dark Luxury Profile Picture</span>
+          </div>
+
+          {/* AVATAR 2: EDITORIAL LIGHT IVORY */}
+          <div className="space-y-3">
+            <div className="w-72 h-72 sm:w-80 sm:h-80 bg-[#FAF8F5] border-4 border-[#1A1816] rounded-full p-6 flex flex-col items-center justify-center text-center shadow-2xl space-y-3 relative mx-auto">
+              <div className="w-20 h-20 rounded-3xl bg-white border border-[#E6E2D8] flex items-center justify-center shadow-sm">
+                <EMallLogoSymbolLarge />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold font-serif text-[#1A1816] tracking-widest uppercase">E-MALL <span className="text-[#C8521B]">PK</span></h3>
+                <span className="text-[9px] text-[#C8521B] uppercase tracking-[0.2em] font-mono block mt-0.5">Digital Mall</span>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-gray-500 block">Editorial Cream Profile Picture</span>
+          </div>
+
+        </div>
+      </div>
+
+      {/* SECTION 2: 5-FLYER GALLERY GRID */}
       <div className="max-w-6xl mx-auto space-y-10">
         
         {/* FLYER 1: FEATURED "COMING SOON / BRAND TEASER" FLYER */}
