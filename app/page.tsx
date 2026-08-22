@@ -62,6 +62,7 @@ export default function HomePage() {
 
   // Quick View Product Modal States
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0); // For multiple images
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedQty, setSelectedQty] = useState(1);
   const [isGiftWrap, setIsGiftWrap] = useState(false);
@@ -120,6 +121,7 @@ export default function HomePage() {
 
   const handleOpenProduct = (product: any) => {
     setSelectedProduct(product);
+    setActiveImageIndex(0); // Start at the first image
     setSelectedSize('M');
     setSelectedQty(1);
     setIsGiftWrap(false);
@@ -502,6 +504,13 @@ export default function HomePage() {
                           {product.shop?.name || 'Verified Partner'}
                         </div>
 
+                        {/* NEW: IMAGE COUNT BADGE */}
+                        {images.length > 1 && (
+                          <div className="absolute bottom-3 right-3 bg-black/70 text-white px-2 py-1 rounded-lg text-[9px] font-bold tracking-widest uppercase">
+                            +{images.length - 1} More Views
+                          </div>
+                        )}
+
                         <div className="absolute top-3 right-3 bg-emerald-50 text-emerald-900 backdrop-blur-md px-2.5 py-1 rounded-full border border-emerald-200 text-[9px] font-bold">
                           100% Original
                         </div>
@@ -545,10 +554,10 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* QUICK VIEW PRODUCT MODAL */}
+      {/* QUICK VIEW PRODUCT MODAL (RESTORED WITH MULTI-IMAGE GALLERY) */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#E6E2D8] rounded-3xl p-8 max-w-2xl w-full shadow-2xl text-xs space-y-6 relative overflow-y-auto max-h-[90vh]">
+          <div className="bg-white border border-[#E6E2D8] rounded-3xl p-8 max-w-4xl w-full shadow-2xl text-xs space-y-6 relative overflow-y-auto max-h-[90vh]">
             <button
               onClick={() => setSelectedProduct(null)}
               className="absolute top-6 right-6 p-2 text-gray-500 hover:text-black bg-gray-100 rounded-full"
@@ -557,19 +566,40 @@ export default function HomePage() {
             </button>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="relative h-80 rounded-2xl overflow-hidden bg-gray-100 border border-[#E6E2D8]">
-                <img
-                  src={
-                    (() => {
-                      try { return JSON.parse(selectedProduct.images)[0]; } catch (e) { return selectedProduct.images; }
-                    })()
-                  }
-                  alt={selectedProduct.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full border border-[#E6E2D8] text-[9px] font-bold text-[#1A1816] uppercase tracking-widest flex items-center gap-1.5">
-                  <Store className="w-3 h-3 text-[#C8521B]" />
-                  {selectedProduct.shop?.name}
+              {/* IMAGE GALLERY SECTION */}
+              <div className="space-y-4">
+                <div className="relative h-96 rounded-2xl overflow-hidden bg-gray-100 border border-[#E6E2D8]">
+                  <img
+                    src={
+                      (() => {
+                        let imgs = [];
+                        try { imgs = JSON.parse(selectedProduct.images); } catch (e) { imgs = [selectedProduct.images]; }
+                        return imgs[activeImageIndex] || imgs[0];
+                      })()
+                    }
+                    alt={selectedProduct.title}
+                    className="w-full h-full object-contain"
+                  />
+                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#E6E2D8] text-[9px] font-bold text-[#1A1816] uppercase tracking-widest flex items-center gap-1.5">
+                    <Store className="w-3 h-3 text-[#C8521B]" />
+                    {selectedProduct.shop?.name}
+                  </div>
+                </div>
+
+                {/* THUMBNAILS LIST */}
+                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  {(() => {
+                    let imgs = [];
+                    try { imgs = JSON.parse(selectedProduct.images); } catch (e) { imgs = [selectedProduct.images]; }
+                    return imgs.map((img: string, idx: number) => (
+                      <img 
+                        key={idx} 
+                        src={img} 
+                        onClick={() => setActiveImageIndex(idx)}
+                        className={`w-16 h-16 rounded-xl object-cover cursor-pointer border-2 transition-all ${activeImageIndex === idx ? 'border-[#C8521B] scale-105' : 'border-transparent opacity-60 hover:opacity-100'}`} 
+                      />
+                    ));
+                  })()}
                 </div>
               </div>
 

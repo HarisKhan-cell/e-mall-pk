@@ -25,7 +25,8 @@ import {
   ShieldCheck,
   LogOut,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  X
 } from 'lucide-react';
 
 export default function AdminMasterPortal() {
@@ -54,7 +55,9 @@ export default function AdminMasterPortal() {
   const [category, setCategory] = useState('Fashion & Apparel');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  
+  // SURGICAL CHANGE: Replace single imageUrl with imageUrls array
+  const [imageUrls, setImageUrls] = useState<string[]>(['']);
 
   const syncAdminData = async () => {
     // 1. Fetch live products from API
@@ -135,6 +138,24 @@ export default function AdminMasterPortal() {
     setTimeout(() => setCopied(false), 3000);
   };
 
+  // SURGICAL HELPERS: Handle multiple image inputs
+  const handleAddImageUrlField = () => {
+    if (imageUrls.length < 5) {
+      setImageUrls([...imageUrls, '']);
+    }
+  };
+
+  const handleImageUrlChange = (index: number, value: string) => {
+    const newUrls = [...imageUrls];
+    newUrls[index] = value;
+    setImageUrls(newUrls);
+  };
+
+  const handleRemoveImageUrlField = (index: number) => {
+    const newUrls = imageUrls.filter((_, i) => i !== index);
+    setImageUrls(newUrls.length > 0 ? newUrls : ['']);
+  };
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
@@ -147,14 +168,16 @@ export default function AdminMasterPortal() {
       setFormError('Please enter a Product Price');
       return;
     }
-    if (!imageUrl || !imageUrl.trim()) {
-      setFormError('Please enter a Direct Image URL');
-      return;
-    }
 
-    let cleanUrl = imageUrl.trim();
-    if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
-      cleanUrl = 'https://' + cleanUrl;
+    // SURGICAL CHANGE: Validate and Clean all URLs in the array
+    const validUrls = imageUrls
+      .map(url => url.trim())
+      .filter(url => url !== '')
+      .map(url => (url.startsWith('http') ? url : `https://${url}`));
+
+    if (validUrls.length === 0) {
+      setFormError('Please enter at least one Product Image URL');
+      return;
     }
 
     const cleanPrice = parseFloat(price.toString().replace(/[^0-9.]/g, '')) || 0;
@@ -167,7 +190,7 @@ export default function AdminMasterPortal() {
       price: cleanPrice,
       category: { name: category },
       shop: { name: finalBrand, commissionRate: 5.0 },
-      images: JSON.stringify([cleanUrl]),
+      images: JSON.stringify(validUrls), // Now saving the full array as a JSON string
     };
 
     try {
@@ -184,7 +207,7 @@ export default function AdminMasterPortal() {
         setTitle('');
         setPrice('');
         setDescription('');
-        setImageUrl('');
+        setImageUrls(['']); // Reset to a single empty field
         setFormError('');
         setSuccessMessage(true);
         setTimeout(() => setSuccessMessage(false), 4000);
@@ -228,7 +251,7 @@ export default function AdminMasterPortal() {
     } catch (err) {}
   };
 
-  // Metrics Calculations
+  // Metrics Calculations (UNTOUCHED)
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || o.totalAmount || 0), 0);
   const totalProfit = orders.reduce((sum, o) => sum + (o.total_hardwork_profit || o.totalHardworkProfit || 0) + 50, 0);
 
@@ -384,7 +407,7 @@ export default function AdminMasterPortal() {
           </div>
         </div>
 
-        {/* METRICS SUMMARY BAR */}
+        {/* METRICS SUMMARY BAR (UNTOUCHED) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1">
             <div className="flex justify-between items-center text-gray-400 text-xs">
@@ -419,7 +442,7 @@ export default function AdminMasterPortal() {
           </div>
         </div>
 
-        {/* TAB 1: LIVE ORDERS MANAGEMENT */}
+        {/* TAB 1: LIVE ORDERS MANAGEMENT (UNTOUCHED) */}
         {activeTab === 'orders' && (
           <div className="bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
             <div className="border-b border-white/10 pb-4 flex justify-between items-center">
@@ -626,16 +649,39 @@ export default function AdminMasterPortal() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Direct Image URL</label>
-                  <input
-                    type="text"
-                    required
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="e.g. https://www.breakout.com.pk/cdn/shop/files/image.jpg"
-                    className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                  />
+                {/* SURGICAL UI CHANGE: Replace single input with dynamic array of inputs */}
+                <div className="space-y-3">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Product Images (Up to 5 Direct Links)</label>
+                  {imageUrls.map((url, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={url}
+                        onChange={(e) => handleImageUrlChange(index, e.target.value)}
+                        placeholder={`Paste Direct Image URL #${index + 1}`}
+                        className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
+                      />
+                      {imageUrls.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImageUrlField(index)}
+                          className="p-3 bg-red-950/40 border border-red-500/20 text-red-400 rounded-2xl hover:bg-red-900/40"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {imageUrls.length < 5 && (
+                    <button
+                      type="button"
+                      onClick={handleAddImageUrlField}
+                      className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27] flex items-center gap-1.5 hover:opacity-80"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add Another Image Link
+                    </button>
+                  )}
                 </div>
 
                 <div>
@@ -666,8 +712,8 @@ export default function AdminMasterPortal() {
               <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between">
                 <div>
                   <div className="relative h-72 w-full overflow-hidden bg-black/60 flex items-center justify-center text-gray-600">
-                    {imageUrl ? (
-                      <img src={imageUrl.startsWith('http') ? imageUrl : `https://${imageUrl}`} alt="Preview" className="w-full h-full object-cover" />
+                    {imageUrls[0] ? (
+                      <img src={imageUrls[0].startsWith('http') ? imageUrls[0] : `https://${imageUrls[0]}`} alt="Preview" className="w-full h-full object-cover" />
                     ) : (
                       <div className="text-center p-6 space-y-2">
                         <ImageIcon className="w-8 h-8 mx-auto text-gray-500" />
