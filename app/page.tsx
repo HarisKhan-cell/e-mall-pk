@@ -156,7 +156,7 @@ export default function HomePage() {
   if (paymentMethod === 'COD') deliveryFee = 195;
   if (paymentMethod === 'EXPRESS_COD') deliveryFee = 350;
 
-  const handleFinalCheckout = (e: React.FormEvent) => {
+  const handleFinalCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
 
@@ -201,10 +201,20 @@ export default function HomePage() {
       status: 'Pending Dispatch'
     };
 
-    const existingOrders = JSON.parse(localStorage.getItem('emall_orders') || '[]');
-    const updatedOrders = [orderReceipt, ...existingOrders];
-    localStorage.setItem('emall_orders', JSON.stringify(updatedOrders));
-    window.dispatchEvent(new Event('emall_orders_updated'));
+    // Await server POST and show alert if error occurs
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderReceipt)
+      });
+      const resData = await res.json();
+      if (!res.ok) {
+        alert(`Supabase Order Error: ${resData.error || 'Failed to save order'}`);
+      }
+    } catch (err: any) {
+      alert(`Network Error: ${err.message}`);
+    }
 
     setLastOrder(orderReceipt);
     setCart([]);

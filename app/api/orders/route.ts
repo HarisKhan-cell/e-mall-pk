@@ -13,12 +13,6 @@ const getHeaders = () => ({
   'Prefer': 'return=representation'
 });
 
-const parseNumber = (val: any) => {
-  if (typeof val === 'number' && !isNaN(val)) return val;
-  const parsed = parseFloat(String(val || 0).replace(/[^0-9.]/g, ''));
-  return isNaN(parsed) ? 0 : parsed;
-};
-
 export async function GET() {
   try {
     const res = await fetch(`${SUPABASE_URL}?select=*&order=created_at.desc`, {
@@ -41,16 +35,6 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    let cartItemsObj = body.cartItems || body.cart_items || [];
-    if (typeof cartItemsObj === 'string') {
-      try { cartItemsObj = JSON.parse(cartItemsObj); } catch (e) {}
-    }
-
-    let shopBreakdownObj = body.shopBreakdown || body.shop_breakdown || {};
-    if (typeof shopBreakdownObj === 'string') {
-      try { shopBreakdownObj = JSON.parse(shopBreakdownObj); } catch (e) {}
-    }
-
     const orderData = {
       order_id: String(body.orderId || body.order_id || `EMALL-${Math.floor(100000 + Math.random() * 900000)}`),
       date: String(body.date || new Date().toLocaleDateString('en-PK')),
@@ -58,13 +42,13 @@ export async function POST(req: Request) {
       customer_phone: String(body.customerPhone || body.customer_phone || ''),
       customer_address: String(body.customerAddress || body.customer_address || ''),
       payment_method: String(body.paymentMethod || body.payment_method || 'COD'),
-      cart_items: cartItemsObj,
-      shop_breakdown: shopBreakdownObj,
-      items_subtotal: parseNumber(body.itemsSubtotal || body.items_subtotal),
-      buyer_fee: parseNumber(body.buyerFee || body.buyer_fee || 50),
-      buyer_delivery_fee: parseNumber(body.buyerDeliveryFee || body.buyer_delivery_fee || 195),
-      total_hardwork_profit: parseNumber(body.totalHardworkProfit || body.total_hardwork_profit),
-      total_amount: parseNumber(body.totalAmount || body.total_amount),
+      cart_items: Array.isArray(body.cartItems) ? body.cartItems : (body.cart_items || []),
+      shop_breakdown: typeof body.shopBreakdown === 'object' ? body.shopBreakdown : {},
+      items_subtotal: Number(body.itemsSubtotal || body.items_subtotal || 0),
+      buyer_fee: Number(body.buyerFee || body.buyer_fee || 50),
+      buyer_delivery_fee: Number(body.buyerDeliveryFee || body.buyer_delivery_fee || 195),
+      total_hardwork_profit: Number(body.totalHardworkProfit || body.total_hardwork_profit || 0),
+      total_amount: Number(body.totalAmount || body.total_amount || 0),
       status: 'Pending Dispatch'
     };
 
