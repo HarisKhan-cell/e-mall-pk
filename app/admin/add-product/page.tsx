@@ -99,6 +99,10 @@ export default function AdminMasterPortal() {
       setIsAuthenticated(true);
     }
     syncAdminData();
+
+    // Auto-poll live orders every 5 seconds
+    const interval = setInterval(syncAdminData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleAdminLogin = (e: React.FormEvent) => {
