@@ -222,7 +222,7 @@ export default function HomePage() {
     setShowInvoice(true);
   };
 
-  const handleVendorSubmit = (e: React.FormEvent) => {
+  const handleVendorSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newApp = {
@@ -233,10 +233,19 @@ export default function HomePage() {
       date: new Date().toLocaleDateString('en-PK')
     };
 
-    const existingVendors = JSON.parse(localStorage.getItem('emall_vendor_apps') || '[]');
-    const updatedVendors = [newApp, ...existingVendors];
-    localStorage.setItem('emall_vendor_apps', JSON.stringify(updatedVendors));
-    window.dispatchEvent(new Event('emall_vendors_updated'));
+    try {
+      const res = await fetch('/api/vendors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newApp)
+      });
+      if (!res.ok) {
+        const errData = await res.json();
+        alert(`Vendor Error: ${errData.error || 'Failed to submit'}`);
+      }
+    } catch (err: any) {
+      console.error('Vendor POST error:', err);
+    }
 
     setVendorSuccess(true);
     setTimeout(() => {
@@ -247,7 +256,6 @@ export default function HomePage() {
       setVendorInsta('');
     }, 3000);
   };
-
   const categories = [
     'All',
     'Fashion & Apparel',
