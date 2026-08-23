@@ -371,49 +371,55 @@ export default function HomePage() {
         </div>
       </nav>
 
-  {/* MALL INTERIOR HERO SECTION - COMPACT & THEMED */}
-      <div className="relative py-14 px-8 text-center border-b border-[#E6E2D8] overflow-hidden bg-gray-900">
+  {/* GRAND MALL INTERIOR HERO SECTION - COMPACT & PREMIUM */}
+      <div className="relative py-20 px-8 text-center border-b border-[#E6E2D8] overflow-hidden bg-gray-950">
         
-        {/* Mall Interior Background Image */}
+        {/* Grand Mall Atrium Background Image */}
         <div 
-          className="absolute inset-0 z-0 opacity-50"
+          className="absolute inset-0 z-0 opacity-40 scale-105"
           style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=2070')", 
+            backgroundImage: "url('https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?q=80&w=2070')", 
             backgroundSize: 'cover', 
-            backgroundPosition: 'center',
+            backgroundPosition: 'center 40%',
           }}
         />
 
-        {/* Cinematic Dark Overlay for Contrast */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/70 via-black/40 to-[#FAF8F5]" />
+        {/* Professional Cinematic Overlay */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/70 via-black/20 to-[#FAF8F5]/10" />
 
-        <div className="relative z-10 max-w-5xl mx-auto space-y-4">
-          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-amber-400 bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-amber-400/20 inline-block">
-            Official Digital Mall Platform
-          </span>
+        <div className="relative z-10 max-w-5xl mx-auto space-y-6">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 mb-2">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white">
+              Official Multi-Brand Destination
+            </span>
+          </div>
 
-          <h1 className="text-4xl sm:text-6xl font-serif font-normal text-white tracking-tighter leading-tight drop-shadow-lg">
+          <h1 className="text-5xl sm:text-7xl font-serif font-normal text-white tracking-tighter leading-[1.1] drop-shadow-2xl">
             Endless Brands. <br />
-            <span className="italic text-gray-300 font-light">One Easy Checkout.</span>
+            <span className="italic text-gray-300 font-light underline decoration-[#C8521B]/40 underline-offset-8">One Easy Checkout.</span>
           </h1>
 
-          <p className="text-gray-300 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed">
-            Shop directly from official brand hubs like <span className="text-white font-medium">Khaadi, Agha Noor & LAMA</span> in one single digital mall experience.
+          <p className="text-gray-200 text-sm sm:text-lg max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md">
+            The first digital mall platform in Pakistan. Shop official inventory from <span className="text-white font-medium italic">Khaadi, Breakout, Agha Noor</span> & more in a single cart.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <div className="flex items-center gap-2 bg-[#C8521B] text-white px-6 py-3 rounded-full font-black text-[10px] uppercase tracking-widest shadow-xl shadow-[#C8521B]/20 hover:scale-105 transition-all cursor-pointer">
+          <div className="flex flex-wrap justify-center gap-4 pt-4">
+            <div className="group flex items-center gap-3 bg-[#C8521B] text-white px-8 py-4 rounded-full shadow-2xl transition-all hover:bg-[#a83e10] hover:scale-105 cursor-pointer">
               <ShoppingBag className="w-4 h-4" />
-              <span>Explore Collection</span>
+              <span className="text-xs font-black uppercase tracking-widest">Explore the Mall</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all cursor-pointer" onClick={() => setShowVendorModal(true)}>
-              <UserPlus className="w-4 h-4" />
-              <span>Become a Seller</span>
+            
+            <div 
+              onClick={() => setShowVendorModal(true)}
+              className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full transition-all hover:bg-white/20 cursor-pointer"
+            >
+              <UserPlus className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-black uppercase tracking-widest">Become a Seller</span>
             </div>
           </div>
         </div>
       </div>
-
       {/* FEATURED VENDOR SPOTLIGHT */}
       <div className="max-w-7xl mx-auto px-8 my-10">
         <div className="bg-white border border-[#E6E2D8] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
