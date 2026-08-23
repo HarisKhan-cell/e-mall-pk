@@ -1200,7 +1200,7 @@ export default function HomePage() {
             <div className="space-y-2 text-gray-400 text-[11px]">
               <p className="flex items-center gap-2 text-white">
                 <Mail className="w-3.5 h-3.5 text-[#C8521B]" />
-                <span>support@emall.pk</span>
+                <span>emallofficials869@gmail.com</span>
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-gray-400" />
