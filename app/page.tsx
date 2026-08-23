@@ -371,35 +371,58 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <div className="relative py-20 px-8 text-center border-b border-[#E6E2D8] overflow-hidden bg-[#F5F2EB]">
-        <div className="relative z-10 max-w-4xl mx-auto space-y-4">
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#C8521B] block">
-            Official Multi-Brand Destination
-          </span>
+      {/* ADVANCED HERO SECTION - LUXURY MINIMALIST DESIGN */}
+      <div className="relative py-32 px-8 text-center border-b border-[#E6E2D8] overflow-hidden bg-[#FAF8F5]">
+        
+        {/* Advanced Background Layer: Architectural Minimalist */}
+        <div 
+          className="absolute inset-0 z-0 opacity-[0.12] mix-blend-multiply transition-transform duration-1000 hover:scale-105"
+          style={{ 
+            backgroundImage: "url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2098')", 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center',
+            filter: 'contrast(1.1) brightness(1.1)'
+          }}
+        />
 
-          <h1 className="text-5xl sm:text-7xl font-serif font-normal text-[#1A1816] tracking-tight leading-[1.05]">
-            Endless Brands. <br />
-            <span className="italic text-[#66615C] font-light">One Easy Checkout.</span>
+        {/* Cinematic Light Gradient */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-tr from-[#FAF8F5] via-transparent to-white/30" />
+
+        <div className="relative z-10 max-w-5xl mx-auto space-y-6">
+          <div className="inline-flex items-center gap-2 bg-[#C8521B]/5 backdrop-blur-md px-4 py-2 rounded-full border border-[#C8521B]/20 mb-2">
+            <Sparkles className="w-3.5 h-3.5 text-[#C8521B]" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#C8521B]">
+              Premium Digital Mall Experience
+            </span>
+          </div>
+
+          <h1 className="text-6xl sm:text-8xl font-serif font-normal text-[#1A1816] tracking-tighter leading-[0.95]">
+            Modern Brands. <br />
+            <span className="italic text-[#66615C] font-light">Elevated Shopping.</span>
           </h1>
 
-          <p className="text-[#66615C] text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed">
-            Shop directly from Khaadi, Breakout, Agha Noor, Hemani, One Dollar Shop, and Baby Section in one single cart!
+          <p className="text-[#66615C] text-base sm:text-xl max-w-2xl mx-auto font-light leading-relaxed tracking-tight">
+            The first consolidated destination for Pakistan's most iconic labels. 
+            Official inventory from <span className="text-[#1A1816] font-medium italic">Khaadi, Breakout, Agha Noor</span> & more.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4 text-xs text-[#1A1816] font-medium pt-4">
-            <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-900 px-5 py-3 rounded-full shadow-sm">
-              <Gift className="w-4 h-4 text-emerald-700" />
-              <span>FREE Delivery on All Prepaid Orders</span>
+          <div className="flex flex-wrap justify-center gap-5 pt-8">
+            <div className="group flex items-center gap-3 bg-[#1A1816] text-white px-7 py-4 rounded-full shadow-2xl transition-all hover:bg-black hover:scale-105 cursor-pointer">
+              <ShoppingBag className="w-4 h-4 text-[#C8521B]" />
+              <span className="text-xs font-bold uppercase tracking-widest">Start Exploring</span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-full border border-[#E6E2D8] shadow-sm">
-              <Clock className="w-4 h-4 text-amber-600" />
-              <span>VIP 24H Lahore Express Delivery (PKR 350)</span>
+            
+            <div className="flex items-center gap-3 bg-white border border-[#E6E2D8] text-[#1A1816] px-7 py-4 rounded-full shadow-sm hover:border-[#1A1816] transition-all">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-bold uppercase tracking-widest">100% Original Guarantee</span>
             </div>
           </div>
         </div>
-      </div>
 
+        {/* Bottom Decorative Line */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-[#C8521B]/20 rounded-full mb-8" />
+      </div>
+      
       {/* FEATURED VENDOR SPOTLIGHT */}
       <div className="max-w-7xl mx-auto px-8 my-10">
         <div className="bg-white border border-[#E6E2D8] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
