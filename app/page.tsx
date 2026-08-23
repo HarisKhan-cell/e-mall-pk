@@ -371,58 +371,49 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* ADVANCED HERO SECTION - LUXURY MINIMALIST DESIGN */}
-      <div className="relative py-32 px-8 text-center border-b border-[#E6E2D8] overflow-hidden bg-[#FAF8F5]">
+  {/* MALL INTERIOR HERO SECTION - COMPACT & THEMED */}
+      <div className="relative py-14 px-8 text-center border-b border-[#E6E2D8] overflow-hidden bg-gray-900">
         
-        {/* Advanced Background Layer: Architectural Minimalist */}
+        {/* Mall Interior Background Image */}
         <div 
-          className="absolute inset-0 z-0 opacity-[0.12] mix-blend-multiply transition-transform duration-1000 hover:scale-105"
+          className="absolute inset-0 z-0 opacity-50"
           style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2098')", 
+            backgroundImage: "url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=2070')", 
             backgroundSize: 'cover', 
             backgroundPosition: 'center',
-            filter: 'contrast(1.1) brightness(1.1)'
           }}
         />
 
-        {/* Cinematic Light Gradient */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-tr from-[#FAF8F5] via-transparent to-white/30" />
+        {/* Cinematic Dark Overlay for Contrast */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/70 via-black/40 to-[#FAF8F5]" />
 
-        <div className="relative z-10 max-w-5xl mx-auto space-y-6">
-          <div className="inline-flex items-center gap-2 bg-[#C8521B]/5 backdrop-blur-md px-4 py-2 rounded-full border border-[#C8521B]/20 mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#C8521B]" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#C8521B]">
-              Premium Digital Mall Experience
-            </span>
-          </div>
+        <div className="relative z-10 max-w-5xl mx-auto space-y-4">
+          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-amber-400 bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-amber-400/20 inline-block">
+            Official Digital Mall Platform
+          </span>
 
-          <h1 className="text-6xl sm:text-8xl font-serif font-normal text-[#1A1816] tracking-tighter leading-[0.95]">
-            Modern Brands. <br />
-            <span className="italic text-[#66615C] font-light">Elevated Shopping.</span>
+          <h1 className="text-4xl sm:text-6xl font-serif font-normal text-white tracking-tighter leading-tight drop-shadow-lg">
+            Endless Brands. <br />
+            <span className="italic text-gray-300 font-light">One Easy Checkout.</span>
           </h1>
 
-          <p className="text-[#66615C] text-base sm:text-xl max-w-2xl mx-auto font-light leading-relaxed tracking-tight">
-            The first consolidated destination for Pakistan's most iconic labels. 
-            Official inventory from <span className="text-[#1A1816] font-medium italic">Khaadi, Breakout, Agha Noor</span> & more.
+          <p className="text-gray-300 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed">
+            Shop directly from official brand hubs like <span className="text-white font-medium">Khaadi, Agha Noor & LAMA</span> in one single digital mall experience.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-5 pt-8">
-            <div className="group flex items-center gap-3 bg-[#1A1816] text-white px-7 py-4 rounded-full shadow-2xl transition-all hover:bg-black hover:scale-105 cursor-pointer">
-              <ShoppingBag className="w-4 h-4 text-[#C8521B]" />
-              <span className="text-xs font-bold uppercase tracking-widest">Start Exploring</span>
+          <div className="flex flex-wrap justify-center gap-4 pt-2">
+            <div className="flex items-center gap-2 bg-[#C8521B] text-white px-6 py-3 rounded-full font-black text-[10px] uppercase tracking-widest shadow-xl shadow-[#C8521B]/20 hover:scale-105 transition-all cursor-pointer">
+              <ShoppingBag className="w-4 h-4" />
+              <span>Explore Collection</span>
             </div>
-            
-            <div className="flex items-center gap-3 bg-white border border-[#E6E2D8] text-[#1A1816] px-7 py-4 rounded-full shadow-sm hover:border-[#1A1816] transition-all">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span className="text-xs font-bold uppercase tracking-widest">100% Original Guarantee</span>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all cursor-pointer" onClick={() => setShowVendorModal(true)}>
+              <UserPlus className="w-4 h-4" />
+              <span>Become a Seller</span>
             </div>
           </div>
         </div>
-
-        {/* Bottom Decorative Line */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-[#C8521B]/20 rounded-full mb-8" />
       </div>
-      
+
       {/* FEATURED VENDOR SPOTLIGHT */}
       <div className="max-w-7xl mx-auto px-8 my-10">
         <div className="bg-white border border-[#E6E2D8] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
