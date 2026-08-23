@@ -3,30 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  Plus,
-  Trash2,
-  Store,
-  Sparkles,
-  ArrowLeft,
-  CheckCircle2,
-  Image as ImageIcon,
-  ShoppingBag,
-  DollarSign,
-  TrendingUp,
-  Clock,
-  Truck,
-  MessageCircle,
-  UserPlus,
-  Phone,
-  ExternalLink,
-  Copy,
-  Lock,
-  KeyRound,
-  ShieldCheck,
-  LogOut,
-  AlertCircle,
-  RefreshCw,
-  X
+  Plus, Trash2, Store, Sparkles, ArrowLeft, CheckCircle2, Image as ImageIcon, ShoppingBag, DollarSign, TrendingUp, Clock, Truck, MessageCircle, UserPlus, Phone, ExternalLink, Copy, Lock, KeyRound, ShieldCheck, LogOut, AlertCircle, RefreshCw, X
 } from 'lucide-react';
 
 export default function AdminMasterPortal() {
@@ -34,76 +11,41 @@ export default function AdminMasterPortal() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [loginError, setLoginError] = useState(false);
-
-  // Tab State
   const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'vendors'>('products');
-  
-  // Data States
   const [products, setProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [vendorApps, setVendorApps] = useState<any[]>([]);
-  
-  // UI Notification States
   const [successMessage, setSuccessMessage] = useState(false);
   const [formError, setFormError] = useState('');
-  const [copied, setCopied] = useState(false);
-
-  // Form State Declarations
+  
+  // Product Form States
   const [title, setTitle] = useState('');
   const [brand, setBrand] = useState('Khaadi Official');
   const [customBrand, setCustomBrand] = useState('');
   const [category, setCategory] = useState('Fashion & Apparel');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  
-  // SURGICAL CHANGE: Replace single imageUrl with imageUrls array
   const [imageUrls, setImageUrls] = useState<string[]>(['']);
 
   const syncAdminData = async () => {
-    // 1. Fetch live products from API
     try {
       const res = await fetch('/api/products', { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setProducts(data);
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    // 2. Fetch live orders from API
+      if (res.ok) { const data = await res.json(); if (Array.isArray(data)) setProducts(data); }
+    } catch (e) {}
     try {
       const resOrders = await fetch('/api/orders', { cache: 'no-store' });
-      if (resOrders.ok) {
-        const dataOrders = await resOrders.json();
-        if (Array.isArray(dataOrders)) {
-          setOrders(dataOrders);
-        }
-      }
-    } catch (err) {
-      console.error(err);
-    }
-
-    // 3. Fetch live vendor applications from API
+      if (resOrders.ok) { const dataOrders = await resOrders.json(); if (Array.isArray(dataOrders)) setOrders(dataOrders); }
+    } catch (err) {}
     try {
       const resVendors = await fetch('/api/vendors', { cache: 'no-store' });
-      if (resVendors.ok) {
-        const dataVendors = await resVendors.json();
-        if (Array.isArray(dataVendors)) setVendorApps(dataVendors);
-      }
+      if (resVendors.ok) { const dataVendors = await resVendors.json(); if (Array.isArray(dataVendors)) setVendorApps(dataVendors); }
     } catch (err) {}
   };
 
   useEffect(() => {
     const authSession = localStorage.getItem('emall_admin_auth');
-    if (authSession === 'true') {
-      setIsAuthenticated(true);
-    }
+    if (authSession === 'true') setIsAuthenticated(true);
     syncAdminData();
-
-    // Auto-poll live orders every 5 seconds
     const interval = setInterval(syncAdminData, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -111,74 +53,21 @@ export default function AdminMasterPortal() {
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (passcode === 'EmallPK2026!' || passcode === 'admin123') {
-      setIsAuthenticated(true);
-      localStorage.setItem('emall_admin_auth', 'true');
-      setLoginError(false);
-      setPasscode('');
-    } else {
-      setLoginError(true);
-    }
+      setIsAuthenticated(true); localStorage.setItem('emall_admin_auth', 'true'); setLoginError(false); setPasscode('');
+    } else { setLoginError(true); }
   };
 
-  const handleAdminLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('emall_admin_auth');
-  };
-
-  const handleClearBrowserCache = () => {
-    localStorage.clear();
-    localStorage.setItem('emall_admin_auth', 'true');
-    window.location.reload();
-  };
-
-  const handleExportAllJSON = () => {
-    const activeStr = JSON.stringify(products);
-    navigator.clipboard.writeText(activeStr);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
-  };
-
-  // SURGICAL HELPERS: Handle multiple image inputs
-  const handleAddImageUrlField = () => {
-    if (imageUrls.length < 5) {
-      setImageUrls([...imageUrls, '']);
-    }
-  };
-
-  const handleImageUrlChange = (index: number, value: string) => {
-    const newUrls = [...imageUrls];
-    newUrls[index] = value;
-    setImageUrls(newUrls);
-  };
-
-  const handleRemoveImageUrlField = (index: number) => {
-    const newUrls = imageUrls.filter((_, i) => i !== index);
-    setImageUrls(newUrls.length > 0 ? newUrls : ['']);
-  };
+  const handleAdminLogout = () => { setIsAuthenticated(false); localStorage.removeItem('emall_admin_auth'); };
+  const handleAddImageUrlField = () => { if (imageUrls.length < 5) setImageUrls([...imageUrls, '']); };
+  const handleImageUrlChange = (index: number, value: string) => { const newUrls = [...imageUrls]; newUrls[index] = value; setImageUrls(newUrls); };
+  const handleRemoveImageUrlField = (index: number) => { const newUrls = imageUrls.filter((_, i) => i !== index); setImageUrls(newUrls.length > 0 ? newUrls : ['']); };
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
-
-    if (!title || !title.trim()) {
-      setFormError('Please enter a Product Title');
-      return;
-    }
-    if (!price) {
-      setFormError('Please enter a Product Price');
-      return;
-    }
-
-    // SURGICAL CHANGE: Validate and Clean all URLs in the array
-    const validUrls = imageUrls
-      .map(url => url.trim())
-      .filter(url => url !== '')
-      .map(url => (url.startsWith('http') ? url : `https://${url}`));
-
-    if (validUrls.length === 0) {
-      setFormError('Please enter at least one Product Image URL');
-      return;
-    }
+    if (!title.trim() || !price) return setFormError('Title and Price are required');
+    const validUrls = imageUrls.map(url => url.trim()).filter(url => url !== '').map(url => (url.startsWith('http') ? url : `https://${url}`));
+    if (validUrls.length === 0) return setFormError('Enter at least one image link');
 
     const cleanPrice = parseFloat(price.toString().replace(/[^0-9.]/g, '')) || 0;
     const finalBrand = brand === 'Custom' ? (customBrand.trim() || 'Custom Brand') : brand;
@@ -190,670 +79,170 @@ export default function AdminMasterPortal() {
       price: cleanPrice,
       category: { name: category },
       shop: { name: finalBrand, commissionRate: 5.0 },
-      images: JSON.stringify(validUrls), // Now saving the full array as a JSON string
+      images: JSON.stringify(validUrls),
     };
 
     try {
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProduct)
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        await syncAdminData();
-        setTitle('');
-        setPrice('');
-        setDescription('');
-        setImageUrls(['']); // Reset to a single empty field
-        setFormError('');
-        setSuccessMessage(true);
-        setTimeout(() => setSuccessMessage(false), 4000);
-      } else {
-        setFormError(`Server error: ${data.error || 'Failed to save product'}`);
-      }
-    } catch (err: any) {
-      setFormError(`Network error: ${err.message}`);
-    }
-  };
-
-  const handleDeleteProduct = async (id: string) => {
-    try {
-      const res = await fetch(`/api/products?id=${id}`, {
-        method: 'DELETE'
-      });
+      const res = await fetch('/api/products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newProduct) });
       if (res.ok) {
-        await syncAdminData();
+        await syncAdminData(); setTitle(''); setPrice(''); setDescription(''); setImageUrls(['']);
+        setSuccessMessage(true); setTimeout(() => setSuccessMessage(false), 4000);
       }
-    } catch (err) {
-      console.error('Delete failed:', err);
-    }
+    } catch (err: any) { setFormError(`Network Error: ${err.message}`); }
   };
 
-  // Order Status Update
-  const handleUpdateOrderStatus = async (orderId: string, status: string) => {
-    try {
-      await fetch('/api/orders', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, status })
-      });
-      await syncAdminData();
-    } catch (err) {}
-  };
+  const handleDeleteProduct = async (id: string) => { try { const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' }); if (res.ok) await syncAdminData(); } catch (err) {} };
+  const handleUpdateOrderStatus = async (orderId: string, status: string) => { try { await fetch('/api/orders', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId, status }) }); await syncAdminData(); } catch (err) {} };
+  const handleDeleteOrder = async (orderId: string) => { try { await fetch(`/api/orders?orderId=${orderId}`, { method: 'DELETE' }); await syncAdminData(); } catch (err) {} };
 
-  const handleDeleteOrder = async (orderId: string) => {
-    try {
-      await fetch(`/api/orders?orderId=${orderId}`, { method: 'DELETE' });
-      await syncAdminData();
-    } catch (err) {}
-  };
-
-  // Metrics Calculations (UNTOUCHED)
+  // FULL METRICS - CEO DASHBOARD
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || o.totalAmount || 0), 0);
   const totalProfit = orders.reduce((sum, o) => sum + (o.total_hardwork_profit || o.totalHardworkProfit || 0) + 50, 0);
 
-  const brandOptions = [
-    'Khaadi Official',
-    'Breakout Official',
-    'LAMA',
-    'Agha Noor Official',
-    'Hemani Natural',
-    'One Dollar Shop',
-    'Baby Section',
-    'Sapphire Official',
-    'SAYA Official',
-    'ETHNIC Official',
-    'Custom'
-  ];
-
-  const categories = [
-    'Fashion & Apparel',
-    'Beauty & Organic',
-    'Baby & Kids',
-    'Home & Lifestyle',
-    'Perfumes & Accessories',
-    'Shoes & Footwear',
-    'Bags & Accessories',
-    'Watches'
-  ];
+  // UPDATED OPTIONS
+  const brandOptions = ['Khaadi Official', 'Outfitters Official', 'Ethnic Official', 'Breakout Official', 'LAMA', 'Agha Noor Official', 'Hemani Natural', 'One Dollar Shop', 'Baby Section', 'Sapphire Official', 'Custom'];
+  const categoriesList = ['Fashion & Apparel', 'Beauty & Organic', 'Baby & Kids', 'Home & Lifestyle', 'Shoes & Footwear', 'Perfumes & Accessories'];
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#090807] text-[#E6DFD5] bg-grid font-sans flex items-center justify-center p-6">
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D95D27] to-amber-600 flex items-center justify-center text-white mx-auto shadow-xl shadow-[#D95D27]/30">
-            <Lock className="w-8 h-8" />
-          </div>
-
-          <div>
-            <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest block">Security Authentication</span>
-            <h1 className="text-2xl font-serif text-white mt-1">E-Mall CEO Master Portal</h1>
-            <p className="text-gray-400 text-xs mt-1">Enter your private CEO passcode to access live orders, sales revenue & store controls.</p>
-          </div>
-
-          {loginError && (
-            <div className="p-3 bg-red-950/80 border border-red-500/40 rounded-2xl text-red-300 text-xs font-bold">
-              ✕ Invalid Passcode. Please try again.
-            </div>
-          )}
-
-          <form onSubmit={handleAdminLogin} className="space-y-4">
-            <div className="relative">
-              <KeyRound className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-              <input
-                type="password"
-                required
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                placeholder="Enter CEO Passcode (EmallPK2026!)"
-                className="w-full pl-11 pr-4 py-3.5 bg-black/50 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>Authenticate CEO Access</span>
-            </button>
+      <div className="min-h-screen bg-[#090807] text-[#E6DFD5] flex items-center justify-center p-6">
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-[#D95D27] flex items-center justify-center text-white mx-auto shadow-xl"><Lock className="w-8 h-8" /></div>
+          <div><span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest block font-sans">Security Authentication</span><h1 className="text-2xl font-serif text-white mt-1">E-Mall CEO Master Portal</h1></div>
+          {loginError && <div className="p-3 bg-red-950/80 border border-red-500/40 rounded-2xl text-red-300 text-xs font-bold font-sans">✕ Invalid Passcode.</div>}
+          <form onSubmit={handleAdminLogin} className="space-y-4 font-sans">
+            <div className="relative"><KeyRound className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" /><input type="password" required value={passcode} onChange={(e) => setPasscode(e.target.value)} placeholder="Enter CEO Passcode" className="w-full pl-11 pr-4 py-3.5 bg-black/50 border border-white/10 rounded-2xl text-xs text-white focus:border-[#D95D27]" /></div>
+            <button type="submit" className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl transition-all flex items-center justify-center gap-2"><ShieldCheck className="w-4 h-4" /> Authenticate Access</button>
           </form>
-
-          <Link href="/" className="inline-block text-xs text-gray-500 hover:text-white transition-colors pt-2">
-            ← Return to Live Website
-          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#090807] text-[#E6DFD5] bg-grid font-sans p-6 sm:p-12 pb-24">
+    <div className="min-h-screen bg-[#090807] text-[#E6DFD5] font-sans p-6 sm:p-12 pb-24">
       <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-6">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="p-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl border border-white/10 transition-all flex items-center gap-2 text-xs font-bold"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Live Mall</span>
-            </Link>
-            <div>
-              <span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest block">CEO Master Portal (Authenticated)</span>
-              <h1 className="text-3xl font-serif text-white mt-0.5">E-Mall PK Sales & Control Hub</h1>
-            </div>
-          </div>
-
+        <div className="flex flex-col sm:flex-row justify-between items-center border-b border-white/10 pb-6 gap-4">
+          <div className="flex items-center gap-4"><Link href="/" className="px-4 py-2 bg-white/5 border border-white/10 rounded-2xl text-xs font-bold transition-all hover:bg-white/10">← Back</Link><h1 className="text-3xl font-serif text-white">CEO Control Hub</h1></div>
           <div className="flex items-center gap-3">
-            <button
-              onClick={handleClearBrowserCache}
-              className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 rounded-2xl transition-all text-xs font-bold flex items-center gap-1.5"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
-              <span>Clear Local Cache</span>
-            </button>
-
-            <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
-              <button
-                onClick={() => setActiveTab('orders')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                  activeTab === 'orders'
-                    ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <ShoppingBag className="w-4 h-4" />
-                <span>Orders ({orders.length})</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('products')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                  activeTab === 'products'
-                    ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Plus className="w-4 h-4" />
-                <span>Products ({products.length})</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('vendors')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                  activeTab === 'vendors'
-                    ? 'bg-[#D95D27] text-white shadow-lg shadow-[#D95D27]/30'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <UserPlus className="w-4 h-4" />
-                <span>Sellers ({vendorApps.length})</span>
-              </button>
-            </div>
-
-            <button
-              onClick={handleAdminLogout}
-              className="p-3 bg-red-950/60 hover:bg-red-900/60 text-red-300 rounded-2xl border border-red-500/30 transition-all text-xs font-bold flex items-center gap-1.5"
-              title="Logout CEO Session"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+             <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
+                <button onClick={() => setActiveTab('orders')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'orders' ? 'bg-[#D95D27] text-white' : 'text-gray-400 hover:text-white'}`}>Orders ({orders.length})</button>
+                <button onClick={() => setActiveTab('products')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'products' ? 'bg-[#D95D27] text-white' : 'text-gray-400 hover:text-white'}`}>Products ({products.length})</button>
+                <button onClick={() => setActiveTab('vendors')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'vendors' ? 'bg-[#D95D27] text-white' : 'text-gray-400 hover:text-white'}`}>Sellers ({vendorApps.length})</button>
+             </div>
+             <button onClick={handleAdminLogout} className="p-3 bg-red-950/60 rounded-2xl border border-red-500/30 text-red-300 transition-all hover:bg-red-900/60"><LogOut className="w-4 h-4" /></button>
           </div>
         </div>
 
-        {/* METRICS SUMMARY BAR (UNTOUCHED) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1">
-            <div className="flex justify-between items-center text-gray-400 text-xs">
-              <span>Total Sales Volume</span>
-              <DollarSign className="w-4 h-4 text-emerald-400" />
-            </div>
-            <p className="text-2xl font-black text-white">PKR {totalRevenue.toLocaleString()}</p>
-          </div>
-
-          <div className="bg-emerald-950/40 border border-emerald-500/30 p-6 rounded-3xl space-y-1">
-            <div className="flex justify-between items-center text-emerald-300 text-xs font-bold">
-              <span>Net E-Mall Profit Earned</span>
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
-            </div>
-            <p className="text-2xl font-black text-emerald-400">PKR {totalProfit.toLocaleString()}</p>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1">
-            <div className="flex justify-between items-center text-gray-400 text-xs">
-              <span>Total Orders Placed</span>
-              <ShoppingBag className="w-4 h-4 text-[#D95D27]" />
-            </div>
-            <p className="text-2xl font-black text-white">{orders.length} Orders</p>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1">
-            <div className="flex justify-between items-center text-gray-400 text-xs">
-              <span>Merchant Applications</span>
-              <UserPlus className="w-4 h-4 text-amber-400" />
-            </div>
-            <p className="text-2xl font-black text-amber-300">{vendorApps.length} Applicants</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-sans">
+          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1"><span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest block">Total Sales Volume</span><p className="text-2xl font-black text-white">PKR {totalRevenue.toLocaleString()}</p></div>
+          <div className="bg-emerald-950/40 border border-emerald-500/30 p-6 rounded-3xl space-y-1"><span className="text-emerald-300 text-[10px] uppercase font-bold tracking-widest block">Net E-Mall Profit</span><p className="text-2xl font-black text-emerald-400">PKR {totalProfit.toLocaleString()}</p></div>
+          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1"><span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest block">Total Orders</span><p className="text-2xl font-black text-white">{orders.length}</p></div>
+          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1"><span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest block">Seller Apps</span><p className="text-2xl font-black text-amber-300">{vendorApps.length}</p></div>
         </div>
 
-        {/* TAB 1: LIVE ORDERS MANAGEMENT (UNTOUCHED) */}
         {activeTab === 'orders' && (
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
-            <div className="border-b border-white/10 pb-4 flex justify-between items-center">
-              <div>
-                <h2 className="text-xl font-serif text-white flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-[#D95D27]" />
-                  <span>Customer Orders ({orders.length})</span>
-                </h2>
-                <p className="text-gray-400 text-xs mt-1">Manage delivery address, contact customers via WhatsApp, and update status.</p>
-              </div>
-            </div>
-
-            {orders.length === 0 ? (
-              <div className="text-center py-20 text-gray-500 text-sm font-serif">
-                No customer orders received yet. Place a test order on the homepage to see it appear live here!
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {orders.map((o) => {
-                  const customerName = o.customer_name || o.customerName;
-                  const customerPhone = o.customer_phone || o.customerPhone;
-                  const customerAddress = o.customer_address || o.customerAddress;
-                  const totalAmount = o.total_amount || o.totalAmount;
-                  const profit = o.total_hardwork_profit || o.totalHardworkProfit;
-                  const orderId = o.order_id || o.orderId;
-                  const items = o.cart_items || o.cartItems || [];
-
-                  const whatsappMsg = encodeURIComponent(
-                    `Assalam-o-Alaikum ${customerName}! Thank you for your order (${orderId}) on E-Mall Pakistan. We are preparing your consolidated delivery to: ${customerAddress}. Total Payable: PKR ${totalAmount?.toLocaleString()}.`
-                  );
-
-                  return (
-                    <div key={orderId} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4 shadow-xl">
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-3 text-xs">
-                        <div>
-                          <span className="font-bold text-white text-sm">Order ID: {orderId}</span>
-                          <span className="text-gray-500 block text-[11px]">{o.date}</span>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
-                            o.status === 'Delivered' ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' : 'bg-amber-950 text-amber-300 border border-amber-500/30'
-                          }`}>
-                            {o.status || 'Pending Dispatch'}
-                          </span>
-
-                          <select
-                            value={o.status || 'Pending Dispatch'}
-                            onChange={(e) => handleUpdateOrderStatus(orderId, e.target.value)}
-                            className="bg-[#090807] border border-white/10 text-xs text-white px-3 py-1.5 rounded-xl"
-                          >
-                            <option value="Pending Dispatch">Pending Dispatch</option>
-                            <option value="In Transit / Dispatched">In Transit / Dispatched</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
-                          </select>
-
-                          <button onClick={() => handleDeleteOrder(orderId)} className="text-red-400 hover:text-red-300 p-1">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-                        <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-1">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Customer Details:</span>
-                          <p className="font-bold text-white text-xs mt-1">{customerName}</p>
-                          <p className="text-gray-400 text-[11px]">{customerPhone}</p>
-                          <p className="text-gray-400 text-[11px]">{customerAddress}</p>
-                          <p className="text-emerald-400 text-[10px] font-bold pt-1">Payment: {o.payment_method || o.paymentMethod}</p>
-
-                          <a
-                            href={`https://wa.me/92${customerPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="mt-3 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] rounded-xl flex items-center justify-center gap-2 transition-all"
-                          >
-                            <MessageCircle className="w-3.5 h-3.5" />
-                            <span>WhatsApp Customer</span>
-                          </a>
-                        </div>
-
-                        <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2 md:col-span-2">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27]">Ordered Items:</span>
-                          <div className="space-y-1.5 max-h-32 overflow-y-auto">
-                            {items.map((item: any, idx: number) => (
-                              <div key={idx} className="flex justify-between items-center text-[11px] text-gray-300 border-b border-white/5 pb-1">
-                                <div>
-                                  <span className="font-bold text-white">{item.title}</span>
-                                  <span className="text-gray-500 block text-[10px]">
-                                    Brand: {item.shop?.name} | Size: {item.selectedSize} | Qty: {item.quantity} {item.isGiftWrap && '🎁 Gift'}
-                                  </span>
-                                </div>
-                                <span className="font-bold text-white">PKR {item.totalPrice?.toLocaleString()}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="pt-2 border-t border-white/10 flex justify-between font-bold text-xs">
-                            <span className="text-amber-400">Our 5% Profit Margin: PKR {profit?.toFixed(2)}</span>
-                            <span className="text-emerald-400 text-sm font-extrabold">Total Payable: PKR {totalAmount?.toLocaleString()}</span>
-                          </div>
-                        </div>
-                      </div>
+          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6 shadow-2xl">
+            <h2 className="text-xl font-serif text-white flex items-center gap-2"><ShoppingBag className="w-5 h-5 text-[#D95D27]" /> Live Orders Management</h2>
+            <div className="space-y-4">
+              {orders.map((o) => (
+                <div key={o.order_id} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4">
+                  <div className="flex justify-between items-center border-b border-white/10 pb-3 font-sans">
+                    <div><span className="font-bold text-white">Order ID: {o.order_id}</span><span className="text-gray-500 block text-[11px]">{o.date}</span></div>
+                    <div className="flex items-center gap-3">
+                      <select value={o.status || 'Pending Dispatch'} onChange={(e) => handleUpdateOrderStatus(o.order_id, e.target.value)} className="bg-[#090807] border border-white/10 text-xs text-white px-3 py-1.5 rounded-xl"><option value="Pending Dispatch">Pending Dispatch</option><option value="In Transit">In Transit</option><option value="Delivered">Delivered</option><option value="Cancelled">Cancelled</option></select>
+                      <button onClick={() => handleDeleteOrder(o.order_id)} className="text-red-400 p-1 transition-all hover:bg-red-500/10 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs font-sans">
+                    <div className="space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10"><p className="font-bold text-white text-sm">{o.customer_name}</p><p className="text-gray-400">{o.customer_phone}</p><p className="text-gray-400">{o.customer_address}</p><p className="text-emerald-400 font-bold pt-1">Payment: {o.payment_method}</p></div>
+                    <div className="md:col-span-2 space-y-2 bg-white/5 p-4 rounded-2xl border border-white/10">
+                       <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                          {(o.cart_items || []).map((item: any, idx: number) => (
+                            <div key={idx} className="flex justify-between text-[11px] text-gray-300 border-b border-white/5 pb-1">
+                              <span>{item.title} (x{item.quantity}) - {item.selectedSize}</span>
+                              <span className="font-bold">PKR {item.totalPrice?.toLocaleString()}</span>
+                            </div>
+                          ))}
+                       </div>
+                       <div className="pt-2 border-t border-white/10 flex justify-between font-bold">
+                          <span className="text-amber-400 text-[9px] uppercase tracking-widest">E-Mall Profit: PKR {o.total_hardwork_profit?.toFixed(2)}</span>
+                          <span className="text-emerald-400 text-sm">TOTAL PAYABLE: PKR {o.total_amount?.toLocaleString()}</span>
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* TAB 2: PRODUCT MANAGEMENT */}
         {activeTab === 'products' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Add Product Form */}
-            <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <h2 className="text-xl font-serif text-white flex items-center gap-2">
-                  <Plus className="w-5 h-5 text-[#D95D27]" />
-                  <span>Add New Article</span>
-                </h2>
-                <p className="text-gray-400 text-xs mt-1">Fill out the fields below to publish a product live to Supabase Cloud Database.</p>
-              </div>
-
-              {formError && (
-                <div className="bg-red-950/80 border border-red-500/40 p-4 rounded-2xl text-red-300 text-xs font-bold flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-red-400" />
-                  <span>{formError}</span>
+            <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6">
+              <h2 className="text-xl font-serif text-white flex items-center gap-2"><Plus className="w-5 h-5 text-[#D95D27]" /> Add New Article</h2>
+              {formError && <div className="p-3 bg-red-950/80 rounded-2xl text-red-300 text-xs font-sans font-bold">✕ {formError}</div>}
+              {successMessage && <div className="p-3 bg-emerald-950/80 rounded-2xl text-emerald-300 text-xs font-sans font-bold">✓ Published live to Digital Mall!</div>}
+              
+              <form onSubmit={handleAddProduct} className="space-y-5 text-xs font-sans">
+                <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Product Title" className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-white focus:border-[#D95D27]" />
+                <div className="grid grid-cols-2 gap-4">
+                  <select value={brand} onChange={(e) => setBrand(e.target.value)} className="w-full px-4 py-3.5 bg-[#090807] border border-white/10 rounded-2xl text-white">{brandOptions.map(b => <option key={b} value={b}>{b}</option>)}</select>
+                  <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-4 py-3.5 bg-[#090807] border border-white/10 rounded-2xl text-white">{categoriesList.map(c => <option key={c} value={c}>{c}</option>)}</select>
                 </div>
-              )}
-
-              {successMessage && (
-                <div className="bg-emerald-950/80 border border-emerald-500/50 p-4 rounded-2xl text-emerald-300 text-xs flex items-center gap-3 font-bold">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  <span>Product published live to Supabase Cloud Database!</span>
-                </div>
-              )}
-
-              <form onSubmit={handleAddProduct} className="space-y-5 text-xs">
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Product Title</label>
-                  <input
-                    type="text"
-                    required
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. Breakout Leather Wallet"
-                    className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Select Brand Store</label>
-                    <select
-                      value={brand}
-                      onChange={(e) => setBrand(e.target.value)}
-                      className="w-full px-4 py-3.5 bg-[#090807] border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                    >
-                      {brandOptions.map((b) => (
-                        <option key={b} value={b}>{b}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {brand === 'Custom' ? (
-                    <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Custom Brand Name</label>
-                      <input
-                        type="text"
-                        required
-                        value={customBrand}
-                        onChange={(e) => setCustomBrand(e.target.value)}
-                        placeholder="e.g. Generation / Sana Safinaz"
-                        className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Category</label>
-                      <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        className="w-full px-4 py-3.5 bg-[#090807] border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                      >
-                        {categories.map((c) => (
-                          <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Original Price (PKR)</label>
-                  <input
-                    type="text"
-                    required
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder="e.g. 1349"
-                    className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                  />
-                </div>
-
-                {/* SURGICAL UI CHANGE: Replace single input with dynamic array of inputs */}
+                <input type="text" required value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Original Price (PKR)" className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-white" />
+                
                 <div className="space-y-3">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Product Images (Up to 5 Direct Links)</label>
-                  {imageUrls.map((url, index) => (
-                    <div key={index} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={url}
-                        onChange={(e) => handleImageUrlChange(index, e.target.value)}
-                        placeholder={`Paste Direct Image URL #${index + 1}`}
-                        className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                      />
-                      {imageUrls.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImageUrlField(index)}
-                          className="p-3 bg-red-950/40 border border-red-500/20 text-red-400 rounded-2xl hover:bg-red-900/40"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  {imageUrls.length < 5 && (
-                    <button
-                      type="button"
-                      onClick={handleAddImageUrlField}
-                      className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27] flex items-center gap-1.5 hover:opacity-80"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Another Image Link
-                    </button>
-                  )}
+                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 block px-1">Gallery Links (Max 5)</label>
+                   {imageUrls.map((url, idx) => (
+                     <div key={idx} className="flex gap-2"><input type="text" value={url} onChange={(e) => handleImageUrlChange(idx, e.target.value)} placeholder={`Direct Link #${idx+1}`} className="flex-1 px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-white focus:border-[#D95D27]" />{imageUrls.length > 1 && <button type="button" onClick={() => handleRemoveImageUrlField(idx)} className="p-3 bg-red-950/40 border border-red-500/20 text-red-400 rounded-2xl hover:bg-red-900/40"><Trash2 className="w-4 h-4" /></button>}</div>
+                   ))}
+                   {imageUrls.length < 5 && <button type="button" onClick={handleAddImageUrlField} className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27] flex items-center gap-1.5 p-2 transition-all hover:opacity-80"><Plus className="w-3.5 h-3.5" /> Add Another Link</button>}
                 </div>
 
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Description</label>
-                  <textarea
-                    rows={2}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="e.g. Genuine leather compact bi-fold wallet."
-                    className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D95D27]"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl shadow-[#D95D27]/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Publish Article Live</span>
-                </button>
+                <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Product Description" className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-white focus:border-[#D95D27]" />
+                <button type="submit" className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black uppercase rounded-full shadow-2xl transition-all">Publish Article Live</button>
               </form>
             </div>
 
-            {/* Live Preview Card */}
             <div className="space-y-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27] block">Live Product Card Preview</span>
-              
-              <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between">
-                <div>
-                  <div className="relative h-72 w-full overflow-hidden bg-black/60 flex items-center justify-center text-gray-600">
-                    {imageUrls[0] ? (
-                      <img src={imageUrls[0].startsWith('http') ? imageUrls[0] : `https://${imageUrls[0]}`} alt="Preview" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="text-center p-6 space-y-2">
-                        <ImageIcon className="w-8 h-8 mx-auto text-gray-500" />
-                        <p className="text-[10px] uppercase font-bold text-gray-500">Image Preview</p>
-                      </div>
-                    )}
-                    <div className="absolute top-3 left-3 bg-[#090807]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5 shadow-lg">
-                      <Store className="w-3 h-3 text-[#D95D27]" />
-                      {brand === 'Custom' ? (customBrand || 'Brand Name') : brand}
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    <h3 className="text-base font-bold text-white font-sans line-clamp-1">
-                      {title || 'Sample Article Name'}
-                    </h3>
-                    <p className="text-gray-400 text-xs mt-2 line-clamp-2 leading-relaxed font-light">
-                      {description || 'Short product fabric description details.'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-6 pt-0">
-                  <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                    <div>
-                      <span className="text-[9px] uppercase font-bold text-gray-500 block tracking-widest">Original Retail</span>
-                      <span className="text-xl font-extrabold text-white">
-                        PKR {price ? parseFloat(price.replace(/[^0-9.]/g, '')).toLocaleString() : '0'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              <span className="text-[10px] font-bold uppercase text-[#D95D27] tracking-widest block font-sans">Live Preview</span>
+              <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between h-fit font-sans">
+                <div className="h-64 bg-black/60 flex items-center justify-center overflow-hidden">{imageUrls[0] ? <img src={imageUrls[0]} className="w-full h-full object-cover" /> : <ImageIcon className="w-10 h-10 text-gray-700" />}</div>
+                <div className="p-6 space-y-2"><h3 className="text-white font-bold text-lg">{title || 'Preview'}</h3><p className="text-gray-400 text-xs line-clamp-2">{description || 'Article info...'}</p><p className="text-2xl font-black text-[#D95D27] pt-2">PKR {price || 0}</p></div>
               </div>
             </div>
 
-            {/* Active Products List */}
-            <div className="lg:col-span-3 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
-              <div className="border-b border-white/10 pb-4 flex justify-between items-center">
-                <h2 className="text-xl font-serif text-white">Manage Active Products ({products.length})</h2>
-                <span className="text-[10px] text-gray-400">Click Trash icon to remove any product</span>
-              </div>
-
+            <div className="lg:col-span-3 bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6 shadow-2xl font-sans">
+              <h2 className="text-xl font-serif text-white">Active Products ({products.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {products.map((p) => {
-                  let images = [];
-                  try { images = JSON.parse(p.images || '[]'); } catch (e) { images = [p.images]; }
-                  const displayImg = images[0] || 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800';
-
-                  return (
-                    <div key={p.id} className="bg-black/40 border border-white/10 rounded-2xl p-4 flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <img src={displayImg} alt={p.title} className="w-12 h-12 rounded-xl object-cover" />
-                        <div>
-                          <h4 className="text-xs font-bold text-white line-clamp-1">{p.title}</h4>
-                          <p className="text-[10px] text-[#D95D27] font-bold">{p.shop?.name}</p>
-                          <p className="text-[10px] text-gray-400 font-extrabold">PKR {p.price?.toLocaleString()}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleDeleteProduct(p.id)}
-                        className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition-all"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                   let imgs = []; try { imgs = JSON.parse(p.images || '[]'); } catch (e) { imgs = [p.images]; }
+                   return (
+                    <div key={p.id} className="bg-black/40 border border-white/10 rounded-2xl p-4 flex items-center justify-between gap-3 group transition-all hover:border-[#D95D27]/40">
+                      <div className="flex items-center gap-3 overflow-hidden"><img src={imgs[0]} className="w-12 h-12 rounded-xl object-cover shrink-0" /><div className="overflow-hidden"><h4 className="text-xs font-bold text-white truncate">{p.title}</h4><p className="text-[10px] text-gray-500 font-extrabold tracking-tighter uppercase">{p.shop?.name}</p><p className="text-[10px] text-gray-400">PKR {p.price?.toLocaleString()}</p></div></div>
+                      <button onClick={() => handleDeleteProduct(p.id)} className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
                     </div>
-                  );
+                   );
                 })}
               </div>
             </div>
           </div>
         )}
 
-        {/* TAB 3: MERCHANT APPLICATIONS TRACKER */}
         {activeTab === 'vendors' && (
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-6">
-            <div className="border-b border-white/10 pb-4 flex justify-between items-center">
-              <div>
-                <h2 className="text-xl font-serif text-white flex items-center gap-2">
-                  <UserPlus className="w-5 h-5 text-emerald-400" />
-                  <span>Merchant Applications ({vendorApps.length})</span>
-                </h2>
-                <p className="text-gray-400 text-xs mt-1">Boutiques and Instagram sellers applying to sell on E-Mall PK under 10% commission.</p>
-              </div>
+          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6 shadow-2xl font-sans">
+            <h2 className="text-xl font-serif text-white flex items-center gap-2"><UserPlus className="w-5 h-5 text-emerald-400" /> Merchant Applications</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {vendorApps.map((v, idx) => (
+                <div key={idx} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4 shadow-xl flex flex-col justify-between transition-all hover:border-emerald-500/30">
+                  <div className="space-y-2"><div className="flex justify-between items-start"><span className="bg-emerald-950 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Seller Partner</span><span className="text-[10px] text-gray-500">{v.vendor_city}</span></div><h3 className="text-lg font-bold text-white font-serif">{v.vendor_name}</h3><p className="text-gray-400 text-xs flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-[#D95D27]" /> {v.vendor_phone}</p></div>
+                  <a href={`https://wa.me/92${v.vendor_phone?.replace(/^0/, '')}`} target="_blank" rel="noreferrer" className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl flex items-center justify-center gap-2 transition-all uppercase tracking-widest"><MessageCircle className="w-4 h-4" /> <span>WhatsApp Seller</span></a>
+                </div>
+              ))}
             </div>
-
-            {vendorApps.length === 0 ? (
-              <div className="text-center py-20 text-gray-500 text-sm font-serif">
-                No seller applications received yet. Click "Become a Seller" on the website navbar to test submitting an application!
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {vendorApps.map((v, idx) => {
-                  const vendorName = v.vendor_name || v.vendorName;
-                  const vendorPhone = v.vendor_phone || v.vendorPhone;
-                  const vendorCity = v.vendor_city || v.vendorCity;
-                  const vendorInsta = v.vendor_insta || v.vendorInsta;
-
-                  const whatsappMsg = encodeURIComponent(
-                    `Assalam-o-Alaikum ${vendorName}! This is Haris Khan from E-Mall Pakistan. We received your seller application for ${vendorCity}. We would love to list your items under our 10% boutique program!`
-                  );
-
-                  return (
-                    <div key={idx} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-start">
-                          <span className="bg-emerald-950 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase">
-                            10% Boutique Partner
-                          </span>
-                          <span className="text-[10px] text-gray-500">{vendorCity}</span>
-                        </div>
-                        <h3 className="text-lg font-bold text-white font-serif">{vendorName}</h3>
-                        <p className="text-gray-400 text-xs flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-[#D95D27]" />
-                          <span>{vendorPhone}</span>
-                        </p>
-                        {vendorInsta && (
-                          <p className="text-gray-400 text-xs flex items-center gap-1.5 line-clamp-1">
-                            <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
-                            <span>{vendorInsta}</span>
-                          </p>
-                        )}
-                      </div>
-
-                      <a
-                        href={`https://wa.me/92${vendorPhone?.replace(/^0/, '')}?text=${whatsappMsg}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl flex items-center justify-center gap-2 transition-all"
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                        <span>Chat on WhatsApp with Seller</span>
-                      </a>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
         )}
-
       </div>
     </div>
   );
