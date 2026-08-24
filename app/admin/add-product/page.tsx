@@ -3,22 +3,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  Plus, Trash2, Store, Sparkles, ArrowLeft, CheckCircle2, Image as ImageIcon, ShoppingBag, DollarSign, TrendingUp, Clock, Truck, MessageCircle, UserPlus, Phone, ExternalLink, Copy, Lock, KeyRound, ShieldCheck, LogOut, AlertCircle, RefreshCw, X
+  Plus, Trash2, Store, Sparkles, ArrowLeft, CheckCircle2, Image as ImageIcon, ShoppingBag, DollarSign, TrendingUp, Clock, Truck, MessageCircle, UserPlus, Phone, ExternalLink, Copy, Lock, KeyRound, ShieldCheck, LogOut, AlertCircle, RefreshCw, X, ListChecks, CheckCircle
 } from 'lucide-react';
 
 export default function AdminMasterPortal() {
-  // Security States
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [loginError, setLoginError] = useState(false);
-  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'vendors'>('products');
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'shopping'>('orders');
   const [products, setProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [vendorApps, setVendorApps] = useState<any[]>([]);
   const [successMessage, setSuccessMessage] = useState(false);
   const [formError, setFormError] = useState('');
   
-  // Product Form States
   const [title, setTitle] = useState('');
   const [brand, setBrand] = useState('Khaadi Official');
   const [customBrand, setCustomBrand] = useState('');
@@ -57,62 +55,55 @@ export default function AdminMasterPortal() {
     } else { setLoginError(true); }
   };
 
-  const handleAdminLogout = () => { setIsAuthenticated(false); localStorage.removeItem('emall_admin_auth'); };
-  const handleAddImageUrlField = () => { if (imageUrls.length < 5) setImageUrls([...imageUrls, '']); };
-  const handleImageUrlChange = (index: number, value: string) => { const newUrls = [...imageUrls]; newUrls[index] = value; setImageUrls(newUrls); };
-  const handleRemoveImageUrlField = (index: number) => { const newUrls = imageUrls.filter((_, i) => i !== index); setImageUrls(newUrls.length > 0 ? newUrls : ['']); };
+  const handleUpdateOrderStatus = async (orderId: string, status: string) => {
+    try {
+      await fetch('/api/orders', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId, status }) });
+      await syncAdminData();
+    } catch (err) {}
+  };
+
+  const handleDeleteOrder = async (orderId: string) => {
+    if(confirm("Confirm deletion of this order record?")) {
+      try { await fetch(`/api/orders?orderId=${orderId}`, { method: 'DELETE' }); await syncAdminData(); } catch (err) {}
+    }
+  };
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormError('');
-    if (!title.trim() || !price) return setFormError('Title and Price are required');
     const validUrls = imageUrls.map(url => url.trim()).filter(url => url !== '').map(url => (url.startsWith('http') ? url : `https://${url}`));
     if (validUrls.length === 0) return setFormError('Enter at least one image link');
-
-    const cleanPrice = parseFloat(price.toString().replace(/[^0-9.]/g, '')) || 0;
-    const finalBrand = brand === 'Custom' ? (customBrand.trim() || 'Custom Brand') : brand;
 
     const newProduct = {
       id: `custom-${Date.now()}`,
       title: title.trim(),
-      description: description.trim() || '100% Original Brand Guaranteed article.',
-      price: cleanPrice,
+      description: description.trim() || 'Official Brand Article',
+      price: parseFloat(price.replace(/[^0-9.]/g, '')),
       category: { name: category },
-      shop: { name: finalBrand, commissionRate: 5.0 },
+      shop: { name: brand === 'Custom' ? customBrand : brand, commissionRate: 5.0 },
       images: JSON.stringify(validUrls),
     };
 
     try {
       const res = await fetch('/api/products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newProduct) });
       if (res.ok) {
-        await syncAdminData(); setTitle(''); setPrice(''); setDescription(''); setImageUrls(['']);
+        await syncAdminData(); setTitle(''); setPrice(''); setImageUrls(['']);
         setSuccessMessage(true); setTimeout(() => setSuccessMessage(false), 4000);
       }
-    } catch (err: any) { setFormError(`Network Error: ${err.message}`); }
+    } catch (err) {}
   };
 
-  const handleDeleteProduct = async (id: string) => { try { const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' }); if (res.ok) await syncAdminData(); } catch (err) {} };
-  const handleUpdateOrderStatus = async (orderId: string, status: string) => { try { await fetch('/api/orders', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId, status }) }); await syncAdminData(); } catch (err) {} };
-  const handleDeleteOrder = async (orderId: string) => { try { await fetch(`/api/orders?orderId=${orderId}`, { method: 'DELETE' }); await syncAdminData(); } catch (err) {} };
-
-  // FULL METRICS - CEO DASHBOARD
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || o.totalAmount || 0), 0);
-  const totalProfit = orders.reduce((sum, o) => sum + (o.total_hardwork_profit || o.totalHardworkProfit || 0) + 50, 0);
-
-  // UPDATED OPTIONS
-  const brandOptions = ['Khaadi Official', 'Outfitters Official', 'Ethnic Official', 'Breakout Official', 'LAMA', 'Agha Noor Official', 'Hemani Natural', 'One Dollar Shop', 'Baby Section', 'Sapphire Official', 'Custom'];
-  const categoriesList = ['Fashion & Apparel', 'Beauty & Organic', 'Baby & Kids', 'Home & Lifestyle', 'Shoes & Footwear', 'Perfumes & Accessories'];
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+  const totalProfit = orders.reduce((sum, o) => sum + (o.total_hardwork_profit || 0) + 50, 0);
 
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#090807] text-[#E6DFD5] flex items-center justify-center p-6">
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-[#D95D27] flex items-center justify-center text-white mx-auto shadow-xl"><Lock className="w-8 h-8" /></div>
-          <div><span className="text-[10px] font-bold text-[#D95D27] uppercase tracking-widest block font-sans">Security Authentication</span><h1 className="text-2xl font-serif text-white mt-1">E-Mall CEO Master Portal</h1></div>
-          {loginError && <div className="p-3 bg-red-950/80 border border-red-500/40 rounded-2xl text-red-300 text-xs font-bold font-sans">✕ Invalid Passcode.</div>}
-          <form onSubmit={handleAdminLogin} className="space-y-4 font-sans">
-            <div className="relative"><KeyRound className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" /><input type="password" required value={passcode} onChange={(e) => setPasscode(e.target.value)} placeholder="Enter CEO Passcode" className="w-full pl-11 pr-4 py-3.5 bg-black/50 border border-white/10 rounded-2xl text-xs text-white focus:border-[#D95D27]" /></div>
-            <button type="submit" className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-2xl transition-all flex items-center justify-center gap-2"><ShieldCheck className="w-4 h-4" /> Authenticate Access</button>
+        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-12 max-w-md w-full shadow-2xl text-center space-y-6">
+          <div className="w-20 h-20 rounded-[1.5rem] bg-[#D95D27] flex items-center justify-center text-white mx-auto shadow-2xl shadow-[#D95D27]/30 animate-pulse"><Lock className="w-10 h-10" /></div>
+          <div><span className="text-[10px] font-black text-[#D95D27] uppercase tracking-[0.4em] block">Admin Verification</span><h1 className="text-3xl font-serif text-white mt-2 tracking-tight">E-Mall CEO Portal</h1></div>
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <input type="password" required value={passcode} onChange={(e) => setPasscode(e.target.value)} placeholder="Enter Secret Passcode" className="w-full px-6 py-4 bg-black border border-white/10 rounded-2xl text-white text-center focus:border-[#D95D27] outline-none" />
+            <button type="submit" className="w-full py-5 bg-[#D95D27] text-white font-black uppercase tracking-widest rounded-full shadow-lg active:scale-95 transition-all">Unlock Dashboard</button>
           </form>
         </div>
       </div>
@@ -121,53 +112,99 @@ export default function AdminMasterPortal() {
 
   return (
     <div className="min-h-screen bg-[#090807] text-[#E6DFD5] font-sans p-6 sm:p-12 pb-24">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex flex-col sm:flex-row justify-between items-center border-b border-white/10 pb-6 gap-4">
-          <div className="flex items-center gap-4"><Link href="/" className="px-4 py-2 bg-white/5 border border-white/10 rounded-2xl text-xs font-bold transition-all hover:bg-white/10">← Back</Link><h1 className="text-3xl font-serif text-white">CEO Control Hub</h1></div>
+      <div className="max-w-7xl mx-auto space-y-10">
+        <div className="flex flex-col sm:flex-row justify-between items-center border-b border-white/10 pb-8 gap-6">
+          <div className="flex items-center gap-4"><Link href="/" className="px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black tracking-widest uppercase hover:bg-white/10 transition-all">← Back to Atrium</Link><h1 className="text-3xl font-serif text-white tracking-tight">CEO Control Hub</h1></div>
           <div className="flex items-center gap-3">
              <div className="flex gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
-                <button onClick={() => setActiveTab('orders')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'orders' ? 'bg-[#D95D27] text-white' : 'text-gray-400 hover:text-white'}`}>Orders ({orders.length})</button>
-                <button onClick={() => setActiveTab('products')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'products' ? 'bg-[#D95D27] text-white' : 'text-gray-400 hover:text-white'}`}>Products ({products.length})</button>
-                <button onClick={() => setActiveTab('vendors')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'vendors' ? 'bg-[#D95D27] text-white' : 'text-gray-400 hover:text-white'}`}>Sellers ({vendorApps.length})</button>
+                <button onClick={() => setActiveTab('orders')} className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'orders' ? 'bg-[#D95D27] text-white' : 'text-gray-500'}`}>Live Orders</button>
+                <button onClick={() => setActiveTab('products')} className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'products' ? 'bg-[#D95D27] text-white' : 'text-gray-500'}`}>Inventory</button>
+                <button onClick={() => setActiveTab('shopping')} className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'shopping' ? 'bg-[#D95D27] text-white' : 'text-gray-500'}`}>Mall Pickups</button>
              </div>
-             <button onClick={handleAdminLogout} className="p-3 bg-red-950/60 rounded-2xl border border-red-500/30 text-red-300 transition-all hover:bg-red-900/60"><LogOut className="w-4 h-4" /></button>
+             <button onClick={() => { setIsAuthenticated(false); localStorage.removeItem('emall_admin_auth'); }} className="p-3.5 bg-red-950/60 rounded-2xl border border-red-500/30 text-red-300 hover:bg-red-900 transition-all"><LogOut className="w-5 h-5" /></button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-sans">
-          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1"><span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest block">Total Sales Volume</span><p className="text-2xl font-black text-white">PKR {totalRevenue.toLocaleString()}</p></div>
-          <div className="bg-emerald-950/40 border border-emerald-500/30 p-6 rounded-3xl space-y-1"><span className="text-emerald-300 text-[10px] uppercase font-bold tracking-widest block">Net E-Mall Profit</span><p className="text-2xl font-black text-emerald-400">PKR {totalProfit.toLocaleString()}</p></div>
-          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1"><span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest block">Total Orders</span><p className="text-2xl font-black text-white">{orders.length}</p></div>
-          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-1"><span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest block">Seller Apps</span><p className="text-2xl font-black text-amber-300">{vendorApps.length}</p></div>
+        {/* METRICS - HARIS CEO VIEW */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] space-y-2 shadow-xl"><span className="text-gray-500 text-[10px] uppercase font-black tracking-widest">Total Sourcing Volume</span><p className="text-3xl font-black text-white leading-none">PKR {totalRevenue.toLocaleString()}</p></div>
+          <div className="bg-emerald-950/40 border border-emerald-500/30 p-8 rounded-[2rem] space-y-2 shadow-xl"><span className="text-emerald-400 text-[10px] uppercase font-black tracking-widest">Net Hardwork Profit</span><p className="text-3xl font-black text-emerald-400 leading-none">PKR {totalProfit.toLocaleString()}</p></div>
+          <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] space-y-2 shadow-xl"><span className="text-gray-500 text-[10px] uppercase font-black tracking-widest">Active Orders</span><p className="text-3xl font-black text-white leading-none">{orders.length}</p></div>
+          <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] space-y-2 shadow-xl"><span className="text-gray-500 text-[10px] uppercase font-black tracking-widest">Seller Applicants</span><p className="text-3xl font-black text-amber-300 leading-none">{vendorApps.length}</p></div>
         </div>
 
+        {/* SHOPPING LIST TAB (For Haris at the Mall) */}
+        {activeTab === 'shopping' && (
+           <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-10 space-y-8 animate-in fade-in duration-500 shadow-2xl">
+              <div className="flex justify-between items-center border-b border-white/10 pb-6"><h2 className="text-2xl font-serif text-white">Mall Pick-up List (Runner View)</h2><ListChecks className="w-6 h-6 text-[#D95D27]" /></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 {orders.filter(o => o.status === 'Stock Verification' || o.status === 'Gathering from Hub').map((o) => (
+                    <div key={o.order_id} className="bg-black/50 border border-white/10 p-6 rounded-3xl space-y-4">
+                       <p className="text-[10px] font-black text-[#D95D27] uppercase tracking-widest">Order ID: {o.order_id}</p>
+                       <div className="space-y-2">
+                          {(o.cart_items || []).map((item:any, i:number) => (
+                             <div key={i} className="flex justify-between text-xs font-bold p-3 bg-white/5 rounded-xl border border-white/5">
+                                <span>{item.shop?.name} - {item.title} ({item.selectedSize})</span>
+                                <span className="text-[#D95D27]">x{item.quantity}</span>
+                             </div>
+                          ))}
+                       </div>
+                       <button onClick={() => handleUpdateOrderStatus(o.order_id, 'Gathering from Hub')} className="w-full py-3 bg-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-white shadow-lg">Mark as Picked up</button>
+                    </div>
+                 ))}
+              </div>
+           </div>
+        )}
+
+        {/* LIVE ORDERS TAB */}
         {activeTab === 'orders' && (
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6 shadow-2xl">
-            <h2 className="text-xl font-serif text-white flex items-center gap-2"><ShoppingBag className="w-5 h-5 text-[#D95D27]" /> Live Orders Management</h2>
-            <div className="space-y-4">
+          <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-10 space-y-8 shadow-2xl">
+            <h2 className="text-2xl font-serif text-white flex items-center gap-3"><ShoppingBag className="w-6 h-6 text-[#D95D27]" /> Live Orders Tracking</h2>
+            <div className="space-y-5">
               {orders.map((o) => (
-                <div key={o.order_id} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4">
-                  <div className="flex justify-between items-center border-b border-white/10 pb-3 font-sans">
-                    <div><span className="font-bold text-white">Order ID: {o.order_id}</span><span className="text-gray-500 block text-[11px]">{o.date}</span></div>
+                <div key={o.order_id} className="bg-black/50 border border-white/10 rounded-[2rem] p-8 space-y-6 shadow-xl transition-all hover:border-white/20">
+                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-white/5 pb-5 gap-4">
+                    <div className="space-y-1">
+                       <span className="text-[10px] font-black text-[#D95D27] uppercase tracking-widest">Verified ID: {o.order_id}</span>
+                       <p className="text-lg font-serif text-white">{o.customer_name} • {o.date}</p>
+                    </div>
                     <div className="flex items-center gap-3">
-                      <select value={o.status || 'Pending Dispatch'} onChange={(e) => handleUpdateOrderStatus(o.order_id, e.target.value)} className="bg-[#090807] border border-white/10 text-xs text-white px-3 py-1.5 rounded-xl"><option value="Pending Dispatch">Pending Dispatch</option><option value="In Transit">In Transit</option><option value="Delivered">Delivered</option><option value="Cancelled">Cancelled</option></select>
-                      <button onClick={() => handleDeleteOrder(o.order_id)} className="text-red-400 p-1 transition-all hover:bg-red-500/10 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                      {/* HARIS POWER BUTTONS */}
+                      <button onClick={() => handleUpdateOrderStatus(o.order_id, 'Awaiting 20% Advance')} className="px-4 py-2 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-xl text-[9px] font-black uppercase tracking-widest">Verify Stock</button>
+                      <button onClick={() => handleUpdateOrderStatus(o.order_id, 'Gathering from Hub')} className="px-4 py-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-[9px] font-black uppercase tracking-widest">Trust Approval (COD)</button>
+                      
+                      <select value={o.status || 'Stock Verification'} onChange={(e) => handleUpdateOrderStatus(o.order_id, e.target.value)} className="bg-[#090807] border border-white/10 text-[10px] font-bold text-white px-4 py-2 rounded-xl focus:border-[#D95D27] outline-none">
+                        <option value="Stock Verification">Stock Verification</option>
+                        <option value="Awaiting 20% Advance">Awaiting 20% Advance</option>
+                        <option value="Gathering from Hub">Gathering from Hub</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                      <button onClick={() => handleDeleteOrder(o.order_id)} className="p-2 text-red-400 bg-red-500/10 rounded-xl transition-all hover:bg-red-500/20"><Trash2 className="w-5 h-5" /></button>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs font-sans">
-                    <div className="space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10"><p className="font-bold text-white text-sm">{o.customer_name}</p><p className="text-gray-400">{o.customer_phone}</p><p className="text-gray-400">{o.customer_address}</p><p className="text-emerald-400 font-bold pt-1">Payment: {o.payment_method}</p></div>
-                    <div className="md:col-span-2 space-y-2 bg-white/5 p-4 rounded-2xl border border-white/10">
-                       <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-xs">
+                    <div className="space-y-3 bg-white/5 p-6 rounded-3xl border border-white/5 shadow-inner">
+                       <div className="space-y-1"><p className="text-[10px] font-black text-gray-500 uppercase tracking-widest leading-none mb-1">Customer & Address</p><p className="font-bold text-white leading-tight">{o.customer_name} ({o.customer_phone})</p><p className="text-gray-400 italic leading-relaxed">{o.customer_address}</p></div>
+                       <div className="flex gap-2 pt-2"><span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${o.payment_method === 'PREPAID' ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' : 'bg-amber-950 text-amber-400 border border-amber-500/30'}`}>{o.payment_method}</span></div>
+                    </div>
+                    <div className="md:col-span-2 space-y-4 bg-white/5 p-6 rounded-3xl border border-white/5">
+                       <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
                           {(o.cart_items || []).map((item: any, idx: number) => (
-                            <div key={idx} className="flex justify-between text-[11px] text-gray-300 border-b border-white/5 pb-1">
-                              <span>{item.title} (x{item.quantity}) - {item.selectedSize}</span>
-                              <span className="font-bold">PKR {item.totalPrice?.toLocaleString()}</span>
+                            <div key={idx} className="flex justify-between text-[11px] text-gray-300 border-b border-white/5 pb-2 hover:text-white transition-colors">
+                              <div className="flex items-center gap-3">
+                                 <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center"><ShoppingBag className="w-3.5 h-3.5 text-[#D95D27]" /></div>
+                                 <span>{item.shop?.name} • {item.title} (x{item.quantity}) - {item.selectedSize}</span>
+                              </div>
+                              <span className="font-black text-white">PKR {item.totalPrice?.toLocaleString()}</span>
                             </div>
                           ))}
                        </div>
-                       <div className="pt-2 border-t border-white/10 flex justify-between font-bold">
-                          <span className="text-amber-400 text-[9px] uppercase tracking-widest">E-Mall Profit: PKR {o.total_hardwork_profit?.toFixed(2)}</span>
-                          <span className="text-emerald-400 text-sm">TOTAL PAYABLE: PKR {o.total_amount?.toLocaleString()}</span>
+                       <div className="pt-3 border-t border-white/10 grid grid-cols-2 lg:grid-cols-3 gap-4">
+                          <div className="space-y-0.5"><p className="text-[9px] font-black text-amber-500 uppercase tracking-widest">CEO Net Margin</p><p className="text-sm font-black text-white leading-none">PKR {o.total_hardwork_profit?.toFixed(2)}</p></div>
+                          <div className="space-y-0.5"><p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest leading-none mb-0.5">20% Advance Goal</p><p className="text-sm font-black text-white leading-none">PKR {o.advanceAmount?.toLocaleString()}</p></div>
+                          <div className="space-y-0.5"><p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Final Bill (80%)</p><p className="text-lg font-black text-emerald-500 leading-none">PKR {o.totalAmount?.toLocaleString()}</p></div>
                        </div>
                     </div>
                   </div>
@@ -177,71 +214,39 @@ export default function AdminMasterPortal() {
           </div>
         )}
 
+        {/* INVENTORY TAB */}
         {activeTab === 'products' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6">
-              <h2 className="text-xl font-serif text-white flex items-center gap-2"><Plus className="w-5 h-5 text-[#D95D27]" /> Add New Article</h2>
-              {formError && <div className="p-3 bg-red-950/80 rounded-2xl text-red-300 text-xs font-sans font-bold">✕ {formError}</div>}
-              {successMessage && <div className="p-3 bg-emerald-950/80 rounded-2xl text-emerald-300 text-xs font-sans font-bold">✓ Published live to Digital Mall!</div>}
-              
-              <form onSubmit={handleAddProduct} className="space-y-5 text-xs font-sans">
-                <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Product Title" className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-white focus:border-[#D95D27]" />
-                <div className="grid grid-cols-2 gap-4">
-                  <select value={brand} onChange={(e) => setBrand(e.target.value)} className="w-full px-4 py-3.5 bg-[#090807] border border-white/10 rounded-2xl text-white">{brandOptions.map(b => <option key={b} value={b}>{b}</option>)}</select>
-                  <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-4 py-3.5 bg-[#090807] border border-white/10 rounded-2xl text-white">{categoriesList.map(c => <option key={c} value={c}>{c}</option>)}</select>
-                </div>
-                <input type="text" required value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Original Price (PKR)" className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-white" />
-                
-                <div className="space-y-3">
-                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 block px-1">Gallery Links (Max 5)</label>
-                   {imageUrls.map((url, idx) => (
-                     <div key={idx} className="flex gap-2"><input type="text" value={url} onChange={(e) => handleImageUrlChange(idx, e.target.value)} placeholder={`Direct Link #${idx+1}`} className="flex-1 px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-white focus:border-[#D95D27]" />{imageUrls.length > 1 && <button type="button" onClick={() => handleRemoveImageUrlField(idx)} className="p-3 bg-red-950/40 border border-red-500/20 text-red-400 rounded-2xl hover:bg-red-900/40"><Trash2 className="w-4 h-4" /></button>}</div>
-                   ))}
-                   {imageUrls.length < 5 && <button type="button" onClick={handleAddImageUrlField} className="text-[10px] font-bold uppercase tracking-widest text-[#D95D27] flex items-center gap-1.5 p-2 transition-all hover:opacity-80"><Plus className="w-3.5 h-3.5" /> Add Another Link</button>}
-                </div>
-
-                <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Product Description" className="w-full px-4 py-3.5 bg-black/40 border border-white/10 rounded-2xl text-white focus:border-[#D95D27]" />
-                <button type="submit" className="w-full py-4 bg-[#D95D27] hover:bg-[#c44e1d] text-white font-black uppercase rounded-full shadow-2xl transition-all">Publish Article Live</button>
+           <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-10 space-y-10 animate-in fade-in duration-500 shadow-2xl">
+              <h2 className="text-2xl font-serif">Mall Product Management</h2>
+              <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
+                 <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Article Title" className="w-full px-6 py-4 bg-black border border-white/10 rounded-2xl text-white outline-none focus:border-[#D95D27]" />
+                 <input type="text" required value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Retail Price (PKR)" className="w-full px-6 py-4 bg-black border border-white/10 rounded-2xl text-white outline-none focus:border-[#D95D27]" />
+                 <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-6 py-4 bg-black border border-white/10 rounded-2xl text-white outline-none focus:border-[#D95D27]">
+                    <option value="Fashion & Apparel">Fashion Floor (G)</option>
+                    <option value="Shoes & Footwear">Footwear Floor (1st)</option>
+                    <option value="Beauty & Organic">Beauty Floor (2nd)</option>
+                    <option value="Perfumes & Accessories">Perfumes Floor (2nd)</option>
+                    <option value="Home & Lifestyle">Lifestyle Floor (3rd)</option>
+                    <option value="Baby & Kids">Kids Floor (3rd)</option>
+                 </select>
+                 <select value={brand} onChange={(e) => setBrand(e.target.value)} className="w-full px-6 py-4 bg-black border border-white/10 rounded-2xl text-white outline-none focus:border-[#D95D27]">
+                    <option value="Khaadi Official">Khaadi Official</option>
+                    <option value="Outfitters Official">Outfitters Official</option>
+                    <option value="Ethnic Official">Ethnic Official</option>
+                    <option value="Breakout Official">Breakout Official</option>
+                    <option value="SAYA Official">SAYA Official</option>
+                    <option value="Custom">Custom Brand Seller</option>
+                 </select>
+                 <div className="md:col-span-2 space-y-3 pt-4 border-t border-white/5">
+                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest px-2">Gallery Image Links (Max 5)</p>
+                    {imageUrls.map((url, idx) => (
+                      <div key={idx} className="flex gap-2"><input type="text" value={url} onChange={(e) => handleImageUrlChange(idx, e.target.value)} placeholder={`Direct Image URL #${idx+1}`} className="flex-1 px-6 py-4 bg-black border border-white/10 rounded-2xl text-xs text-white" />{imageUrls.length > 1 && <button type="button" onClick={() => handleRemoveImageUrlField(idx)} className="p-3 bg-red-950/60 rounded-xl text-red-300 transition-all hover:bg-red-800"><Trash2 className="w-4 h-4" /></button>}</div>
+                    ))}
+                    {imageUrls.length < 5 && <button type="button" onClick={handleAddImageUrlField} className="text-[#D95D27] font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-70 p-2">+ Add Another Perspective View</button>}
+                 </div>
+                 <button type="submit" className="md:col-span-2 py-5 bg-[#D95D27] text-white font-black uppercase tracking-[0.2em] rounded-full shadow-2xl transition-all active:scale-95 shadow-[#D95D27]/30">Publish live to Hub</button>
               </form>
-            </div>
-
-            <div className="space-y-4">
-              <span className="text-[10px] font-bold uppercase text-[#D95D27] tracking-widest block font-sans">Live Preview</span>
-              <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between h-fit font-sans">
-                <div className="h-64 bg-black/60 flex items-center justify-center overflow-hidden">{imageUrls[0] ? <img src={imageUrls[0]} className="w-full h-full object-cover" /> : <ImageIcon className="w-10 h-10 text-gray-700" />}</div>
-                <div className="p-6 space-y-2"><h3 className="text-white font-bold text-lg">{title || 'Preview'}</h3><p className="text-gray-400 text-xs line-clamp-2">{description || 'Article info...'}</p><p className="text-2xl font-black text-[#D95D27] pt-2">PKR {price || 0}</p></div>
-              </div>
-            </div>
-
-            <div className="lg:col-span-3 bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6 shadow-2xl font-sans">
-              <h2 className="text-xl font-serif text-white">Active Products ({products.length})</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {products.map((p) => {
-                   let imgs = []; try { imgs = JSON.parse(p.images || '[]'); } catch (e) { imgs = [p.images]; }
-                   return (
-                    <div key={p.id} className="bg-black/40 border border-white/10 rounded-2xl p-4 flex items-center justify-between gap-3 group transition-all hover:border-[#D95D27]/40">
-                      <div className="flex items-center gap-3 overflow-hidden"><img src={imgs[0]} className="w-12 h-12 rounded-xl object-cover shrink-0" /><div className="overflow-hidden"><h4 className="text-xs font-bold text-white truncate">{p.title}</h4><p className="text-[10px] text-gray-500 font-extrabold tracking-tighter uppercase">{p.shop?.name}</p><p className="text-[10px] text-gray-400">PKR {p.price?.toLocaleString()}</p></div></div>
-                      <button onClick={() => handleDeleteProduct(p.id)} className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
-                    </div>
-                   );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'vendors' && (
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6 shadow-2xl font-sans">
-            <h2 className="text-xl font-serif text-white flex items-center gap-2"><UserPlus className="w-5 h-5 text-emerald-400" /> Merchant Applications</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vendorApps.map((v, idx) => (
-                <div key={idx} className="bg-black/50 border border-white/10 rounded-3xl p-6 space-y-4 shadow-xl flex flex-col justify-between transition-all hover:border-emerald-500/30">
-                  <div className="space-y-2"><div className="flex justify-between items-start"><span className="bg-emerald-950 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Seller Partner</span><span className="text-[10px] text-gray-500">{v.vendor_city}</span></div><h3 className="text-lg font-bold text-white font-serif">{v.vendor_name}</h3><p className="text-gray-400 text-xs flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-[#D95D27]" /> {v.vendor_phone}</p></div>
-                  <a href={`https://wa.me/92${v.vendor_phone?.replace(/^0/, '')}`} target="_blank" rel="noreferrer" className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl flex items-center justify-center gap-2 transition-all uppercase tracking-widest"><MessageCircle className="w-4 h-4" /> <span>WhatsApp Seller</span></a>
-                </div>
-              ))}
-            </div>
-          </div>
+           </div>
         )}
       </div>
     </div>
