@@ -385,7 +385,7 @@ export default function HomePage() {
                   {/* SCENARIO 1: Show 5% markup row for official brands only */}
                   {sub.isResale && (
                     <div className="pt-1 flex justify-between text-[10px] text-amber-800 font-bold uppercase tracking-widest">
-                       <span>5% Hardwork & Sourcing Fee:</span>
+                       <span>5% Sourcing Fee:</span>
                        <span>PKR {sub.customerMarkup.toLocaleString()}</span>
                     </div>
                   )}
